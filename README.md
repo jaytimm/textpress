@@ -1,6 +1,6 @@
-# nlpkit
+# nlplite
 
-The lightweight, versatile NLP companion in R.
+A lightweight, versatile NLP companion in R.
 
 ``` r
 devtools::install_github("jaytimm/nlpkit")
