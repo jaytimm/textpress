@@ -1,8 +1,8 @@
 # nlpkit
 
-## Core NLP Functionality
+## 1. Core NLP Functionality
 
-### Text Processing and Analysis
+### Basic Text Processing
 
 The package offers fundamental tools for text tokenization and sentence
 segmentation, crucial for preparing text for LLM processing. This
@@ -16,7 +16,7 @@ data formats, facilitating integration with diverse data pipelines. This
 feature is essential when working with LLMs requiring specific data
 formats.
 
-## Advanced Corpus Search and Analysis
+## 2. Advanced Corpus Search
 
 ### Pattern Detection and Contextual Enrichment
 
@@ -30,7 +30,7 @@ It can maintain small, manageable text chunks for detailed analysis
 while retrieving adjacent chunks for broader context. This balance is
 crucial for feeding coherent and contextually complete segments to LLMs.
 
-## LLM Integration and Optimization
+## 3. LLM Integration
 
 ### Efficient LLM Interfacing
 
@@ -45,9 +45,9 @@ plots aids in managing redundant embeddings. This feature ensures each
 input to the LLM is unique and valuable, thus enhancing analysis quality
 and reducing computational load.
 
-## Summary
+## 4. Summary
 
-In summary, the ‘nlpkit’ is a versatile and indispensable tool in the
+In summary, the `nlpkit` is a versatile and indispensable tool in the
 NLP domain, adept at traditional NLP tasks and equipped with advanced
 features for corpus analysis, embedding management, and LLM
 optimization. Its wide range of applications spans from academic
