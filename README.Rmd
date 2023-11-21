@@ -6,6 +6,18 @@ output:
 
 # nlpkit
 
+```{r eval=FALSE, include=FALSE}
+# A very simple R package. meant to be a one-stop shop for basic NLP tasks. Designed to stay out of the way ...  For larger text projects, Python & `spaCy` are best.  
+```
+
+
+
+```{r eval=FALSE}
+devtools::install_github("jaytimm/nlpkit")
+```
+
+
+
 ## 1. Core NLP Functionality
 
 ### Basic Text Processing
@@ -44,4 +56,4 @@ A DBSCAN-based approach to identify and remove redundant points in 2D plots aids
 
 ## 4. Summary
 
-In summary, the `nlpkit` is a versatile and indispensable tool in the NLP domain, adept at traditional NLP tasks and equipped with advanced features for corpus analysis, embedding management, and LLM optimization. Its wide range of applications spans from academic research to practical data science and AI implementations, making it a valuable asset for NLP practitioners.
+In summary, the `nlpkit` is a versatile tool for a host of NLP projects, adept at traditional NLP tasks and equipped with advanced features for corpus analysis, embedding management, and LLM integration. Its wide range of applications spans from academic research to practical data science and AI implementations, making it a valuable asset for NLP practitioners.

@@ -16,7 +16,7 @@
 #' @export
 #' @rdname search_find_gramx
 #'
-nlp_split_sentences <- function(tif) {
+nlp_tif_sentence <- function(tif) {
 
   # Validate input
   if (!("doc_id" %in% names(tif) && "text" %in% names(tif))) {

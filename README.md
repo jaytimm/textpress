@@ -1,5 +1,9 @@
 # nlpkit
 
+``` r
+devtools::install_github("jaytimm/nlpkit")
+```
+
 ## 1. Core NLP Functionality
 
 ### Basic Text Processing
@@ -47,9 +51,9 @@ and reducing computational load.
 
 ## 4. Summary
 
-In summary, the `nlpkit` is a versatile and indispensable tool in the
-NLP domain, adept at traditional NLP tasks and equipped with advanced
-features for corpus analysis, embedding management, and LLM
-optimization. Its wide range of applications spans from academic
-research to practical data science and AI implementations, making it a
-valuable asset for NLP practitioners.
+In summary, the `nlpkit` is a versatile tool for a host of NLP projects,
+adept at traditional NLP tasks and equipped with advanced features for
+corpus analysis, embedding management, and LLM integration. Its wide
+range of applications spans from academic research to practical data
+science and AI implementations, making it a valuable asset for NLP
+practitioners.
