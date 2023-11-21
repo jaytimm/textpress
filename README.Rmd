@@ -6,6 +6,8 @@ output:
 
 # nlpkit
 
+The lightweight, versatile NLP companion in R.
+
 ```{r eval=FALSE, include=FALSE}
 # A very simple R package. meant to be a one-stop shop for basic NLP tasks. Designed to stay out of the way ...  For larger text projects, Python & `spaCy` are best.  
 ```

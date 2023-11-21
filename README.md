@@ -1,5 +1,7 @@
 # nlpkit
 
+The lightweight, versatile NLP companion in R.
+
 ``` r
 devtools::install_github("jaytimm/nlpkit")
 ```
