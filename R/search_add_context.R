@@ -1,12 +1,19 @@
-#' Add context to search results
+#' Add Context to Search Results and Highlight Terms
 #'
-#' @name add_context
-#' @param gramx output from find_gramx()
-#' @param df Annotion dataframe
-#' @param form A character string
-#' @param tag A character string
-#' @param highlight A boolean
-#' @return A data frame
+#' This function adds contextual information to search results from a data frame
+#' and optionally highlights the search terms.
+#'
+#' @param gramx A data table containing search results including `doc_id` and other relevant columns.
+#' @param df A data frame containing the original text data with `doc_id` and `sentence_id`.
+#' @param inline Column name in `gramx` that contains the search terms.
+#' @param highlight Optional parameter to specify the highlight style for search terms.
+#' @return A data table with contextual information added to the search results.
+#' @importFrom data.table setDT
+#' @examples
+#' # Example usage
+#' # gramx <- data.table(doc_id = 1:2, inline = c("search_term1", "search_term2"))
+#' # df <- data.frame(doc_id = 1:2, sentence_id = 1:2, token = c("token1", "token2"))
+#' # search_add_context(gramx, df)
 #'
 #' @export
 #' @rdname search_add_context
@@ -16,6 +23,18 @@ search_add_context <- function(gramx,
                         df,
                         inline = 'inline',
                         highlight = NULL) {
+
+  # Validate input
+  if (!is.data.table(gramx)) {
+    stop("The argument 'gramx' must be a data table.")
+  }
+  if (!is.data.frame(df)) {
+    stop("The argument 'df' must be a data frame.")
+  }
+  if (!inline %in% names(gramx)) {
+    stop("The 'inline' column does not exist in the 'gramx' data table.")
+  }
+
 
   data.table::setDT(df)
   data.table::setDT(gramx)
