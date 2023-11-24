@@ -3,7 +3,7 @@
 A lightweight, versatile NLP companion in R.
 
 ``` r
-devtools::install_github("jaytimm/nlpkit")
+devtools::install_github("jaytimm/nlplite")
 ```
 
 ## 1. Core NLP Functionality
@@ -53,9 +53,9 @@ and reducing computational load.
 
 ## 4. Summary
 
-In summary, the `nlpkit` is a versatile tool for a host of NLP projects,
-adept at traditional NLP tasks and equipped with advanced features for
-corpus analysis, embedding management, and LLM integration. Its wide
-range of applications spans from academic research to practical data
-science and AI implementations, making it a valuable asset for NLP
+In summary, the `nlplite` is a versatile tool for a host of NLP
+projects, adept at traditional NLP tasks and equipped with advanced
+features for corpus analysis, embedding management, and LLM integration.
+Its wide range of applications spans from academic research to practical
+data science and AI implementations, making it a valuable asset for NLP
 practitioners.
