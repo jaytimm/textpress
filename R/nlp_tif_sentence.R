@@ -5,7 +5,6 @@
 #' @param tif A data frame with at least two columns: `doc_id` and `text`.
 #' @return A data frame with four columns: `doc_id`, `sentence_id`, `text`, and `words`.
 #' @importFrom data.table data.table setcolorder
-#' @importFrom tokenizers tokenize_sentences count_words
 #' @export
 #' @examples
 #' # Example usage
@@ -24,7 +23,7 @@ nlp_tif_sentence <- function(tif) {
 
   # Convert doc_id to character and tokenize text
   xx <- data.table::data.table(doc_id = tif$doc_id |> as.character(),
-                               text = sapply(tif$text, tokenizers::tokenize_sentences))
+                               text = sapply(tif$text, sentence_split))
 
   # Unlist the text and create sentence IDs
   xx1 <- xx[,.(text = unlist(text)), by = doc_id]
@@ -33,8 +32,17 @@ nlp_tif_sentence <- function(tif) {
 
   # Reorder columns
   data.table::setcolorder(xx1, c('doc_id', 'sentence_id', 'text_id', 'text'))
-
-  # # Count words in each sentence
-  # xx1[, words := tokenizers::count_words(text)]
   return(xx1)
 }
+
+
+
+sentence_split <- function(x) {
+    x <- stringi::stri_replace_all_charclass(x, "[[:whitespace:]]", " ")
+    out <- stringi::stri_split_boundaries(x,
+                                          type = "sentence",
+                                          skip_word_none = FALSE)
+    lapply(out, stringi::stri_trim_both)
+}
+
+

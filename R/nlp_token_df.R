@@ -3,8 +3,8 @@
 #' This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
 #'
 #' @param tok A list where each element contains tokens corresponding to a document or a sentence.
+#' @param by A character string specifying grouping column.
 #' @return A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.
-#' @importFrom textshape tidy_list
 #' @importFrom data.table rowid
 #' @examples
 #' # Example usage
@@ -14,24 +14,23 @@
 #' @rdname nlp_token_df
 #'
 #'
-nlp_token_df <- function(tok, by = 'text_id'){
+nlp_token_df <- function(tok,
+                         by = "text_id",
+                         token = "token") {
 
-  # Validate input
-  if (!is.list(tok)) {
-    stop("The argument 'tok' must be a list.")
+  if (!all(sapply(tok, is.atomic))) {
+    stop("`x` must be a list of atomic `vector`s")
   }
 
-  df <- textshape::tidy_list(tok,
-                             id.name = by,
-                             content.name = 'token')
+  if (is.null(names(tok))) {
+    names(tok) <- seq_along(tok)
+  }
 
-  # if(grepl('\\.', df$doc_id[1])) {
-  #   df[, sentence_id := gsub('^.*\\.', '', doc_id)]
-  #   df[, doc_id := gsub('\\..*$', '', doc_id)]
-  #   df[, term_id := data.table::rowid(doc_id, sentence_id)]
-  # }
-  #
-  # df[, token_id := data.table::rowid(doc_id)]
-  return(df)
+  df <- data.frame(rep(names(tok), sapply(tok, length)),
+                   unlist(tok, use.names = FALSE),
+                   check.names = FALSE,
+                   row.names = NULL)
+
+  colnames(df) <- c(by, token)
+  return(data.table::data.table(df))
 }
-

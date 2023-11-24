@@ -7,10 +7,10 @@
 nlp_tif_sentence(tif)
 }
 \arguments{
-\item{tif}{A data frame with at least two columns: `doc_id` and `text`.}
+\item{tif}{A data frame with at least two columns: \code{doc_id} and \code{text}.}
 }
 \value{
-A data frame with four columns: `doc_id`, `sentence_id`, `text`, and `words`.
+A data frame with four columns: \code{doc_id}, \code{sentence_id}, \code{text}, and \code{words}.
 }
 \description{
 This function splits the text from a given data frame into individual sentences.

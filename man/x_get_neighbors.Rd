@@ -7,22 +7,22 @@
 x_get_neighbors(x, matrix, n = 10)
 }
 \arguments{
-\item{x}{A character vector (term) or numeric vector.}
+\item{x}{A character or numeric vector representing the term or vector.}
 
-\item{matrix}{A matrix against which the similarity of 'x' is calculated.}
+\item{matrix}{A numeric matrix or a sparse matrix against which the similarity is calculated.}
 
-\item{n}{The number of nearest neighbors to return.}
+\item{n}{Number of nearest neighbors to return.}
 }
 \value{
-A data frame with the rank, terms, and their cosine similarity scores.
+A data frame with the ranks, terms, and their cosine similarity scores.
 }
 \description{
-This function calculates the nearest neighbors of a given term or vector
-based on cosine similarity using a specified matrix.
-It returns the top 'n' nearest neighbors.
+This function identifies the nearest neighbors of a given term or vector
+in a matrix based on cosine similarity.
 }
 \examples{
-# Example usage
-# matrix <- matrix(rnorm(100), ncol = 10)
-# wd_get_NN("example_term", matrix, 5)
+matrix <- matrix(rnorm(100), ncol = 10)
+term <- rnorm(10)
+neighbors <- x_get_neighbors(term, matrix, 5)
+
 }

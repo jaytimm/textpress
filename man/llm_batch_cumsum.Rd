@@ -12,7 +12,7 @@ llm_batch_cumsum(x, threshold)
 \item{threshold}{A numeric threshold for the cumulative sum of each batch.}
 }
 \value{
-A numeric vector indicating the batch number for each element of `x`.
+A numeric vector indicating the batch number for each element of \code{x}.
 }
 \description{
 This function takes a numeric vector and groups its elements into batches.

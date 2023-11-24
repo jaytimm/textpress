@@ -4,10 +4,12 @@
 \alias{nlp_token_df}
 \title{Convert Token List to Data Frame}
 \usage{
-nlp_token_df(tok, by = "text_id")
+nlp_token_df(tok, by = "text_id", token = "token")
 }
 \arguments{
 \item{tok}{A list where each element contains tokens corresponding to a document or a sentence.}
+
+\item{by}{A character string specifying grouping column.}
 }
 \value{
 A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.

@@ -2,8 +2,8 @@
 #'
 #' This function tokenizes text data from a data frame using the 'tokenizers' package, preserving the original text structure like capitalization and punctuation.
 #' @param tif A data frame containing the text to be tokenized and a document identifier in 'doc_id'.
+#' @param by A character string specifying grouping column.
 #' @return A named list of tokens, where each list item corresponds to a document.
-#' @importFrom tokenizers tokenize_words
 #' @examples
 #' # Assuming tif is a data frame with columns 'doc_id' and 'text'
 #' # tif <- data.frame(doc_id = 1:2, text = c("Sample text 1", "Sample text 2"))
@@ -28,14 +28,18 @@ nlp_tif_token <- function(tif,
 
   # Tokenizing
   tokens <- lapply(tif$text, function(text) {
-    unlist(tokenizers::tokenize_words(text,
-                                      strip_punct = FALSE,
-                                      simplify = FALSE,
-                                      lowercase = F))
-  })
+    unlist(token_split(text))
+    })
 
   # Naming the list
   names(tokens) <-  tif[[by]]
-
   return(tokens)
+}
+
+
+
+token_split <- function(x) {
+  out <- stringi::stri_split_boundaries(x, type = "word")
+  out <- lapply(out, stringi::stri_subset_charclass, "\\p{WHITESPACE}", negate = TRUE)
+  out
 }
