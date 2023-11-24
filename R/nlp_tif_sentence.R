@@ -1,7 +1,6 @@
 #' Split Text into Sentences
 #'
 #' This function splits the text from a given data frame into individual sentences.
-#' It also counts the number of words in each sentence.
 #'
 #' @param tif A data frame with at least two columns: `doc_id` and `text`.
 #' @return A data frame with four columns: `doc_id`, `sentence_id`, `text`, and `words`.
@@ -14,7 +13,7 @@
 #' nlp_split_sentences(df)
 
 #' @export
-#' @rdname search_find_gramx
+#' @rdname nlp_tif_sentence
 #'
 nlp_tif_sentence <- function(tif) {
 
@@ -30,11 +29,12 @@ nlp_tif_sentence <- function(tif) {
   # Unlist the text and create sentence IDs
   xx1 <- xx[,.(text = unlist(text)), by = doc_id]
   xx1[, sentence_id := seq_len(.N), by = doc_id]
+  xx1[, text_id := paste0(doc_id, '.', sentence_id)]
 
   # Reorder columns
-  data.table::setcolorder(xx1, c('doc_id', 'sentence_id', 'text'))
+  data.table::setcolorder(xx1, c('doc_id', 'sentence_id', 'text_id', 'text'))
 
-  # Count words in each sentence
-  xx1[, words := tokenizers::count_words(text)]
+  # # Count words in each sentence
+  # xx1[, words := tokenizers::count_words(text)]
   return(xx1)
 }

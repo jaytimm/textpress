@@ -4,7 +4,7 @@
 \alias{nlp_token_df}
 \title{Convert Token List to Data Frame}
 \usage{
-nlp_token_df(tok)
+nlp_token_df(tok, by = "text_id")
 }
 \arguments{
 \item{tok}{A list where each element contains tokens corresponding to a document or a sentence.}

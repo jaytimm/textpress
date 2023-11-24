@@ -14,7 +14,7 @@
 #' @rdname nlp_token_df
 #'
 #'
-nlp_token_df <- function(tok){
+nlp_token_df <- function(tok, by = 'text_id'){
 
   # Validate input
   if (!is.list(tok)) {
@@ -22,16 +22,16 @@ nlp_token_df <- function(tok){
   }
 
   df <- textshape::tidy_list(tok,
-                             id.name = 'doc_id',
+                             id.name = by,
                              content.name = 'token')
 
-  if(grepl('\\.', df$doc_id[1])) {
-    df[, sentence_id := gsub('^.*\\.', '', doc_id)]
-    df[, doc_id := gsub('\\..*$', '', doc_id)]
-    df[, term_id := data.table::rowid(doc_id, sentence_id)]
-  }
-
-  df[, token_id := data.table::rowid(doc_id)]
+  # if(grepl('\\.', df$doc_id[1])) {
+  #   df[, sentence_id := gsub('^.*\\.', '', doc_id)]
+  #   df[, doc_id := gsub('\\..*$', '', doc_id)]
+  #   df[, term_id := data.table::rowid(doc_id, sentence_id)]
+  # }
+  #
+  # df[, token_id := data.table::rowid(doc_id)]
   return(df)
 }
 
