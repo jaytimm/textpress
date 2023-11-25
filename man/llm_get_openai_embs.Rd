@@ -4,7 +4,14 @@
 \alias{llm_get_openai_embs}
 \title{Extract Embeddings from OpenAI}
 \usage{
-llm_get_openai_embs(x)
+llm_get_openai_embs(
+  tif,
+  batch.id,
+  text.segment,
+  text.segment.id,
+  query = NULL,
+  wait = 30
+)
 }
 \arguments{
 \item{x}{A character string representing the text to be embedded.}

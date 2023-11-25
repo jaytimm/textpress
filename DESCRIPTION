@@ -16,7 +16,6 @@ Imports:
     httr,
     jsonlite,
     purrr,
-    quanteda,
-    stringr,
+    Matrix,
     stringi
 License: GPL-3

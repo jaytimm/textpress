@@ -5,7 +5,6 @@
 #' @param tok A list where each element contains tokens corresponding to a document or a sentence.
 #' @param by A character string specifying grouping column.
 #' @return A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.
-#' @importFrom data.table rowid
 #' @examples
 #' # Example usage
 #' # tok <- list("doc1" = c("token1", "token2"), "doc2" = c("token3", "token4"))
