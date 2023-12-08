@@ -1,9 +1,9 @@
-# nlplite
+# nlpx
 
 A lightweight, versatile NLP companion in R.
 
 ``` r
-devtools::install_github("jaytimm/nlplite")
+devtools::install_github("jaytimm/nlpx")
 ```
 
 ## 1. Core NLP Functionality

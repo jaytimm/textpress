@@ -51,8 +51,9 @@ search_corpus <- function(tif,
 
   tif[, text_id := paste0(doc_id, '.', sentence_id)]
 
-  found <- stringi::stri_locate_all(df$text, regex = term2)
-  names(found) <- df$text_id
+  found <- stringi::stri_locate_all(tif$text, regex = term2)
+
+  names(found) <- tif$text_id
   found1 <- lapply(found, data.frame)
   df1 <- data.table::rbindlist(found1, idcol='text_id', use.names = F)
   df1 <- subset(df1, !is.na(start))
@@ -64,7 +65,8 @@ search_corpus <- function(tif,
   df3 <- df1[, .(sentence_id = unlist(neighbors)),
              by = list(text_id, doc_id, start, end)]
   df3[, is_target := ifelse(text_id == paste0(doc_id, '.', sentence_id), 1, 0)]
-  df4 <- df[df3, on = c('doc_id', 'sentence_id'), nomatch=0]
+
+  df4 <- tif[df3, on = c('doc_id', 'sentence_id'), nomatch=0]
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), '')]
   df4[, text := ifelse(is_target == 1, insert_highlight(text, start, end), text)]
 
