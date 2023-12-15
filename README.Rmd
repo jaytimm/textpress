@@ -8,54 +8,75 @@ output:
 
 A lightweight, versatile NLP companion in R.
 
-```{r eval=FALSE, include=FALSE}
-# A very simple R package. meant to be a one-stop shop for basic NLP tasks. Designed to stay out of the way ...  For larger text projects, Python & `spaCy` are best.  
-```
-
-
-
 ```{r eval=FALSE}
 devtools::install_github("jaytimm/nlpx")
 ```
 
 
+## Some data
 
-## 1. Core NLP Functionality
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+mm <- quicknews::qnews_build_rss(x = 'ChatGPT') |>
+  quicknews::qnews_parse_rss() |>
+  mutate(url = quicknews::qnews_get_rurls(link))
 
-### Basic Text Processing
-
-The package offers fundamental tools for text tokenization and sentence segmentation, crucial for preparing text for LLM processing. This ensures that the input text is appropriately structured and segmented, laying a solid foundation for any NLP task.
-
-
-### Data Frame Conversion
-
-The package provides functions for smooth conversion between different data formats, facilitating integration with diverse data pipelines. This feature is essential when working with LLMs requiring specific data formats.
-
-
-## 2. Advanced Corpus Search
-
-### Pattern Detection and Contextual Enrichment
-
-The package includes advanced search capabilities to identify complex lexical and grammatical patterns, enriched with contextual data. This feature is invaluable for qualitative corpus analysis.
+articles <- quicknews::qnews_extract_article(
+  x = mm$url[1:25], cores = 3) |>
+  left_join(mm)
+```
 
 
-### Balancing Chunk Size with Context
 
-It can maintain small, manageable text chunks for detailed analysis while retrieving adjacent chunks for broader context. This balance is crucial for feeding coherent and contextually complete segments to LLMs.
+## Core NLP tasks
 
+### Simple annotation
 
-## 3. LLM Integration
+```{r message=FALSE, warning=FALSE}
+df_ss <- articles |>
+  mutate(doc_id = row_number()) |>
+  nlpx::nlp_split_sentences() 
 
-### Efficient LLM Interfacing
-
-The package offers tailored functions for batch creation and text embedding retrieval, optimizing LLM processing workloads. This is essential for large-scale text analysis and real-time LLM applications.
-
-
-### Handling Redundant Embeddings
-
-A DBSCAN-based approach to identify and remove redundant points in 2D plots aids in managing redundant embeddings. This feature ensures each input to the LLM is unique and valuable, thus enhancing analysis quality and reducing computational load.
+df_ss |> head() |> knitr::kable()
+```
 
 
-## 4. Summary
+```{r message=TRUE, warning=FALSE}
+df <- df_ss |>
+  nlpx::nlp_tokenize_text() |>
+  nlpx::nlp_cast_tokens()
 
-In summary, the `nlpx` is a versatile tool for a host of NLP projects, adept at traditional NLP tasks and equipped with advanced features for corpus analysis, embedding management, and LLM integration. Its wide range of applications spans from academic research to practical data science and AI implementations, making it a valuable asset for NLP practitioners.
+df |> head()
+```
+
+
+## Search
+
+### Text
+
+```{r message=FALSE, warning=FALSE}
+df_ss |>
+  nlpx::nlp_search_corpus(search = 'artificial intelligence', 
+                          highlight = c('**', '**'),
+                          n = 0) |>
+  knitr::kable(escape = F)
+```
+
+
+### df
+
+```{r message=FALSE, warning=FALSE}
+df |>
+  nlpx::nlp_search_df(search_col = 'token', 
+                      id_col = 'text_id',
+                      include = c('ChatGPT', 'prompt'),
+                      logic = 'and',
+                      exclude = NULL) |>
+  
+  group_by(text_id) |>
+  summarize(text = paste0(token, collapse = ' ')) |>
+  knitr::kable()
+```
+
+
+

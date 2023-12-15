@@ -39,6 +39,9 @@ nlp_search_corpus <- function(tif,
     stop("highlight must be a character vector of length 2.")
   }
 
+  LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
+  RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
+
   # Initialize data.table
   data.table::setDT(tif)
 
@@ -69,13 +72,15 @@ nlp_search_corpus <- function(tif,
 
   df4 <- tif[df3, on = c('doc_id', 'sentence_id'), nomatch=0]
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), '')]
-  df4[, text := ifelse(is_target == 1, insert_highlight(text, start, end), text)]
+  df4[, text := ifelse(is_target == 1, insert_highlight(text, start, end, highlight = highlight), text)]
 
   df5 <- df4[, list(text = paste(text, collapse = " ")),
              by = list(i.text_id, start, end)]
 
   df5[, c("doc_id", "sentence_id") := data.table::tstrsplit(i.text_id, "\\.")]
-  df5[, pattern := gsub(".*<(.*)>.*", "\\1", text)]
+  patsy <- paste0(".*", LL, "(.*)", RR, ".*")
+
+  df5[, pattern := gsub(patsy, "\\1", text)]
 
   if(is_inline){
     df5[, pos := gsub("\\S+/(\\S+)/\\S+","\\1", pattern) |> trimws()]
@@ -113,11 +118,11 @@ translate_query <- function(x){
 }
 
 
-insert_highlight <- function(text, start, end) {
+insert_highlight <- function(text, start, end, highlight) {
   before_term <- substr(text, 1, start - 1)
   term <- substr(text, start, end)
   after_term <- substr(text, end + 1, nchar(text))
 
   ## make generic --
-  paste0(before_term, "<", term, ">", after_term)
+  paste0(before_term, highlight[1], term, highlight[2], after_term)
 }
