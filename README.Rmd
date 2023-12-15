@@ -59,6 +59,8 @@ df_ss |>
   nlpx::nlp_search_corpus(search = 'artificial intelligence', 
                           highlight = c('**', '**'),
                           n = 0) |>
+  
+  select(doc_id:text) |>
   knitr::kable(escape = F)
 ```
 
