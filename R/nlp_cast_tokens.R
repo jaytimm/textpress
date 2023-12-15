@@ -10,12 +10,12 @@
 #' # tok <- list("doc1" = c("token1", "token2"), "doc2" = c("token3", "token4"))
 #' # nlp_token_df(tok)
 #' @export
-#' @rdname nlp_token_df
+#' @rdname nlp_cast_tokens
 #'
 #'
-nlp_token_df <- function(tok,
-                         by = "text_id",
-                         token = "token") {
+nlp_cast_tokens <- function(tok,
+                            by = "text_id",
+                            token = "token") {
 
   if (!all(sapply(tok, is.atomic))) {
     stop("`x` must be a list of atomic `vector`s")

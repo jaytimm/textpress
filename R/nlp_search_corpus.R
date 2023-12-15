@@ -11,15 +11,16 @@
 #' @return A data frame with the original text and the found patterns highlighted.
 #' @import data.table
 #' @export
+#' @rdname nlp_search_corpus
 #'
 #' @examples
 #' # Assuming 'tif' is a data frame with 'doc_id', 'sentence_id', and 'text' columns
 #' search_corpus(tif, search = "example", n = 1)
-search_corpus <- function(tif,
-                          search,
-                          n = 0,
-                          is_inline = FALSE,
-                          highlight = c('<', '>')) {
+nlp_search_corpus <- function(tif,
+                              search,
+                              n = 0,
+                              is_inline = FALSE,
+                              highlight = c('<', '>')) {
 
   # Validate inputs
   if (!is.data.frame(tif)) {

@@ -12,17 +12,17 @@
 #'
 #' @return A subset of the df based on the search criteria.
 #' @export
-#'
+#' @rdname nlp_search_annotation
 #' @examples
 #' df <- data.frame(doc_id = 1:3, text = c("apple banana", "banana cherry", "cherry apple"))
 #' search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "or")
 #' search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "and", exclude = "cherry")
-search_df <- function(df,
-                      search_col,
-                      id_col,
-                      include,
-                      logic = 'or',
-                      exclude = NULL) {
+nlp_search_annotation <- function(df,
+                                  search_col,
+                                  id_col,
+                                  include,
+                                  logic = 'or',
+                                  exclude = NULL) {
 
   data.table::setDT(df)
 

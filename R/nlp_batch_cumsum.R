@@ -11,10 +11,10 @@
 #' # wd_batch_text(c(10, 20, 30, 40, 50), 50)
 
 #' @export
-#' @rdname llm_batch_cumsum
+#' @rdname nlp_batch_cumsum
 #'
 
-llm_batch_cumsum <- function(x, threshold) {
+nlp_batch_cumsum <- function(x, threshold) {
 
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")

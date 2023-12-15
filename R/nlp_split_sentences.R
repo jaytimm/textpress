@@ -12,9 +12,9 @@
 #' nlp_split_sentences(df)
 
 #' @export
-#' @rdname nlp_tif_sentence
+#' @rdname nlp_split_sentences
 #'
-nlp_tif_sentence <- function(tif) {
+nlp_split_sentences <- function(tif) {
 
   # Validate input
   if (!("doc_id" %in% names(tif) && "text" %in% names(tif))) {

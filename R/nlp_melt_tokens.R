@@ -12,12 +12,12 @@
 #' nlp_df_token(df, "text", by = "doc_id")
 #'
 #' @export
-#' @rdname nlp_df_token
+#' @rdname nlp_melt_tokens
 #'
 #'
-nlp_df_token <- function(df,
-                     token,
-                     by = c('doc_id')){
+nlp_melt_tokens <- function(df,
+                            token,
+                            by = c('doc_id')){
 
   # Validate input
   if (!is.data.frame(df)) {

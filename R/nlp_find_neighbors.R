@@ -77,7 +77,7 @@ get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
 #' term <- rnorm(10)
 #' neighbors <- x_get_neighbors(term, matrix, 5)
 #'
-x_get_neighbors <- function(x, matrix, n = 10) {
+nlp_find_neighbors <- function(x, matrix, n = 10) {
   # Validate inputs
   if (!is.character(x) && !is.numeric(x)) {
     stop("The first argument 'x' must be either a character or numeric vector.")

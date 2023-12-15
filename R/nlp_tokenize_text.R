@@ -9,10 +9,10 @@
 #' # tif <- data.frame(doc_id = 1:2, text = c("Sample text 1", "Sample text 2"))
 #' # tokens <- nlp_tif_token(tif)
 #' @export
-#' @rdname nlp_tif_token
+#' @rdname nlp_tokenize_text
 #'
-nlp_tif_token <- function(tif,
-                          by = 'text_id') {
+nlp_tokenize_text <- function(tif,
+                              by = 'text_id') {
 
   # Check if 'tif' is a data frame
   if (!is.data.frame(tif)) {

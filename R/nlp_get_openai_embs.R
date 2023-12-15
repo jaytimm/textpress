@@ -13,15 +13,15 @@
 #' # wd_extract_openai_embs("Example text")
 
 #' @export
-#' @rdname llm_get_openai_embs
+#' @rdname nlp_fetch_openai_embs
 #'
 
-llm_get_openai_embs <- function(tif,
-                                 batch.id,
-                                 text.segment,
-                                 text.segment.id,
-                                 query = NULL,
-                                 wait = 30){
+nlp_fetch_openai_embs <- function(tif,
+                                  batch.id,
+                                  text.segment,
+                                  text.segment.id,
+                                  query = NULL,
+                                  wait = 30){
 
   if(!is.null(query)){
     embeddings <- openai_embs(x = query)
@@ -37,7 +37,7 @@ llm_get_openai_embs <- function(tif,
 
       txt <- z[[i]][[text.segment]]
 
-      embeddings <-openai_embs(x = txt)
+      embeddings <- openai_embs(x = txt)
       m99 <- matrix(unlist(embeddings), ncol = 1536, byrow = TRUE)
 
       rownames(m99) <- z[[i]][[text.segment.id]]
