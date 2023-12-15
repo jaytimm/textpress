@@ -17,9 +17,9 @@
 #'
 
 nlp_fetch_openai_embs <- function(tif,
-                                  batch.id,
-                                  text.segment,
-                                  text.segment.id,
+                                  batch_id = 'batch_id',
+                                  text = 'text',
+                                  text_id = 'text_id',
                                   query = NULL,
                                   wait = 30){
 
@@ -30,17 +30,17 @@ nlp_fetch_openai_embs <- function(tif,
     m99
   } else{
 
-    z <- split(tif, tif[[batch.id]])
+    z <- split(tif, tif[[batch_id]])
     eb_list <- list()
 
     for(i in 1:length(z)){
 
-      txt <- z[[i]][[text.segment]]
+      txt <- z[[i]][[text]]
 
       embeddings <- openai_embs(x = txt)
       m99 <- matrix(unlist(embeddings), ncol = 1536, byrow = TRUE)
 
-      rownames(m99) <- z[[i]][[text.segment.id]]
+      rownames(m99) <- z[[i]][[text_id]]
       eb_list[[i]] <- m99
 
       print(paste0('Batch ', i, ' of ', length(z)))
