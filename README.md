@@ -89,8 +89,8 @@ df_ss |>
 | 4      | 2           | The momentous first release of ChatGPT on Nov. 30, 2023 was based on GPT 3.5, the nonzero number firmly establishing the skyward trajectory of **artificial intelligence**.                                                                       |
 | 8      | 5           | According to Google, MedLM is the future of its generative AI in healthcare, focusing on enabling users for safe and responsible use of **Artificial Intelligence**.                                                                              |
 | 10     | 1           | In the ever-evolving landscape of cybersecurity threats, a new contender has emerged, leveraging the cutting-edge advancements in **artificial intelligence**: ChatGPT-driven phishing schemes.                                                   |
-| 11     | 3           | The strange trend has emerged as Microsoft-backed OpenAI faces stiff competition from other firms pursuing generative **artificial intelligence** products, including Google, which recently released its own “Gemini” chatbot tool.              |
-| 13     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
+| 12     | 3           | The strange trend has emerged as Microsoft-backed OpenAI faces stiff competition from other firms pursuing generative **artificial intelligence** products, including Google, which recently released its own “Gemini” chatbot tool.              |
+| 14     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
 
 ## Search inline
 
@@ -141,11 +141,11 @@ inline_ss |>
 
 | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
 |:--|:---|:----------------------------------------------------------------|
-| 12     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14** ,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26           |
-| 13     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4** is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                       |
-| 15     | 10          | Accordingly/RB/1 ,/,/2 a/DT/3 new/JJ/4 acronym/NN/5 is/VBZ/6 emerging/VBG/7 :/:/8 LMM/NNP/9 (/-LRB-/10 large/JJ/11 **multimodal/JJ/12 model/NN/13** )/-RRB-/14 ,/,/15 not/RB/16 to/TO/17 be/VB/18 confused/VBN/19 with/IN/20 LLM/NNP/21 ././22                                                              |
-| 15     | 12          | However/RB/1 ,/,/2 it/PRP/3 is/VBZ/4 not/RB/5 a/DT/6 fully/RB/7 **multimodal/JJ/8 model/NN/9** in/IN/10 the/DT/11 way/NN/12 that/WRB/13 Gemini/NNP/14 promises/VBZ/15 to/TO/16 be/VB/17 ././18                                                                                                              |
-| 15     | 14          | ChatGPT/RB/1 -/,/2 4/GW/3 also/RB/4 converts/VBZ/5 text/NN/6 to/TO/7 speech/VB/8 on/IN/9 output/NN/10 using/VBG/11 a/DT/12 **different/JJ/13 model/NN/14** ,/,/15 meaning/VBG/16 that/IN/17 GPT/NNP/18 -/HYPH/19 4V/NNP/20 itself/PRP/21 is/VBZ/22 working/VBG/23 purely/RB/24 with/IN/25 text/NN/26 ././27 |
+| 13     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14** ,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26           |
+| 14     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4** is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                       |
+| 16     | 10          | Accordingly/RB/1 ,/,/2 a/DT/3 new/JJ/4 acronym/NN/5 is/VBZ/6 emerging/VBG/7 :/:/8 LMM/NNP/9 (/-LRB-/10 large/JJ/11 **multimodal/JJ/12 model/NN/13** )/-RRB-/14 ,/,/15 not/RB/16 to/TO/17 be/VB/18 confused/VBN/19 with/IN/20 LLM/NNP/21 ././22                                                              |
+| 16     | 12          | However/RB/1 ,/,/2 it/PRP/3 is/VBZ/4 not/RB/5 a/DT/6 fully/RB/7 **multimodal/JJ/8 model/NN/9** in/IN/10 the/DT/11 way/NN/12 that/WRB/13 Gemini/NNP/14 promises/VBZ/15 to/TO/16 be/VB/17 ././18                                                                                                              |
+| 16     | 14          | ChatGPT/RB/1 -/,/2 4/GW/3 also/RB/4 converts/VBZ/5 text/NN/6 to/TO/7 speech/VB/8 on/IN/9 output/NN/10 using/VBG/11 a/DT/12 **different/JJ/13 model/NN/14** ,/,/15 meaning/VBG/16 that/IN/17 GPT/NNP/18 -/HYPH/19 4V/NNP/20 itself/PRP/21 is/VBZ/22 working/VBG/23 purely/RB/24 with/IN/25 text/NN/26 ././27 |
 
 ## Search df
 
@@ -165,9 +165,9 @@ df |>
 
 | text_id | text                                                                                                                                                                                                      |
 |:---|:-------------------------------------------------------------------|
-| 13.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI .                                               |
-| 13.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                                                                     |
-| 14.11   | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county . |
+| 14.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI .                                               |
+| 14.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                                                                     |
+| 15.11   | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county . |
 
 ## OpenAI embeddings
 
@@ -209,10 +209,10 @@ nlpx::nlp_find_neighbors(x = query,
 
 | cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
 |--:|:--|---:|:--------------------------------------------------------------|
-|   0.905 | 14     |          16 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT.                                                                                                                  |
+|   0.905 | 15     |          16 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT.                                                                                                                  |
 |   0.881 | 4      |          14 | ChatGPT and AI are embedding themselves in systems everywhere so fast that it’s scaring some of the smartest minds on the planet.                                                                                                                                                                           |
-|   0.881 | 11     |           2 | Social media platforms such as X, Reddit and even OpenAI’s developer forum are riddled with accounts that ChatGPT – a “large-language model” trained on massive troves of internet data — is resisting labor-intensive prompts, such as requests to help the user write code and transcribe blocks of text. |
-|   0.880 | 13     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                                                                                                                                       |
+|   0.881 | 12     |           2 | Social media platforms such as X, Reddit and even OpenAI’s developer forum are riddled with accounts that ChatGPT – a “large-language model” trained on massive troves of internet data — is resisting labor-intensive prompts, such as requests to help the user write code and transcribe blocks of text. |
+|   0.880 | 14     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                                                                                                                                       |
 |   0.880 | 5      |          15 | Is ChatGPT really getting lazier — or is it yet another instance of humans anthropomorphizing an algorithm and reading too much into its uncanny outputs?                                                                                                                                                   |
 
 ### Lexical semantics
@@ -221,23 +221,23 @@ nlpx::nlp_find_neighbors(x = query,
 mesht <- pubmedtk::data_mesh_thesuarus()
 embs <- pubmedtk::data_mesh_embeddings()
 
-nlpx::nlp_find_neighbors(x = 'Political Activism',
+nlpx::nlp_find_neighbors(x = 'Artificial Intelligence',
                          matrix = embs,
                          n = 10) |>
   knitr::kable()
 ```
 
-| rank | term1              | term2                             | cos_sim |
-|-----:|:-------------------|:----------------------------------|--------:|
-|    1 | Political Activism | Political Activism                |   1.000 |
-|    2 | Political Activism | Democracy                         |   0.686 |
-|    3 | Political Activism | Fiscal Policy                     |   0.637 |
-|    4 | Political Activism | United States Government Agencies |   0.637 |
-|    5 | Political Activism | Government Regulation             |   0.630 |
-|    6 | Political Activism | Social Control, Informal          |   0.627 |
-|    7 | Political Activism | Political Systems                 |   0.626 |
-|    8 | Political Activism | Public Policy                     |   0.625 |
-|    9 | Political Activism | Gross Domestic Product            |   0.625 |
-|   10 | Political Activism | Patient Advocacy                  |   0.623 |
+| rank | term1                   | term2                                | cos_sim |
+|-----:|:----------------------|:----------------------------------|--------:|
+|    1 | Artificial Intelligence | Artificial Intelligence              |   1.000 |
+|    2 | Artificial Intelligence | Machine Learning                     |   0.712 |
+|    3 | Artificial Intelligence | Language Arts                        |   0.657 |
+|    4 | Artificial Intelligence | Natural Language Processing          |   0.605 |
+|    5 | Artificial Intelligence | Mobile Applications                  |   0.601 |
+|    6 | Artificial Intelligence | Unsupervised Machine Learning        |   0.595 |
+|    7 | Artificial Intelligence | Supervised Machine Learning          |   0.587 |
+|    8 | Artificial Intelligence | Speech-Language Pathology            |   0.586 |
+|    9 | Artificial Intelligence | Signal Processing, Computer-Assisted |   0.585 |
+|   10 | Artificial Intelligence | Social Skills                        |   0.583 |
 
 ## Summary
