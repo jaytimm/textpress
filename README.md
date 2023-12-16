@@ -1,20 +1,12 @@
 # nlpx
 
-> A lightweight, versatile NLP companion in R.
+A lightweight, versatile NLP companion in R. The package integrates
+easily with common R tools and provides essential features like text
+processing and corpus search, as well as a functionality for building
+text embeddings via OpenAI. Ideal for users who need a basic,
+unobtrusive NLP tool in R.
 
-`nlpx` is a simple, efficient NLP package, catering to moderately-sized
-datasets. With its straightforward functionality and limited
-dependencies, it’s a good fit for basic NLP tasks.
-
-The package integrates easily with common R tools and provides essential
-features like text processing, lexico-grammatical pattern identification
-in context, and semantic search, while avoiding the complexity of more
-advanced libraries. Also streamlines building text embeddings (as vector
-store matrices) via OpenAI.
-
-Ideal for users who need a basic, unobtrusive NLP tool in R, `nlpx` is
-practical for projects requiring easy setup and a lightweight approach.
-For researchers who utilize NLP, digital humanists, and linguists.
+## Installation
 
 ``` r
 devtools::install_github("jaytimm/nlpx")
@@ -83,13 +75,13 @@ df_ss |>
   knitr::kable(escape = F)
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                            |
-|:---|:----|:---------------------------------------------------------------|
-| 5      | 1           | OpenAI on Thursday said that a major outage on its **artificial intelligence** chatbot, ChatGPT, was resolved.                                                                                                  |
-| 7      | 8           | “He said he was cooking fries to make money over the summer, and he would rather be working for me doing AI,” says Hinton, who is often recognized as the godfather of modern **artificial intelligence** (AI). |
-| 8      | 14          | OpenAI recently added DALL-E 3, its most powerful version of an **artificial intelligence** image generator to date, to ChatGPT Plus and Enterprise subscriptions.                                              |
-| 9      | 2           | Their findings, published in the journal Telematics and Informatics, suggest the potential for geographic biases existing in current generative **artificial intelligence** (AI) models.                        |
-| 9      | 3           | ChatGPT is a large-language model developed by OpenAI Inc., an **artificial intelligence** research organization.                                                                                               |
+| doc_id | sentence_id | text                                                                                                                                                                                                                                              |
+|:--|:----|:----------------------------------------------------------------|
+| 5      | 1           | OpenAI on Thursday said that a major outage on its **artificial intelligence** chatbot, ChatGPT, was resolved.                                                                                                                                    |
+| 9      | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
+| 9      | 223         | ChatGPT is a general-purpose chatbot that uses **artificial intelligence** to generate text after a user enters a prompt, developed by tech startup OpenAI.                                                                                       |
+| 10     | 14          | OpenAI recently added DALL-E 3, its most powerful version of an **artificial intelligence** image generator to date, to ChatGPT Plus and Enterprise subscriptions.                                                                                |
+| 11     | 2           | Their findings, published in the journal Telematics and Informatics, suggest the potential for geographic biases existing in current generative **artificial intelligence** (AI) models.                                                          |
 
 ## Search df
 
@@ -107,13 +99,13 @@ df |>
   knitr::kable()
 ```
 
-| text_id | text                                                                                                                                                                                                      |
+| text_id | text                                                                                                                                                                                                                                                             |
 |:---|:-------------------------------------------------------------------|
-| 13.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI .                                               |
-| 13.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                                                                     |
-| 16.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .                                                  |
-| 3.52    | Ask your closest friends and trusted team members to complete the square brackets in this prompt in ChatGPT and send you the result .                                                                     |
-| 9.9     | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county . |
+| 11.9    | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county .                                                        |
+| 13.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .                                                                                                         |
+| 2.15    | Give your notes to ChatGPT and prompt it to draft a meeting agenda or develop discussion points relevant to your unique goals for the meeting .                                                                                                                  |
+| 2.19    | If you are struggling to create copy for your marketing outreach , video scripts , or email campaigns , simply give your ChatGPT custom instructions , then prompt it to create the marketing materials you need .                                               |
+| 2.21    | Being specific and selective with the way you word your prompt ensures it produces marketing material that is consistent with your brand voice , so that it is not overly formal , or has way too many flamboyant adjectives ( a tell - tale sign of ChatGPT ) . |
 
 ## Search inline
 
@@ -137,7 +129,7 @@ vstore <- df_ss |>
 ## Basic semantic search
 
 ``` r
-q <- 'Fears and risks associated with ChatGPT and the future?'
+q <- 'What are some concerns about the impact of advanced AI models like ChatGPT?'
 ```
 
 ``` r
@@ -152,10 +144,10 @@ nlpx::nlp_find_neighbors(x = query,
   knitr::kable()
 ```
 
-| cos_sim | doc_id | sentence_id | text                                                                                                                                                              |
-|---:|:---|-----:|:----------------------------------------------------------|
-|   0.874 | 13     |          59 | An independent review from Common Sense Media, a nonprofit advocacy group, found that ChatGPT could potentially be harmful for younger users.                     |
-|   0.871 | 10     |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.               |
-|   0.863 | 1      |          27 | ChatGPT is becoming more capable at the same time that its underlying technology is destroying much of the web as we’ve known it.                                 |
-|   0.860 | 10     |          41 | ChatGPT has a large environmental impact, problematic biases and can mislead its users into thinking that its output comes from a person, she says.               |
-|   0.852 | 13     |         116 | “As you may know, the government has been tightening regulations associated with deep synthesis technologies (DST) and generative AI services, including ChatGPT. |
+| cos_sim | doc_id | sentence_id | text                                                                                                                                                                                       |
+|---:|:---|----:|:-----------------------------------------------------------|
+|   0.904 | 11     |          14 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT. |
+|   0.879 | 9      |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                      |
+|   0.876 | 4      |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.                                        |
+|   0.876 | 4      |          30 | Undisclosed AI-made content has begun to percolate through the Internet and some scientists have admitted using ChatGPT to generate articles without declaring it.                         |
+|   0.876 | 12     |           4 | Google has been accused of lagging behind OpenAI’s ChatGPT, widely regarded as the most popular and powerful in the AI space.                                                              |
