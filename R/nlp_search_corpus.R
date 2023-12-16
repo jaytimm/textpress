@@ -22,23 +22,6 @@ nlp_search_corpus <- function(tif,
                               is_inline = FALSE,
                               highlight = c('<', '>')) {
 
-  # Validate inputs
-  if (!is.data.frame(tif)) {
-    stop("tif must be a data frame.")
-  }
-  if (!is.character(search)) {
-    stop("search must be a character vector.")
-  }
-  if (!is.numeric(n)) {
-    stop("n must be a numeric value.")
-  }
-  if (!is.logical(is_inline)) {
-    stop("is_inline must be a logical value.")
-  }
-  if (!is.character(highlight) || length(highlight) != 2) {
-    stop("highlight must be a character vector of length 2.")
-  }
-
   LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
   RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
 
@@ -54,6 +37,7 @@ nlp_search_corpus <- function(tif,
   }
 
   tif[, text_id := paste0(doc_id, '.', sentence_id)]
+  tif[, sentence_id := as.integer(sentence_id)]
 
   found <- stringi::stri_locate_all(tif$text, regex = term2)
 
@@ -70,7 +54,9 @@ nlp_search_corpus <- function(tif,
              by = list(text_id, doc_id, start, end)]
   df3[, is_target := ifelse(text_id == paste0(doc_id, '.', sentence_id), 1, 0)]
 
+  ##
   df4 <- tif[df3, on = c('doc_id', 'sentence_id'), nomatch=0]
+
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), '')]
   df4[, text := ifelse(is_target == 1, insert_highlight(text, start, end, highlight = highlight), text)]
 

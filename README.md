@@ -1,10 +1,11 @@
 # nlpx
 
-A lightweight, versatile NLP companion in R. The package integrates
-easily with common R tools and provides essential features like text
-processing and corpus search, as well as a functionality for building
-text embeddings via OpenAI. Ideal for users who need a basic,
-unobtrusive NLP tool in R.
+> A lightweight, versatile NLP companion in R. The package integrates
+> easily with common R tools and provides basic features for text
+> processing and corpus search, as well as functionality for building
+> text embeddings via OpenAI.
+
+> Ideal for users who need a basic, unobtrusive NLP tool in R.
 
 ## Installation
 
@@ -25,7 +26,9 @@ articles <- quicknews::qnews_extract_article(
   left_join(mm)
 ```
 
-## Split sentences
+## Text processing
+
+### Split sentences
 
 ``` r
 df_ss <- articles |>
@@ -43,13 +46,20 @@ df_ss |> slice(1:5) |> knitr::kable()
 | 1      |           4 | 1.4     | Which is to say, do AI-powered chatbots open new doors to learning and discovery, or do they instead risk siloing off information and leaving us stuck with unreliable access to truth? |
 | 1      |           5 | 1.5     | Earlier today, OpenAI, the maker of ChatGPT, announced a partnership with the media conglomerate Axel Springer that seems to get us closer to an answer.                                |
 
-## Tokenization
+### Tokenization
 
 ``` r
-df <- df_ss |>
-  nlpx::nlp_tokenize_text() |>
-  nlpx::nlp_cast_tokens()
+tokens <- df_ss |> nlpx::nlp_tokenize_text()
+```
 
+    ## $`1.1`
+    ##  [1] "What"     "does"     "life"     "online"   "look"     "like"    
+    ##  [7] "filtered" "through"  "a"        "bot"      "?"
+
+### Cast tokens to df
+
+``` r
+df <- tokens |> nlpx::nlp_cast_tokens()
 df |> head() |> knitr::kable()
 ```
 
@@ -78,10 +88,71 @@ df_ss |>
 | doc_id | sentence_id | text                                                                                                                                                                                                                                              |
 |:--|:----|:----------------------------------------------------------------|
 | 5      | 1           | OpenAI on Thursday said that a major outage on its **artificial intelligence** chatbot, ChatGPT, was resolved.                                                                                                                                    |
-| 9      | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
-| 9      | 223         | ChatGPT is a general-purpose chatbot that uses **artificial intelligence** to generate text after a user enters a prompt, developed by tech startup OpenAI.                                                                                       |
-| 10     | 14          | OpenAI recently added DALL-E 3, its most powerful version of an **artificial intelligence** image generator to date, to ChatGPT Plus and Enterprise subscriptions.                                                                                |
-| 11     | 2           | Their findings, published in the journal Telematics and Informatics, suggest the potential for geographic biases existing in current generative **artificial intelligence** (AI) models.                                                          |
+| 10     | 44          | That should (hopefully) help you get more accurate, up-to-date data right when you need it, rather than solely relying on the **artificial intelligence** (AI) chatbot’s rather outdated training data.                                           |
+| 10     | 51          | Most American adults do not trust **artificial intelligence** (AI) tools like ChatGPT and worry about their potential misuse, a new survey has found.                                                                                             |
+| 11     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
+| 11     | 223         | ChatGPT is a general-purpose chatbot that uses **artificial intelligence** to generate text after a user enters a prompt, developed by tech startup OpenAI.                                                                                       |
+
+## Search inline
+
+### Annotate corpus with `udpipe`
+
+``` r
+ud_annotated_corpus <- udpipe::udpipe(object = model,
+                                      x = tokens,
+                                      tagger = 'default',
+                                      parser = 'none')
+
+ud_annotated_corpus |> select(doc_id, start:xpos) |> slice(1:5) |> knitr::kable()
+```
+
+| doc_id | start | end | term_id | token_id | token  | lemma  | upos | xpos |
+|:-------|------:|----:|--------:|:---------|:-------|:-------|:-----|:-----|
+| 1.1    |     1 |   4 |       1 | 1        | What   | what   | PRON | WP   |
+| 1.1    |     6 |   9 |       2 | 2        | does   | do     | AUX  | VBZ  |
+| 1.1    |    11 |  14 |       3 | 3        | life   | life   | NOUN | NN   |
+| 1.1    |    16 |  21 |       4 | 4        | online | online | ADV  | RB   |
+| 1.1    |    23 |  26 |       5 | 5        | look   | look   | VERB | VB   |
+
+### Build inline text
+
+``` r
+inline_ss <- ud_annotated_corpus |>
+  mutate(inline = paste0(token, '/', xpos, '/', token_id)) |>
+  tidyr::separate(col = doc_id, into = c('doc_id', 'sentence_id'), sep = '\\.') |>
+  group_by(doc_id, sentence_id) |>
+  summarise(text = paste0(inline, collapse = " "))
+```
+
+    ## `summarise()` has grouped output by 'doc_id'. You can override using the
+    ## `.groups` argument.
+
+``` r
+inline_ss$text[1]
+```
+
+    ## [1] "What/WP/1 does/VBZ/2 life/NN/3 online/RB/4 look/VB/5 like/IN/6 filtered/VBN/7 through/IN/8 a/DT/9 bot/NN/10 ?/./11"
+
+### Search for lexico-grammatical pattern
+
+``` r
+inline_ss |>
+  nlpx::nlp_search_corpus(search = 'JJ model', 
+                          highlight = c('**', '**'),
+                          n = 0,
+                          is_inline = T) |>
+  
+  #select(doc_id:text) |>
+  slice(1:5) |>
+  knitr::kable(escape = F)
+```
+
+| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | start | end | pattern                    | pattern2       | pos   |
+|:-|:-|:---------------------------------------------------------|-:|-:|:---|:--|:-|
+| 1      | 19          | OpenAI’s/VBZ/1 most/RBS/2 **powerful/JJ/3 model/NN/4 **does/VBZ/5 not/RB/6 currently/RB/7 provide/VB/8 information/NN/9 about/IN/10 any/DT/11 event/NN/12 more/RBR/13 recent/JJ/14 than/IN/15 April/NNP/16 2023/CD/17 ././18                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |    27 |  51 | powerful/JJ/3 model/NN/4   | powerful model | JJ NN |
+| 11     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4 **is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |    21 |  43 | recent/JJ/3 model/NN/4     | recent model   | JJ NN |
+| 13     | 6           | Insider/RBR/1 also/RB/2 reports/VBZ/3 that/DT/4 ,/,/5 with/IN/6 a/DT/7 score/NN/8 of/IN/9 90.0/CD/10 %/NN/11 ,/,/12 Gemini/NNP/13 Ultra/NNP/14 is/VBZ/15 the/DT/16 **first/JJ/17 model/NN/18 **to/TO/19 outperform/VB/20 human/JJ/21 experts/NNS/22 on/IN/23 MMLU/NNP/24 (/-LRB-/25 massive/JJ/26 multitask/NN/27 language/NN/28 understanding/NN/29 )/-RRB-/30 ,/,/31 which/WDT/32 uses/VBZ/33 a/DT/34 combination/NN/35 of/IN/36 57/CD/37 subjects/NNS/38 such/JJ/39 as/IN/40 math/NN/41 ,/,/42 physics/NNS/43 ,/,/44 history/NN/45 ,/,/46 law/NN/47 ,/,/48 medicine/NN/49 and/CC/50 ethics/NNS/51 for/IN/52 testing/NN/53 both/CC/54 world/NN/55 knowledge/NN/56 and/CC/57 problem/NN/58 -/HYPH/59 solving/NN/60 abilities/NNS/61 ././62 |   164 | 187 | first/JJ/17 model/NN/18    | first model    | JJ NN |
+| 16     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14 **,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26                                                                                                                                                                                                                                                                                                                                                                                                                                           |   121 | 147 | powerful/JJ/13 model/NN/14 | powerful model | JJ NN |
 
 ## Search df
 
@@ -99,15 +170,13 @@ df |>
   knitr::kable()
 ```
 
-| text_id | text                                                                                                                                                                                                                                                             |
+| text_id | text                                                                                                                                                                                                      |
 |:---|:-------------------------------------------------------------------|
-| 11.9    | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county .                                                        |
-| 13.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .                                                                                                         |
-| 2.15    | Give your notes to ChatGPT and prompt it to draft a meeting agenda or develop discussion points relevant to your unique goals for the meeting .                                                                                                                  |
-| 2.19    | If you are struggling to create copy for your marketing outreach , video scripts , or email campaigns , simply give your ChatGPT custom instructions , then prompt it to create the marketing materials you need .                                               |
-| 2.21    | Being specific and selective with the way you word your prompt ensures it produces marketing material that is consistent with your brand voice , so that it is not overly formal , or has way too many flamboyant adjectives ( a tell - tale sign of ChatGPT ) . |
-
-## Search inline
+| 11.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI .                                               |
+| 11.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                                                                     |
+| 14.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .                                                  |
+| 15.9    | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county . |
+| 2.52    | Ask your closest friends and trusted team members to complete the square brackets in this prompt in ChatGPT and send you the result .                                                                     |
 
 ## OpenAI embeddings
 
@@ -129,7 +198,8 @@ vstore <- df_ss |>
 ## Basic semantic search
 
 ``` r
-q <- 'What are some concerns about the impact of advanced AI models like ChatGPT?'
+q <- 'What are some concerns about the impact of
+advanced AI models like ChatGPT?'
 ```
 
 ``` r
@@ -146,8 +216,10 @@ nlpx::nlp_find_neighbors(x = query,
 
 | cos_sim | doc_id | sentence_id | text                                                                                                                                                                                       |
 |---:|:---|----:|:-----------------------------------------------------------|
-|   0.904 | 11     |          14 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT. |
-|   0.879 | 9      |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                      |
+|   0.905 | 15     |          14 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT. |
+|   0.880 | 11     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                      |
+|   0.877 | 10     |          51 | Most American adults do not trust artificial intelligence (AI) tools like ChatGPT and worry about their potential misuse, a new survey has found.                                          |
 |   0.876 | 4      |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.                                        |
-|   0.876 | 4      |          30 | Undisclosed AI-made content has begun to percolate through the Internet and some scientists have admitted using ChatGPT to generate articles without declaring it.                         |
-|   0.876 | 12     |           4 | Google has been accused of lagging behind OpenAI’s ChatGPT, widely regarded as the most popular and powerful in the AI space.                                                              |
+|   0.876 | 11     |         116 | “As you may know, the government has been tightening regulations associated with deep synthesis technologies (DST) and generative AI services, including ChatGPT.                          |
+
+## Summary
