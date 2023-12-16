@@ -19,7 +19,7 @@ articles <- quicknews::qnews_extract_article(
   left_join(mm)
 ```
 
-## Basic annotation
+## Split sentences
 
 ``` r
 df_ss <- articles |>
@@ -36,6 +36,8 @@ df_ss |> slice(1:5) |> knitr::kable()
 | 1      |           3 | 1.3     | Does the technology expand our world or constrain it?                                                                                                                                   |
 | 1      |           4 | 1.4     | Which is to say, do AI-powered chatbots open new doors to learning and discovery, or do they instead risk siloing off information and leaving us stuck with unreliable access to truth? |
 | 1      |           5 | 1.5     | Earlier today, OpenAI, the maker of ChatGPT, announced a partnership with the media conglomerate Axel Springer that seems to get us closer to an answer.                                |
+
+## Tokenzation & tokens to df
 
 ``` r
 df <- df_ss |>
@@ -70,10 +72,10 @@ df_ss |>
 | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                       |
 |:--|:---|:----------------------------------------------------------------|
 | 5      | 1           | OpenAI on Thursday said that a major outage on its **artificial intelligence** chatbot, ChatGPT, was resolved.                                                                                                                                                                             |
-| 7      | 8           | “He said he was cooking fries to make money over the summer, and he would rather be working for me doing AI,” says Hinton, who is often recognized as the godfather of modern **artificial intelligence** (AI).                                                                            |
 | 8      | 14          | OpenAI recently added DALL-E 3, its most powerful version of an **artificial intelligence** image generator to date, to ChatGPT Plus and Enterprise subscriptions.                                                                                                                         |
-| 10     | 1           | ChatGPT, an **artificial intelligence** (AI) chatbot that returns answers to written prompts, has been tested and found wanting by researchers at the University of Florida College of Medicine (UF Health) who looked into how well it could answer typical patient questions on urology. |
-| 10     | 18          | Pathologists and clinical laboratory managers will want to monitor how developers improve the performance of chatbots and other applications using **artificial intelligence**.                                                                                                            |
+| 9      | 1           | ChatGPT, an **artificial intelligence** (AI) chatbot that returns answers to written prompts, has been tested and found wanting by researchers at the University of Florida College of Medicine (UF Health) who looked into how well it could answer typical patient questions on urology. |
+| 9      | 18          | Pathologists and clinical laboratory managers will want to monitor how developers improve the performance of chatbots and other applications using **artificial intelligence**.                                                                                                            |
+| 11     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.”                                          |
 
 ## Search df
 
@@ -86,17 +88,17 @@ df |>
                       exclude = NULL) |>
   
   group_by(text_id) |>
-  slice(1:5) |>
   summarize(text = paste0(token, collapse = ' ')) |>
+  slice(1:5) |>
   knitr::kable()
 ```
 
-| text_id | text                         |
-|:--------|:-----------------------------|
-| 12.223  | ChatGPT is a general -       |
-| 12.242  | ChatGPT is AI - powered      |
-| 14.69   | OpenAI first rolled out the  |
-| 3.52    | Ask your closest friends and |
+| text_id | text                                                                                                                                                        |
+|:----|:------------------------------------------------------------------|
+| 11.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI . |
+| 11.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                       |
+| 13.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .    |
+| 3.52    | Ask your closest friends and trusted team members to complete the square brackets in this prompt in ChatGPT and send you the result .                       |
 
 ## OpenAI embeddings
 
@@ -129,8 +131,8 @@ nlpx::nlp_find_neighbors(x = query,
 
 | cos_sim | doc_id | sentence_id | text                                                                                                                                                              |
 |---:|:---|-----:|:----------------------------------------------------------|
-|   0.874 | 12     |          59 | An independent review from Common Sense Media, a nonprofit advocacy group, found that ChatGPT could potentially be harmful for younger users.                     |
-|   0.871 | 9      |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.               |
+|   0.874 | 11     |          59 | An independent review from Common Sense Media, a nonprofit advocacy group, found that ChatGPT could potentially be harmful for younger users.                     |
+|   0.871 | 7      |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.               |
 |   0.863 | 1      |          27 | ChatGPT is becoming more capable at the same time that its underlying technology is destroying much of the web as we’ve known it.                                 |
-|   0.859 | 9      |          41 | ChatGPT has a large environmental impact, problematic biases and can mislead its users into thinking that its output comes from a person, she says.               |
-|   0.852 | 12     |         116 | “As you may know, the government has been tightening regulations associated with deep synthesis technologies (DST) and generative AI services, including ChatGPT. |
+|   0.859 | 7      |          41 | ChatGPT has a large environmental impact, problematic biases and can mislead its users into thinking that its output comes from a person, she says.               |
+|   0.852 | 11     |         116 | “As you may know, the government has been tightening regulations associated with deep synthesis technologies (DST) and generative AI services, including ChatGPT. |
