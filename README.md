@@ -37,7 +37,7 @@ df_ss |> slice(1:5) |> knitr::kable()
 | 1      |           4 | 1.4     | Which is to say, do AI-powered chatbots open new doors to learning and discovery, or do they instead risk siloing off information and leaving us stuck with unreliable access to truth? |
 | 1      |           5 | 1.5     | Earlier today, OpenAI, the maker of ChatGPT, announced a partnership with the media conglomerate Axel Springer that seems to get us closer to an answer.                                |
 
-## Tokenzation & tokens to df
+## Tokenization
 
 ``` r
 df <- df_ss |>
@@ -97,8 +97,10 @@ df |>
 |:----|:------------------------------------------------------------------|
 | 11.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI . |
 | 11.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                       |
-| 13.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .    |
+| 14.69   | OpenAI first rolled out the ability to prompt ChatGPT with your voice and images in September , but it only made the feature available to paying users .    |
 | 3.52    | Ask your closest friends and trusted team members to complete the square brackets in this prompt in ChatGPT and send you the result .                       |
+
+## Search inline
 
 ## OpenAI embeddings
 
@@ -106,7 +108,9 @@ df |>
 vstore <- df_ss |>
   mutate(words = tokenizers::count_words(text)) |>
   filter(words > 20, words < 60) |>
-  mutate(batch_id = nlpx::nlp_batch_cumsum(x = words, threshold = 10000)) |>
+  mutate(batch_id = nlpx::nlp_batch_cumsum(x = words,
+                                           threshold = 10000)) |>
+  
   nlpx::nlp_fetch_openai_embs(text_id = 'text_id',
                               text = 'text',
                               batch_id = 'batch_id')
@@ -115,10 +119,14 @@ vstore <- df_ss |>
     ## [1] "Batch 1 of 2"
     ## [1] "Batch 2 of 2"
 
-## Basic retrieval
+## Basic semantic search
 
 ``` r
-query <- nlpx::nlp_fetch_openai_embs(query = 'Fears and risks associated with ChatGPT and the future?')
+q <- 'Fears and risks associated with ChatGPT and the future?'
+```
+
+``` r
+query <- nlpx::nlp_fetch_openai_embs(query = q)
 
 nlpx::nlp_find_neighbors(x = query, 
                          matrix = vstore, 
@@ -134,5 +142,5 @@ nlpx::nlp_find_neighbors(x = query,
 |   0.874 | 11     |          59 | An independent review from Common Sense Media, a nonprofit advocacy group, found that ChatGPT could potentially be harmful for younger users.                     |
 |   0.871 | 7      |          19 | But for many, it was ChatGPT’s release as a free-to-use dialogue agent in November 2022 that quickly revealed this technology’s power and pitfalls.               |
 |   0.863 | 1      |          27 | ChatGPT is becoming more capable at the same time that its underlying technology is destroying much of the web as we’ve known it.                                 |
-|   0.859 | 7      |          41 | ChatGPT has a large environmental impact, problematic biases and can mislead its users into thinking that its output comes from a person, she says.               |
+|   0.860 | 7      |          41 | ChatGPT has a large environmental impact, problematic biases and can mislead its users into thinking that its output comes from a person, she says.               |
 |   0.852 | 11     |         116 | “As you may know, the government has been tightening regulations associated with deep synthesis technologies (DST) and generative AI services, including ChatGPT. |
