@@ -33,13 +33,13 @@ df_ss <- articles |>
 df_ss |> slice(1:5) |> knitr::kable()
 ```
 
-| doc_id | sentence_id | text_id | text                                                                                                                                                                        |
-|:---|-----:|:---|:----------------------------------------------------------|
-| 1      |           1 | 1.1     | If you buy through a BGR link, we may earn an affiliate commission, helping support our expert product labs.                                                                |
-| 1      |           2 | 1.2     | Google stunned the world with Gemini, a ChatGPT rival that could receive voice instructions and react to a real-time feed of the world while answering those voice prompts. |
-| 1      |           3 | 1.3     | It was miles ahead of what ChatGPT could do.                                                                                                                                |
-| 1      |           4 | 1.4     | Also, it was all fake.                                                                                                                                                      |
-| 1      |           5 | 1.5     | Disappointingly so.                                                                                                                                                         |
+| doc_id | sentence_id | text_id | text                                                                                                         |
+|:----|------:|:----|:------------------------------------------------------|
+| 1      |           1 | 1.1     | If you buy through a BGR link, we may earn an affiliate commission, helping support our expert product labs. |
+| 1      |           2 | 1.2     | I’ve wanted to get on ChatGPT Plus for months but kept postponing the upgrade until DevDay came along.       |
+| 1      |           3 | 1.3     | OpenAI’s big developer event brought custom GPTs, among other things, and I knew I wanted to try them out.   |
+| 1      |           4 | 1.4     | However, making and using custom GPTs was restricted to the ChatGPT Plus subscription.                       |
+| 1      |           5 | 1.5     | And I knew I had to get on.                                                                                  |
 
 ### Tokenization
 
@@ -76,7 +76,8 @@ df |> head() |> knitr::kable()
 df_ss |>
   nlpx::nlp_search_corpus(search = 'artificial intelligence', 
                           highlight = c('**', '**'),
-                          n = 0) |>
+                          n = 0, 
+                          is_inline = F) |>
   
   select(doc_id:text) |>
   slice(1:5) |>
@@ -86,10 +87,10 @@ df_ss |>
 | doc_id | sentence_id | text                                                                                                                                                                                                                                              |
 |:--|:----|:----------------------------------------------------------------|
 | 4      | 2           | The momentous first release of ChatGPT on Nov. 30, 2023 was based on GPT 3.5, the nonzero number firmly establishing the skyward trajectory of **artificial intelligence**.                                                                       |
-| 10     | 3           | The strange trend has emerged as Microsoft-backed OpenAI faces stiff competition from other firms pursuing generative **artificial intelligence** products, including Google, which recently released its own “Gemini” chatbot tool.              |
+| 8      | 5           | According to Google, MedLM is the future of its generative AI in healthcare, focusing on enabling users for safe and responsible use of **Artificial Intelligence**.                                                                              |
+| 10     | 1           | In the ever-evolving landscape of cybersecurity threats, a new contender has emerged, leveraging the cutting-edge advancements in **artificial intelligence**: ChatGPT-driven phishing schemes.                                                   |
+| 11     | 3           | The strange trend has emerged as Microsoft-backed OpenAI faces stiff competition from other firms pursuing generative **artificial intelligence** products, including Google, which recently released its own “Gemini” chatbot tool.              |
 | 13     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
-| 13     | 223         | ChatGPT is a general-purpose chatbot that uses **artificial intelligence** to generate text after a user enters a prompt, developed by tech startup OpenAI.                                                                                       |
-| 14     | 4           | Their findings, published in the journal Telematics and Informatics, suggest the potential for geographic biases existing in current generative **artificial intelligence** (AI) models.                                                          |
 
 ## Search inline
 
@@ -138,13 +139,13 @@ inline_ss |>
   knitr::kable(escape = F)
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
 |:--|:---|:----------------------------------------------------------------|
-| 1      | 21          | If/IN/1 you/PRP/2 know/VBP/3 your/PRP/4*w**a**y*/*N**N*/5*a**r**o**u**n**d*/*I**N*/6*A**I*/*N**N**P*/7*s**o**f**t**w**a**r**e*/*N**N*/8, /, /9*y**o**u*/*P**R**P*/10*c**a**n*/*M**D*/11*s**t**a**r**t*/*V**B*/12*u**s**i**n**g*/*V**B**G*/13*t**h**e*/*D**T*/14 \*  \* *n**e**w*/*J**J*/15*m**o**d**e**l*/*N**N*/16 \*  \* *t**o*/*T**O*/17*i**n**c**o**r**p**o**r**a**t**e*/*V**B*/18*i**n*/*I**N*/19*y**o**u**r*/*P**R**P*/20 apps/NNS/21 ././22 |
-| 1      | 31          | It/PRP/1 is/VBZ/2 a/DT/3 decoder/NN/4 -/HYPH/5 **only/JJ/6 model/NN/7 **where/WRB/8 the/DT/9 feedforward/NN/10 block/NN/11 picks/NNS/12 from/IN/13 a/DT/14 set/NN/15 of/IN/16 8/CD/17 distinct/JJ/18 groups/NNS/19 of/IN/20 parameters/NNS/21 ././22                                                                                                                                                                                               |
-| 11     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14 **,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26                                                                                                                                                  |
-| 13     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4 **is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                                                                                                                                                              |
-| 15     | 10          | Accordingly/RB/1 ,/,/2 a/DT/3 new/JJ/4 acronym/NN/5 is/VBZ/6 emerging/VBG/7 :/:/8 LMM/NNP/9 (/-LRB-/10 large/JJ/11 **multimodal/JJ/12 model/NN/13 **)/-RRB-/14 ,/,/15 not/RB/16 to/TO/17 be/VB/18 confused/VBN/19 with/IN/20 LLM/NNP/21 ././22                                                                                                                                                                                                     |
+| 12     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14** ,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26           |
+| 13     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4** is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                       |
+| 15     | 10          | Accordingly/RB/1 ,/,/2 a/DT/3 new/JJ/4 acronym/NN/5 is/VBZ/6 emerging/VBG/7 :/:/8 LMM/NNP/9 (/-LRB-/10 large/JJ/11 **multimodal/JJ/12 model/NN/13** )/-RRB-/14 ,/,/15 not/RB/16 to/TO/17 be/VB/18 confused/VBN/19 with/IN/20 LLM/NNP/21 ././22                                                              |
+| 15     | 12          | However/RB/1 ,/,/2 it/PRP/3 is/VBZ/4 not/RB/5 a/DT/6 fully/RB/7 **multimodal/JJ/8 model/NN/9** in/IN/10 the/DT/11 way/NN/12 that/WRB/13 Gemini/NNP/14 promises/VBZ/15 to/TO/16 be/VB/17 ././18                                                                                                              |
+| 15     | 14          | ChatGPT/RB/1 -/,/2 4/GW/3 also/RB/4 converts/VBZ/5 text/NN/6 to/TO/7 speech/VB/8 on/IN/9 output/NN/10 using/VBG/11 a/DT/12 **different/JJ/13 model/NN/14** ,/,/15 meaning/VBG/16 that/IN/17 GPT/NNP/18 -/HYPH/19 4V/NNP/20 itself/PRP/21 is/VBZ/22 working/VBG/23 purely/RB/24 with/IN/25 text/NN/26 ././27 |
 
 ## Search df
 
@@ -187,6 +188,8 @@ vstore <- df_ss |>
 
 ## Basic semantic search
 
+### Retrieval
+
 ``` r
 q <- 'What are some concerns about the impact of
 advanced AI models like ChatGPT?'
@@ -204,12 +207,37 @@ nlpx::nlp_find_neighbors(x = query,
   knitr::kable()
 ```
 
-| cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                            |
+| cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
 |--:|:--|---:|:--------------------------------------------------------------|
-|   0.905 | 14     |          16 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT.                                                                                                                                      |
-|   0.902 | 12     |          49 | Some researchers feared the chatbot would be used to generate disinformation on a massive scale, while others sounded the alarm over ChatGPT’s phishing email-, spam- and malware-generating potential.                                                                                                                         |
-|   0.892 | 12     |          50 | The concerns pushed policymakers in Europe to mandate security assessments for any products using generative AI systems like ChatGPT, and over 20,000 signatories — including Elon Musk and Apple co-founder Steve Wozniak — to sign an open letter calling for the immediate pause of large-scale AI experiments like ChatGPT. |
-|   0.887 | 12     |          16 | “The primary impact \[ChatGPT\] has had \[is\] encouraging people training AIs to try to mimic it, or encouraging people studying AIs to use it as their central object of study,” Biderman said.                                                                                                                               |
-|   0.882 | 4      |          14 | ChatGPT and AI are embedding themselves in systems everywhere so fast that it’s scaring some of the smartest minds on the planet.                                                                                                                                                                                               |
+|   0.905 | 14     |          16 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT.                                                                                                                  |
+|   0.881 | 4      |          14 | ChatGPT and AI are embedding themselves in systems everywhere so fast that it’s scaring some of the smartest minds on the planet.                                                                                                                                                                           |
+|   0.881 | 11     |           2 | Social media platforms such as X, Reddit and even OpenAI’s developer forum are riddled with accounts that ChatGPT – a “large-language model” trained on massive troves of internet data — is resisting labor-intensive prompts, such as requests to help the user write code and transcribe blocks of text. |
+|   0.880 | 13     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                                                                                                                                       |
+|   0.880 | 5      |          15 | Is ChatGPT really getting lazier — or is it yet another instance of humans anthropomorphizing an algorithm and reading too much into its uncanny outputs?                                                                                                                                                   |
+
+### Lexical semantics
+
+``` r
+mesht <- pubmedtk::data_mesh_thesuarus()
+embs <- pubmedtk::data_mesh_embeddings()
+
+nlpx::nlp_find_neighbors(x = 'Political Activism',
+                         matrix = embs,
+                         n = 10) |>
+  knitr::kable()
+```
+
+| rank | term1              | term2                             | cos_sim |
+|-----:|:-------------------|:----------------------------------|--------:|
+|    1 | Political Activism | Political Activism                |   1.000 |
+|    2 | Political Activism | Democracy                         |   0.686 |
+|    3 | Political Activism | Fiscal Policy                     |   0.637 |
+|    4 | Political Activism | United States Government Agencies |   0.637 |
+|    5 | Political Activism | Government Regulation             |   0.630 |
+|    6 | Political Activism | Social Control, Informal          |   0.627 |
+|    7 | Political Activism | Political Systems                 |   0.626 |
+|    8 | Political Activism | Public Policy                     |   0.625 |
+|    9 | Political Activism | Gross Domestic Product            |   0.625 |
+|   10 | Political Activism | Patient Advocacy                  |   0.623 |
 
 ## Summary

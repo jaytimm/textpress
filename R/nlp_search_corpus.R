@@ -30,7 +30,7 @@ nlp_search_corpus <- function(tif,
 
   # Translation for inline queries
   if (is_inline) {
-    term2 <- translate_query(search)
+    term2 <- translate_query(search) |> trimws()
   } else {
     term1 <- paste0('(?i)', search)
     term2 <- paste0(term1, collapse = '|')
