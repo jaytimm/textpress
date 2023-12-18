@@ -11,6 +11,8 @@
 
 util.article_extract <- function (x) {
 
+  # x <- batches[[1]]
+  # q <- x[1]
   articles <- lapply(x, function(q) {
     raw_site <- util.get_site(q)
     annotated_site <- util.annotate_site(site = raw_site)
@@ -36,6 +38,7 @@ util.article_extract <- function (x) {
 #'
 util.get_site <- function(x) {
   # Attempt to read the HTML content from the URL
+  # x <- batches[[1]][1]
   site <- tryCatch(
     xml2::read_html(httr::GET(x, httr::timeout(60))),
     error = function(e) "Error"
@@ -45,7 +48,7 @@ util.get_site <- function(x) {
   w1 <- w2 <- NA
 
   # Check if site reading was successful
-  if (site != 'Error') {
+  if (!any(site == 'Error')) {
     # Extract nodes of specific types
     ntype1 <- 'p,h1,h2,h3'
     w0 <- rvest::html_nodes(site, ntype1)

@@ -17,35 +17,53 @@ nlp_scrape_web <- function(x,
                            input = 'search',
                            cores = 3) {
   # Determine the number of cores to use
-  cores <- ifelse(cores > 3, min(parallel::detectCores() - 1, 3), cores)
+  cores <- ifelse(cores > 3,
+                  min(parallel::detectCores() - 1, 3),
+                  cores)
+
+
 
   # Initialize an empty data frame for metadata
-  mm <- data.frame(url = character(), stringsAsFactors = FALSE)
+  mm <- data.frame(url = character())
 
   # Process input based on the type
   if (input == 'search') {
+
     # Process for search term
     mm <- util.build_rss(x = x) |> util.parse_rss()
-    mm$url <- util.get_urls(mm$link)  # Assuming 'link' is the column with URLs
+    mm$url <- util.get_urls(mm$link)
   } else if (input == 'rss') {
+
     # Process for RSS feed URL
-    mm <- util.parse_rss(x)  # Assuming this returns a data frame with a URL column
+    mm <- util.parse_rss(x)
+
   } else if (input == 'urls') {
+
     # Directly process list of URLs with no metadata
     mm$url <- x
   } else {
     stop("Invalid input type. Please choose from 'search', 'rss', or 'urls'.")
   }
 
+
+
   # Split urls into batches
   batches <- split(mm$url, ceiling(seq_along(mm$url) / 20))
 
+
+  ## quick check:
+  # chx <- batches[[1]] |> util.article_extract()
+
   # Set up a parallel cluster
   clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(cl = clust, varlist = c("util.article_extract"), envir = environment())
+  parallel::clusterExport(cl = clust,
+                          varlist = c("util.article_extract"),
+                          envir = environment())
 
   # Execute the task function in parallel
-  results <- pbapply::pblapply(X = batches, FUN = util.article_extract, cl = clust)
+  results <- pbapply::pblapply(X = batches,
+                               FUN = util.article_extract,
+                               cl = clust)
 
   # Stop the cluster
   parallel::stopCluster(clust)
@@ -55,8 +73,16 @@ nlp_scrape_web <- function(x,
 
   # If RSS metadata is available (not for simple URLs), merge it with results
   if (input != 'urls') {
-    combined_results <- merge(combined_results, mm, by = "url", all = TRUE)
-    combined_results[, c('url', 'date', 'source', 'title', 'text')]
+    combined_results <- merge(combined_results,
+                              mm,
+                              by = "url",
+                              all = TRUE)
+
+    combined_results[, c('url',
+                         'date',
+                         'source',
+                         'title',
+                         'text')]
   }
 
   # Select and return relevant columns
