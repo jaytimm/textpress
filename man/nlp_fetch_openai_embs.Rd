@@ -6,9 +6,9 @@
 \usage{
 nlp_fetch_openai_embs(
   tif,
-  batch.id,
-  text.segment,
-  text.segment.id,
+  batch_id = "batch_id",
+  text = "text",
+  text_id = "text_id",
   query = NULL,
   wait = 30
 )

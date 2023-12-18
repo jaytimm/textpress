@@ -4,7 +4,7 @@
 \alias{nlp_search_df}
 \title{Search in Document-Term Matrix}
 \usage{
-nlp_search_df(df, search_col, id_col, include, logic = "or", exclude = NULL)
+nlp_search_df(df, search_col, id_col, include, logic = "and", exclude = NULL)
 }
 \arguments{
 \item{df}{A Document-Term Matrix (df) or data frame to be searched.}
