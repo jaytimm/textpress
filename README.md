@@ -2,7 +2,7 @@
 
 > A lightweight, versatile NLP companion in R. Provides basic features
 > for (1) text processing, (2) corpus search, and (3) web scraping, as
-> well as (4) functionality for building text embeddings via OpenAI.
+> well as functionality for (4) building text embeddings via OpenAI.
 > Ideal for users who need a basic, unobtrusive NLP tool in R.
 
 ## Installation
@@ -215,17 +215,5 @@ textpress::nlp_find_neighbors(x = query,
 |   0.889 | 12     |           1 | Since OpenAI released ChatGPT last year, there have been quite a few occasions where flaws in the AI chatbot could’ve been weaponized or manipulated by bad actors to access sensitive or private data.                                                         |
 |   0.881 | 1      |          47 | Unlike the viral hype but concerning issues seen with chatbots like ChatGPT, Claude represents a major step forward in safeguards and value alignment, addressing rising concerns about misinformation and preserving human integrity in generative AI systems. |
 |   0.881 | 1      |          49 | ChatGPT: As an AI developed by OpenAI, I don’t experience personal concerns or emotions, but it’s important to recognize the significance of copyright issues in AI applications, particularly in marketing.                                                    |
-
-``` r
-### Word-level
-
-# mesht <- pubmedtk::data_mesh_thesuarus()
-# embs <- pubmedtk::data_mesh_embeddings()
-#
-# textpress::nlp_find_neighbors(x = 'Artificial Intelligence',
-#                          matrix = embs,
-#                          n = 10) |>
-#   knitr::kable()
-```
 
 ## Summary
