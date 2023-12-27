@@ -1,6 +1,6 @@
 
 
-junk_phrases <- c('your (email )?inbox',
+.junk_phrases <- c('your (email )?inbox',
                 'all rights reserved',
                 'free subsc',
                 '^please',
@@ -22,5 +22,5 @@ junk_phrases <- c('your (email )?inbox',
                 'your comment')
 
 
-setwd('/home/jtimm/pCloudDrive/GitHub/packages/quicknews/data')
-usethis::use_data(junk_phrases, overwrite=TRUE, internal = T)
+setwd('/home/jtimm/pCloudDrive/GitHub/packages/textpress/data')
+usethis::use_data(.junk_phrases, overwrite=TRUE, internal = T)

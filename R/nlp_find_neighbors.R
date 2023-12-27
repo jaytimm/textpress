@@ -8,17 +8,17 @@
 #' @param norm Character, either "l2" or "none" for normalization method.
 #'
 #' @return A matrix of cosine similarity values.
-#' @export
+#' @noRd
 #'
 #' @examples
 #' x <- matrix(rnorm(50), nrow = 10)
 #' # Self-similarity
-#' sim_matrix <- get_sim(x)
+#' sim_matrix <- .get_sim(x)
 #' # Similarity with another matrix
 #' y <- matrix(rnorm(50), nrow = 10)
-#' sim_matrix <- get_sim(x, y)
+#' sim_matrix <- .get_sim(x, y)
 
-get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
+.get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
 
   norm <- match.arg(norm)
 
@@ -100,7 +100,7 @@ nlp_find_neighbors <- function(x, matrix, n = 10) {
   }
 
   # Compute cosine similarity using the 'sim2' function
-  cos_sim <- get_sim(matrix, t0, norm = "l2")
+  cos_sim <- .get_sim(matrix, t0, norm = "l2")
 
   # Extract the top 'n' similar terms
   sim_scores <- cos_sim[, 1]

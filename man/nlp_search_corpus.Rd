@@ -2,34 +2,34 @@
 % Please edit documentation in R/nlp_search_corpus.R
 \name{nlp_search_corpus}
 \alias{nlp_search_corpus}
-\title{Search and Highlight Patterns in a Corpus}
+\title{NLP Search Corpus}
 \usage{
 nlp_search_corpus(
   tif,
   search,
   n = 0,
   is_inline = FALSE,
-  highlight = c("<", ">")
+  highlight = c("<", ">"),
+  cores = 1
 )
 }
 \arguments{
-\item{tif}{A data frame representing the text corpus.}
+\item{tif}{A data frame or data.table containing the text corpus.}
 
-\item{search}{Character vector of search terms or patterns.}
+\item{search}{The search pattern or query.}
 
-\item{n}{Numeric value specifying the number of sentences to include for context.}
+\item{n}{Numeric, default 0. Specifies the context size around the found patterns.}
 
-\item{is_inline}{Logical; if TRUE, search uses inline annotations for terms.}
+\item{is_inline}{Logical, default FALSE. Indicates if the search should be inline.}
 
-\item{highlight}{Character vector of length 2 indicating the start and end highlight tags.}
+\item{highlight}{A character vector of length two, default c('<', '>').
+Used to highlight the found patterns in the text.}
+
+\item{cores}{Numeric, default 1. The number of cores to use for parallel processing.}
 }
 \value{
-A data frame with the original text and the found patterns highlighted.
+A data.table with the search results.
 }
 \description{
-This function searches for patterns in a text corpus and optionally highlights them.
-}
-\examples{
-# Assuming 'tif' is a data frame with 'doc_id', 'sentence_id', and 'text' columns
-search_corpus(tif, search = "example", n = 1)
+Searches a text corpus for specified patterns, with support for parallel processing.
 }

@@ -1,4 +1,4 @@
-Package: nlpx
+Package: textpress
 Type: Package
 Title: Lightweight and User-Friendly Natural Language Processing Toolkit
 Version: 0.1.0

@@ -1,26 +1,77 @@
-#' Search and Highlight Patterns in a Corpus
+#' NLP Search Corpus
 #'
-#' This function searches for patterns in a text corpus and optionally highlights them.
+#' Searches a text corpus for specified patterns, with support for parallel processing.
 #'
-#' @param tif A data frame representing the text corpus.
-#' @param search Character vector of search terms or patterns.
-#' @param n Numeric value specifying the number of sentences to include for context.
-#' @param is_inline Logical; if TRUE, search uses inline annotations for terms.
-#' @param highlight Character vector of length 2 indicating the start and end highlight tags.
-#'
-#' @return A data frame with the original text and the found patterns highlighted.
-#' @import data.table
+#' @param tif A data frame or data.table containing the text corpus.
+#' @param search The search pattern or query.
+#' @param n Numeric, default 0. Specifies the context size around the found patterns.
+#' @param is_inline Logical, default FALSE. Indicates if the search should be inline.
+#' @param highlight A character vector of length two, default c('<', '>').
+#'                  Used to highlight the found patterns in the text.
+#' @param cores Numeric, default 1. The number of cores to use for parallel processing.
+#' @return A data.table with the search results.
 #' @export
-#' @rdname nlp_search_corpus
 #'
-#' @examples
-#' # Assuming 'tif' is a data frame with 'doc_id', 'sentence_id', and 'text' columns
-#' search_corpus(tif, search = "example", n = 1)
+#'
 nlp_search_corpus <- function(tif,
                               search,
                               n = 0,
                               is_inline = FALSE,
-                              highlight = c('<', '>')) {
+                              highlight = c('<', '>'),
+                              cores = 1) {
+
+  # If only one core is used, run the non-parallel version of the function
+  if (cores == 1) {
+    return(.search_corpus(tif,
+                          search,
+                          n,
+                          is_inline,
+                          highlight))
+  } else{
+
+    # Determine the number of cores to use
+    cores <- ifelse(cores > 3, min(parallel::detectCores() - 1, 3), cores)
+
+    # Split the dataframe into batches
+    batches <- split(tif, ceiling(seq(1, nrow(tif)) / 300))
+
+    # Set up a parallel cluster
+    clust <- parallel::makeCluster(cores)
+    on.exit(parallel::stopCluster(clust)) # Ensure cluster is stopped when the function exits
+
+    # Export the nlp_search_corpus function to each worker
+    parallel::clusterExport(cl = clust,
+                            varlist = c(".search_corpus"),
+                            envir = environment())
+
+    # Create a function to pass additional parameters to nlp_search_corpus
+    search_fun <- function(batch) {
+      .search_corpus(batch,
+                     search,
+                     n,
+                     is_inline,
+                     highlight)
+    }
+
+
+    # Execute the task function in parallel
+    results <- pbapply::pblapply(X = batches,
+                                 FUN = search_fun,
+                                 cl = clust)
+
+    # Combine the results
+    combined_results <- data.table::rbindlist(results)
+    combined_results
+  }
+}
+
+
+#' @keywords internal
+.search_corpus <- function(tif,
+                           search,
+                           n = 0,
+                           is_inline = FALSE,
+                           highlight = c('<', '>')) {
 
   LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
   RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
@@ -30,7 +81,7 @@ nlp_search_corpus <- function(tif,
 
   # Translation for inline queries
   if (is_inline) {
-    term2 <- translate_query(search) |> trimws()
+    term2 <- .translate_query(search) |> trimws()
   } else {
     term1 <- paste0('(?i)', search)
     term2 <- paste0(term1, collapse = '|')
@@ -58,7 +109,11 @@ nlp_search_corpus <- function(tif,
   df4 <- tif[df3, on = c('doc_id', 'sentence_id'), nomatch=0]
 
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), '')]
-  df4[, text := ifelse(is_target == 1, insert_highlight(text, start, end, highlight = highlight), text)]
+  df4[, text := ifelse(is_target == 1, .insert_highlight(text,
+                                                             start,
+                                                             end,
+                                                             highlight = highlight),
+                       text)]
 
   df5 <- df4[, list(text = paste(text, collapse = " ")),
              by = list(i.text_id, start, end)]
@@ -86,7 +141,18 @@ nlp_search_corpus <- function(tif,
 }
 
 
-translate_query <- function(x){
+
+
+#' Translate Search Query
+#'
+#' Translates a search query into a format suitable for regex matching,
+#' particularly for inline searches.
+#'
+#' @param x The search query string to be translated.
+#' @return A character string representing the translated query.
+#' @keywords internal
+
+.translate_query <- function(x){
 
   q <- unlist(strsplit(x, " "))
   y0 <- lapply(q, function(x) {
@@ -104,7 +170,25 @@ translate_query <- function(x){
 }
 
 
-insert_highlight <- function(text, start, end, highlight) {
+
+#' Insert Highlight in Text
+#'
+#' Inserts highlight markers around a specified substring in a text string.
+#' Used to visually emphasize search query matches in the text.
+#'
+#' @param text The text string where highlighting is to be applied.
+#' @param start The starting position of the substring to highlight.
+#' @param end The ending position of the substring to highlight.
+#' @param highlight A character vector of length two specifying the
+#'                  opening and closing highlight markers.
+#' @return A character string with the specified substring highlighted.
+#' @keywords internal
+#'
+.insert_highlight <- function(text,
+                              start,
+                              end,
+                              highlight) {
+
   before_term <- substr(text, 1, start - 1)
   term <- substr(text, start, end)
   after_term <- substr(text, end + 1, nchar(text))
