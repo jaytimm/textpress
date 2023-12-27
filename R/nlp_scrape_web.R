@@ -157,65 +157,64 @@ nlp_scrape_web <- function(x,
 }
 
 
+#' Annotate Website Data
+#'
+#' This function processes a data.table containing website data and annotates
+#' each line, identifying relevant text and removing boilerplate content.
+#'
+#' @param site A data.table representing the scraped website data.
+#' @return A data.table with annotations.
+#' @importFrom data.table setDT fifelse nafill last
+#' @keywords internal
 
-#' Annotate Site Data
-#'
-#' An internal function for annotating scraped site data.
-#'
-#' @param site A data frame of site data to annotate.
-#' @return An annotated data frame.
-#' @importFrom stats ave
-#' @importFrom zoo na.locf
-#' @noRd
-#'
 .annotate_site <- function(site) {
 
-  junk1 <- paste0(.junk_phrases, collapse = '|')
-  site$text <- trimws(site$text)
+  # Convert to data.table
+  data.table::setDT(site)
 
-  ## -- title may be empty --
-  title <- subset(site, site$type == 'h1')$text
-  title <- title[length(title)]
-  if(length(title) == 0) {title <- NA}
-  site$h1_title <- title
+  # Compile a regular expression pattern for junk phrases
+  junk1 <- paste0(textpress:::.junk_phrases, collapse = '|')
 
-  site$place <- stats::ave(seq_len(nrow(site)),
-                           site$url,
-                           FUN = seq_along)
+  # Trim whitespace from the text column
+  site[, text := trimws(text)]
 
-  site$not_pnode <- ifelse(site$type == 'p', 0, 1)
-  site$has_ellipses <- ifelse(grepl('\\.\\.\\.(.)?$',
-                                    site$text), 1, 0)
+  # Extract the last title from the site, if any
+  site[, h1_title := ifelse(type == 'h1', text, NA)]
+  site[, h1_title := data.table::last(na.omit(h1_title)), by = .(url)]
 
-  ## falsely ids quotations as no stops --
-  site$no_stop <-  ifelse(grepl('(\\.|\\!|\\?)(.)?$',
-                                gsub("\"|'", '', site$text)),
-                          0, 1)
+  # Assign a sequential number to each row within each URL group
+  site[, place := seq_len(.N), by = .(url)]
 
-  site$has_latest <- ifelse(grepl('^latest( .*)? news$|^more( .*)? stories$|^related news$',
-                                  site$text,
-                                  ignore.case = T),
-                            1, NA)
-  site$has_latest[site$place == 1] <- 0
-  site$has_latest <- zoo::na.locf(site$has_latest)
+  # Mark paragraphs and non-paragraph nodes
+  site[, not_pnode := data.table::fifelse(type == 'p', 0, 1)]
 
-  site$less_10 <- ifelse(nchar(site$text) > 10, 0, 1)
-  site$has_junk <- ifelse(grepl(junk1,
-                                site$text,
-                                ignore.case = T),
-                          1, 0)
+  # Check for ellipses at the end of text
+  site[, has_ellipses := data.table::fifelse(grepl('\\.\\.\\.(.)?$', text), 1, 0)]
 
-  site$discard <- rowSums(site[, c("not_pnode",
-                                   "has_latest",
-                                   "has_ellipses",
-                                   "no_stop",
-                                   "less_10",
-                                   "has_junk")])
+  # Identify text without standard sentence-ending punctuation, ignoring quotes
+  site[, no_stop := data.table::fifelse(grepl('(\\.|\\!|\\?)(.)?$', gsub("\"|'", '', text)), 0, 1)]
 
-  site$discard <- ifelse(site$discard > 0, 'junk', 'keep')
+  # Identify specific patterns that indicate non-relevant text
+  site[, has_latest := ifelse(grepl('^latest( .*)? news$|^more( .*)? stories$|^related news$', text, ignore.case = TRUE), 1, NA)]
+
+  site[, has_latest := ifelse(place == 1, 0L, has_latest)]
+  site[, has_latest := data.table::nafill(has_latest, type = "locf")]
+
+  # Flag text with fewer than 10 characters as potential junk
+  site[, less_10 := data.table::fifelse(nchar(text) > 10, 0, 1)]
+
+  # Identify text matching junk phrases
+  site[, has_junk := data.table::fifelse(grepl(junk1, text, ignore.case = TRUE), 1, 0)]
+
+  # Combine flags to determine if the row should be discarded
+  site[, discard := rowSums(.SD[, .(not_pnode, has_latest, has_ellipses, no_stop, less_10, has_junk)])]
+  site[, discard := data.table::fifelse(discard > 0, 'junk', 'keep')]
 
   return(site)
 }
 
 
-
+# x <- 'https://time.com/6343967/bidenomics-is-real-economics/'
+# site <- x |> .get_site()
+# annotated_site <- site |> .annotate_site()
+# clean_site <- annotated_site |> .article_extract()
