@@ -1,22 +1,26 @@
-# nlpx
+# textpress
 
-> A lightweight, versatile NLP companion in R. The package integrates
-> easily with common R tools and provides basic features for text
-> processing and corpus search, as well as functionality for building
-> text embeddings via OpenAI. Ideal for users who need a basic,
-> unobtrusive NLP tool in R.
+> A lightweight, versatile NLP companion in R. Provides basic features
+> for text processing, corpus search, and web scraping, as well as
+> functionality for building text embeddings via OpenAI. Ideal for users
+> who need a basic, unobtrusive NLP tool in R.
 
 ## Installation
 
 ``` r
-devtools::install_github("jaytimm/nlpx")
+devtools::install_github("jaytimm/textpress")
 ```
 
-## Some data
+## Usage
+
+## Web scraping
 
 ``` r
 library(dplyr)
-articles <- quicknews::quicknews('ChatGPT',  cores = 5) |>
+articles <- textpress::nlp_scrape_web(x = 'ChatGPT', 
+                                      input = 'search',
+                                      cores = 5) |>
+  select(url, date:title, text) |>
   filter(!is.na(text)) |>
   slice(5:30)
 ```
@@ -28,69 +32,70 @@ articles <- quicknews::quicknews('ChatGPT',  cores = 5) |>
 ``` r
 df_ss <- articles |>
   mutate(doc_id = row_number()) |>
-  nlpx::nlp_split_sentences() 
+  textpress::nlp_split_sentences() 
 
 df_ss |> slice(1:5) |> knitr::kable()
 ```
 
-| doc_id | sentence_id | text_id | text                                                                                                         |
-|:----|------:|:----|:------------------------------------------------------|
-| 1      |           1 | 1.1     | If you buy through a BGR link, we may earn an affiliate commission, helping support our expert product labs. |
-| 1      |           2 | 1.2     | I’ve wanted to get on ChatGPT Plus for months but kept postponing the upgrade until DevDay came along.       |
-| 1      |           3 | 1.3     | OpenAI’s big developer event brought custom GPTs, among other things, and I knew I wanted to try them out.   |
-| 1      |           4 | 1.4     | However, making and using custom GPTs was restricted to the ChatGPT Plus subscription.                       |
-| 1      |           5 | 1.5     | And I knew I had to get on.                                                                                  |
+| doc_id | sentence_id | text_id | text                                                                                                                                                                                                                                                                                                                                |
+|:--|---:|:--|:--------------------------------------------------------------|
+| 1      |           1 | 1.1     | Much like 2022 and its numerous calamities that shook the crypto industry brought no shortage of bears and doomsayers, 2023 brought recovery and renewed enthusiasm for investors.                                                                                                                                                  |
+| 1      |           2 | 1.2     | Indeed, many cryptocurrencies rose to highs not seen in well over a year, such as Bitcoin (BTC), Ethereum (ETH), and Solana (SOL), while others, like Polygon (MATIC), while benefiting from the rally, are still significantly under even compared with their previous 2023 highs.                                                 |
+| 1      |           3 | 1.3     | Still, considering that many believe that recent events have finally left the “crypto winter” in the dustbin, and given that the New Year is right around the corner, Finbold decided to ask the artificial intelligence (AI) of OpenAI’s posterchild – ChatGPT – about which cryptocurrencies it would recommend to savvy traders. |
+| 1      |           4 | 1.4     | In its analysis, the AI seemingly remained level-headed, offering cryptocurrencies with a strong track record.                                                                                                                                                                                                                      |
+| 1      |           5 | 1.5     | ChatGPT’s first pick for 2024 is the world’s foremost cryptocurrency – Bitcoin (BTC).                                                                                                                                                                                                                                               |
 
 ### Tokenization
 
 ``` r
-tokens <- df_ss |> nlpx::nlp_tokenize_text()
+tokens <- df_ss |> textpress::nlp_tokenize_text()
 ```
 
     ## $`1.1`
-    ##  [1] "If"         "you"        "buy"        "through"    "a"         
-    ##  [6] "BGR"        "link"       ","          "we"         "may"       
-    ## [11] "earn"       "an"         "affiliate"  "commission" ","         
-    ## [16] "helping"    "support"    "our"        "expert"     "product"   
-    ## [21] "labs"       "."
+    ##  [1] "Much"       "like"       "2022"       "and"        "its"       
+    ##  [6] "numerous"   "calamities" "that"       "shook"      "the"       
+    ## [11] "crypto"     "industry"   "brought"    "no"         "shortage"  
+    ## [16] "of"         "bears"      "and"        "doomsayers" ","         
+    ## [21] "2023"       "brought"    "recovery"   "and"        "renewed"   
+    ## [26] "enthusiasm" "for"        "investors"  "."
 
 ### Cast tokens to df
 
 ``` r
-df <- tokens |> nlpx::nlp_cast_tokens()
+df <- tokens |> textpress::nlp_cast_tokens()
 df |> head() |> knitr::kable()
 ```
 
-| text_id | token   |
-|:--------|:--------|
-| 1.1     | If      |
-| 1.1     | you     |
-| 1.1     | buy     |
-| 1.1     | through |
-| 1.1     | a       |
-| 1.1     | BGR     |
+| text_id | token    |
+|:--------|:---------|
+| 1.1     | Much     |
+| 1.1     | like     |
+| 1.1     | 2022     |
+| 1.1     | and      |
+| 1.1     | its      |
+| 1.1     | numerous |
 
 ## Search text
 
 ``` r
 df_ss |>
-  nlpx::nlp_search_corpus(search = 'artificial intelligence', 
-                          highlight = c('**', '**'),
-                          n = 0, 
-                          is_inline = F) |>
+  textpress::nlp_search_corpus(search = 'artificial intelligence', 
+                               highlight = c('**', '**'),
+                               n = 0, 
+                               is_inline = F) |>
   
   select(doc_id:text) |>
   slice(1:5) |>
   knitr::kable(escape = F)
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                                                              |
-|:--|:----|:----------------------------------------------------------------|
-| 4      | 2           | The momentous first release of ChatGPT on Nov. 30, 2023 was based on GPT 3.5, the nonzero number firmly establishing the skyward trajectory of **artificial intelligence**.                                                                       |
-| 8      | 5           | According to Google, MedLM is the future of its generative AI in healthcare, focusing on enabling users for safe and responsible use of **Artificial Intelligence**.                                                                              |
-| 10     | 1           | In the ever-evolving landscape of cybersecurity threats, a new contender has emerged, leveraging the cutting-edge advancements in **artificial intelligence**: ChatGPT-driven phishing schemes.                                                   |
-| 12     | 3           | The strange trend has emerged as Microsoft-backed OpenAI faces stiff competition from other firms pursuing generative **artificial intelligence** products, including Google, which recently released its own “Gemini” chatbot tool.              |
-| 14     | 146         | The Texas federal judge has added a requirement that any attorney appearing in his court must attest that “no portion of the filing was drafted by generative **artificial intelligence**,” or if it was, that it was checked “by a human being.” |
+| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                    |
+|:--|:---|:-----------------------------------------------------------------|
+| 1      | 3           | Still, considering that many believe that recent events have finally left the “crypto winter” in the dustbin, and given that the New Year is right around the corner, Finbold decided to ask the **artificial intelligence** (AI) of OpenAI’s posterchild – ChatGPT – about which cryptocurrencies it would recommend to savvy traders. |
+| 2      | 3           | With 2023 nearly over and 2024 – a year many hope will turn into a proper bull market – right around the corner, Finbold decided to ask the **artificial intelligence** (AI) of OpenAI’s flagship platform – ChatGPT – which stocks a savvy investor might want to buy before the holidays are over.                                    |
+| 2      | 22          | Nvidia is the biggest player in the semiconductor industry and a crucial part in the burgeoning **artificial intelligence** sector.                                                                                                                                                                                                     |
+| 3      | 1           | The **Artificial Intelligence** (AI) run has propelled competition among developers and businesses in 2023.                                                                                                                                                                                                                             |
+| 4      | 2           | Google’s (NASDAQ: GOOGL) offering – Bard – while not as famous as the other **artificial intelligence** (AI), has also garnered a significant fanbase.                                                                                                                                                                                  |
 
 ## Search inline
 
@@ -103,13 +108,13 @@ ud_annotated_corpus <- udpipe::udpipe(object = model,
                                       parser = 'none')
 ```
 
-| doc_id | start | end | term_id | token_id | token   | lemma   | upos  | xpos |
-|:-------|------:|----:|--------:|:---------|:--------|:--------|:------|:-----|
-| 1.1    |     1 |   2 |       1 | 1        | If      | if      | SCONJ | IN   |
-| 1.1    |     4 |   6 |       2 | 2        | you     | you     | PRON  | PRP  |
-| 1.1    |     8 |  10 |       3 | 3        | buy     | buy     | VERB  | VBP  |
-| 1.1    |    12 |  18 |       4 | 4        | through | through | ADP   | IN   |
-| 1.1    |    20 |  20 |       5 | 5        | a       | a       | DET   | DT   |
+| doc_id | start | end | term_id | token_id | token | lemma | upos  | xpos |
+|:-------|------:|----:|--------:|:---------|:------|:------|:------|:-----|
+| 1.1    |     1 |   4 |       1 | 1        | Much  | much  | ADJ   | JJ   |
+| 1.1    |     6 |   9 |       2 | 2        | like  | like  | ADP   | IN   |
+| 1.1    |    11 |  14 |       3 | 3        | 2022  | 2022  | NUM   | CD   |
+| 1.1    |    16 |  18 |       4 | 4        | and   | and   | CCONJ | CC   |
+| 1.1    |    20 |  22 |       5 | 5        | its   | its   | PRON  | PRP$ |
 
 ### Build inline text
 
@@ -123,39 +128,36 @@ inline_ss <- ud_annotated_corpus |>
 inline_ss$text[1] #|> strwrap(width = 40)
 ```
 
-    ## [1] "If/IN/1 you/PRP/2 buy/VBP/3 through/IN/4 a/DT/5 BGR/NNP/6 link/NN/7 ,/,/8 we/PRP/9 may/MD/10 earn/VB/11 an/DT/12 affiliate/JJ/13 commission/NN/14 ,/,/15 helping/VBG/16 support/VB/17 our/PRP$/18 expert/NN/19 product/NN/20 labs/NNS/21 ././22"
+    ## [1] "Much/JJ/1 like/IN/2 2022/CD/3 and/CC/4 its/PRP$/5 numerous/JJ/6 calamities/NNS/7 that/WDT/8 shook/VBP/9 the/DT/10 crypto/NN/11 industry/NN/12 brought/VBD/13 no/DT/14 shortage/NN/15 of/IN/16 bears/NNS/17 and/CC/18 doomsayers/NNS/19 ,/,/20 2023/CD/21 brought/NN/22 recovery/NN/23 and/CC/24 renewed/VBD/25 enthusiasm/NN/26 for/IN/27 investors/NNS/28 ././29"
 
 ### Search for lexico-grammatical pattern
 
 ``` r
 inline_ss |>
-  nlpx::nlp_search_corpus(search = 'JJ model', 
-                          highlight = c('**', '**'),
-                          n = 0,
-                          is_inline = T) |>
+  textpress::nlp_search_corpus(search = 'JJ model', 
+                               highlight = c('**', '**'),
+                               n = 0,
+                               is_inline = T) |>
   
   select(doc_id:text) |>
   slice(1:5) |>
   knitr::kable(escape = F)
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
-|:--|:---|:----------------------------------------------------------------|
-| 13     | 67          | More/RBR/1 recently/RB/2 ,/,/3 it’s/VBZ/4 been/VBN/5 shifted/VBN/6 to/IN/7 PaLM/NNP/8 2/CD/9 ,/,/10 a/DT/11 more/RBR/12 **powerful/JJ/13 model/NN/14** ,/,/15 which/WDT/16 Google/NNP/17 says/VBZ/18 is/VBZ/19 faster/JJR/20 and/CC/21 more/RBR/22 efficient/JJ/23 than/IN/24 LaMDA/NNP/25 ././26           |
-| 14     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4** is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                       |
-| 16     | 10          | Accordingly/RB/1 ,/,/2 a/DT/3 new/JJ/4 acronym/NN/5 is/VBZ/6 emerging/VBG/7 :/:/8 LMM/NNP/9 (/-LRB-/10 large/JJ/11 **multimodal/JJ/12 model/NN/13** )/-RRB-/14 ,/,/15 not/RB/16 to/TO/17 be/VB/18 confused/VBN/19 with/IN/20 LLM/NNP/21 ././22                                                              |
-| 16     | 12          | However/RB/1 ,/,/2 it/PRP/3 is/VBZ/4 not/RB/5 a/DT/6 fully/RB/7 **multimodal/JJ/8 model/NN/9** in/IN/10 the/DT/11 way/NN/12 that/WRB/13 Gemini/NNP/14 promises/VBZ/15 to/TO/16 be/VB/17 ././18                                                                                                              |
-| 16     | 14          | ChatGPT/RB/1 -/,/2 4/GW/3 also/RB/4 converts/VBZ/5 text/NN/6 to/TO/7 speech/VB/8 on/IN/9 output/NN/10 using/VBG/11 a/DT/12 **different/JJ/13 model/NN/14** ,/,/15 meaning/VBG/16 that/IN/17 GPT/NNP/18 -/HYPH/19 4V/NNP/20 itself/PRP/21 is/VBZ/22 working/VBG/23 purely/RB/24 with/IN/25 text/NN/26 ././27 |
+| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                   |
+|:--|:---|:-----------------------------------------------------------------|
+| 16     | 15          | This/DT/1 doesn’t/RB/2 mean/VB/3 Gemini/NNP/4 Ultra/NNP/5 is/VBZ/6 a/DT/7 **bad/JJ/8 model/NN/9** or/CC/10 that/IN/11 it/PRP/12 can’t/RB/13 compete/VB/14 with/IN/15 GPT/NN/16 -/,/17 4/CD/18 but/CC/19 shows/VBZ/20 the/DT/21 consequences/NNS/22 of/IN/23 Google/NNP/24 overhyping/VBG/25 its/PRP$/26 own/JJ/27 product/NN/28 ././29 |
+| 23     | 227         | The/DT/1 most/RBS/2 **recent/JJ/3 model/NN/4** is/VBZ/5 GPT/RB/6 -/SYM/7 4/CD/8 ././9                                                                                                                                                                                                                                                  |
 
 ## Search df
 
 ``` r
 df |>
-  nlpx::nlp_search_df(search_col = 'token', 
-                      id_col = 'text_id',
-                      include = c('ChatGPT', 'prompt'),
-                      logic = 'and',
-                      exclude = NULL) |>
+  textpress::nlp_search_df(search_col = 'token', 
+                           id_col = 'text_id',
+                           include = c('ChatGPT', 'prompt'),
+                           logic = 'and',
+                           exclude = NULL) |>
   
   group_by(text_id) |>
   summarize(text = paste0(token, collapse = ' ')) |>
@@ -163,11 +165,12 @@ df |>
   knitr::kable()
 ```
 
-| text_id | text                                                                                                                                                                                                      |
-|:---|:-------------------------------------------------------------------|
-| 14.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI .                                               |
-| 14.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                                                                     |
-| 15.11   | Utilizing a list of the 3,108 counties in the contiguous United States , the research group asked the ChatGPT interface to answer a prompt asking about the environmental justice issues in each county . |
+| text_id | text                                                                                                                                                        |
+|:----|:------------------------------------------------------------------|
+| 12.9    | However , I discovered that conversing with ChatGPT to fine - tune my prompt ideas transformed the process .                                                |
+| 21.6    | This ChatGPT prompt guide can help generate ideas and create new workflows to help you or your business tackle challenges and projects effectively .        |
+| 23.223  | ChatGPT is a general - purpose chatbot that uses artificial intelligence to generate text after a user enters a prompt , developed by tech startup OpenAI . |
+| 23.242  | ChatGPT is AI - powered and utilizes LLM technology to generate text after a prompt .                                                                       |
 
 ## OpenAI embeddings
 
@@ -175,20 +178,18 @@ df |>
 vstore <- df_ss |>
   mutate(words = tokenizers::count_words(text)) |>
   filter(words > 20, words < 60) |>
-  mutate(batch_id = nlpx::nlp_batch_cumsum(x = words,
+  mutate(batch_id = textpress::nlp_batch_cumsum(x = words,
                                            threshold = 10000)) |>
   
-  nlpx::nlp_fetch_openai_embs(text_id = 'text_id',
-                              text = 'text',
-                              batch_id = 'batch_id')
+  textpress::nlp_fetch_openai_embs(text_id = 'text_id',
+                                   text = 'text',
+                                   batch_id = 'batch_id')
 ```
 
     ## [1] "Batch 1 of 2"
     ## [1] "Batch 2 of 2"
 
-## Basic semantic search
-
-### Retrieval
+## Semantic search
 
 ``` r
 q <- 'What are some concerns about the impact of
@@ -196,48 +197,35 @@ advanced AI models like ChatGPT?'
 ```
 
 ``` r
-query <- nlpx::nlp_fetch_openai_embs(query = q)
+query <- textpress::nlp_fetch_openai_embs(query = q)
 
-nlpx::nlp_find_neighbors(x = query, 
-                         matrix = vstore, 
-                         n = 5) |>
+textpress::nlp_find_neighbors(x = query, 
+                              matrix = vstore, 
+                              n = 5) |>
   
   left_join(df_ss, by = c('term2' = 'text_id')) |>
   select(cos_sim:text) |>
   knitr::kable()
 ```
 
-| cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                        |
-|--:|:--|---:|:--------------------------------------------------------------|
-|   0.905 | 15     |          16 | With generative AI emerging as a new gateway tool for gaining information, the testing of potential biases in modeling outputs is an important part of improving programs such as ChatGPT.                                                                                                                  |
-|   0.881 | 4      |          14 | ChatGPT and AI are embedding themselves in systems everywhere so fast that it’s scaring some of the smartest minds on the planet.                                                                                                                                                                           |
-|   0.881 | 12     |           2 | Social media platforms such as X, Reddit and even OpenAI’s developer forum are riddled with accounts that ChatGPT – a “large-language model” trained on massive troves of internet data — is resisting labor-intensive prompts, such as requests to help the user write code and transcribe blocks of text. |
-|   0.880 | 14     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                                                                                                                                       |
-|   0.880 | 5      |          15 | Is ChatGPT really getting lazier — or is it yet another instance of humans anthropomorphizing an algorithm and reading too much into its uncanny outputs?                                                                                                                                                   |
-
-### Lexical semantics
+| cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                    |
+|---:|:---|----:|:------------------------------------------------------------|
+|   0.891 | 19     |          26 | Experts in the field have great concerns over the “fundamental flaw” of a programmed-in, left-leaning bias that ChatGPT uses to produce its answers.                                                    |
+|   0.889 | 26     |          38 | Some AI experts have called for models behind AI like ChatGPT to be open sourced so the public knows how exactly they are trained.                                                                      |
+|   0.889 | 7      |           1 | Since OpenAI released ChatGPT last year, there have been quite a few occasions where flaws in the AI chatbot could’ve been weaponized or manipulated by bad actors to access sensitive or private data. |
+|   0.880 | 23     |         288 | But OpenAI is involved in at least one lawsuit that has implications for AI systems trained on publicly available data, which would touch on ChatGPT.                                                   |
+|   0.876 | 6      |           1 | ChatGPT is being asked to handle all kinds of weird tasks, from determining whether written text was created by an AI, to answering homework questions, and much more.                                  |
 
 ``` r
-mesht <- pubmedtk::data_mesh_thesuarus()
-embs <- pubmedtk::data_mesh_embeddings()
+### Word-level
 
-nlpx::nlp_find_neighbors(x = 'Artificial Intelligence',
-                         matrix = embs,
-                         n = 10) |>
-  knitr::kable()
+# mesht <- pubmedtk::data_mesh_thesuarus()
+# embs <- pubmedtk::data_mesh_embeddings()
+# 
+# textpress::nlp_find_neighbors(x = 'Artificial Intelligence',
+#                          matrix = embs,
+#                          n = 10) |>
+#   knitr::kable()
 ```
-
-| rank | term1                   | term2                                | cos_sim |
-|-----:|:----------------------|:----------------------------------|--------:|
-|    1 | Artificial Intelligence | Artificial Intelligence              |   1.000 |
-|    2 | Artificial Intelligence | Machine Learning                     |   0.712 |
-|    3 | Artificial Intelligence | Language Arts                        |   0.657 |
-|    4 | Artificial Intelligence | Natural Language Processing          |   0.605 |
-|    5 | Artificial Intelligence | Mobile Applications                  |   0.601 |
-|    6 | Artificial Intelligence | Unsupervised Machine Learning        |   0.595 |
-|    7 | Artificial Intelligence | Supervised Machine Learning          |   0.587 |
-|    8 | Artificial Intelligence | Speech-Language Pathology            |   0.586 |
-|    9 | Artificial Intelligence | Signal Processing, Computer-Assisted |   0.585 |
-|   10 | Artificial Intelligence | Social Skills                        |   0.583 |
 
 ## Summary
