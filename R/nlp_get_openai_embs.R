@@ -24,7 +24,7 @@ nlp_fetch_openai_embs <- function(tif,
                                   wait = 30){
 
   if(!is.null(query)){
-    embeddings <- openai_embs(x = query)
+    embeddings <- .openai_embs(x = query)
     m99 <- matrix(unlist(embeddings), ncol = 1536, nrow = 1)
     rownames(m99) <- stringr::str_trunc(query, 100)
     m99
@@ -52,31 +52,27 @@ nlp_fetch_openai_embs <- function(tif,
 }
 
 
-openai_embs <- function(x){
 
-  # # Input validation
-  # for (arg in c(batch.id, text.segment, text.segment.id)) {
-  #   if (!arg %in% names(tif)) {
-  #     stop(sprintf("Column '%s' not found in the data frame.", arg))
-  #   }
-  # }
-  #
-  # if (!is.null(query) && !is.character(query)) {
-  #   stop("The 'query' must be a character string.")
-  # }
-  #
-  # if (!is.numeric(wait) || length(wait) != 1) {
-  #   stop("The 'wait' must be a single numeric value.")
-  # }
-
+#' Fetches embeddings from OpenAI API, internal function.
+#'
+#' @param x Text input for embedding generation.
+#' @return A list of embeddings for the given input.
+#' @keywords internal
+#' @noRd
+.openai_embs <- function(x) {
+  # Add authorization header with OpenAI API key
   auth <- httr::add_headers(Authorization = paste("Bearer", Sys.getenv("OPENAI_API_KEY")))
+
+  # Define request body with model and input
   body <- list(model = "text-embedding-ada-002", input = x)
 
+  # Send POST request to OpenAI API
   resp <- httr::POST("https://api.openai.com/v1/embeddings",
                      auth,
                      body = body,
                      encode = "json")
 
+  # Extract and return embeddings from the response
   httr::content(resp, as = "text", encoding = "UTF-8") |>
     jsonlite::fromJSON(flatten = TRUE) |>
     purrr::pluck("data", "embedding")

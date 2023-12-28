@@ -16,15 +16,11 @@
 nlp_scrape_web <- function(x,
                            input = 'search',
                            cores = 3) {
+
   # Determine the number of cores to use
-  cores <- ifelse(cores > 3,
-                  min(parallel::detectCores() - 1, 3),
+  cores <- ifelse(cores > parallel::detectCores() - 1,
+                  parallel::detectCores() - 1,
                   cores)
-
-
-
-  # Initialize an empty data frame for metadata
-  mm <- data.frame(url = character())
 
   # Process input based on the type
   if (input == 'search') {
@@ -40,7 +36,7 @@ nlp_scrape_web <- function(x,
   } else if (input == 'urls') {
 
     # Directly process list of URLs with no metadata
-    mm$url <- x
+    mm <- data.frame(url = x)
   } else {
     stop("Invalid input type. Please choose from 'search', 'rss', or 'urls'.")
   }

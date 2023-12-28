@@ -10,13 +10,6 @@
 #' @return A matrix of cosine similarity values.
 #' @noRd
 #'
-#' @examples
-#' x <- matrix(rnorm(50), nrow = 10)
-#' # Self-similarity
-#' sim_matrix <- .get_sim(x)
-#' # Similarity with another matrix
-#' y <- matrix(rnorm(50), nrow = 10)
-#' sim_matrix <- .get_sim(x, y)
 
 .get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
 

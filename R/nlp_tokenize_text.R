@@ -28,7 +28,7 @@ nlp_tokenize_text <- function(tif,
 
   # Tokenizing
   tokens <- lapply(tif$text, function(text) {
-    unlist(token_split(text))
+    unlist(.token_split(text))
     })
 
   # Naming the list
@@ -38,8 +38,19 @@ nlp_tokenize_text <- function(tif,
 
 
 
-token_split <- function(x) {
+#' Splits text into tokens, removing whitespace, for internal use.
+#'
+#' @param x Character vector to tokenize.
+#' @return List of character vectors, each containing the tokens.
+#' @keywords internal
+#' @noRd
+.token_split <- function(x) {
+  # Split text into words based on word boundaries
   out <- stringi::stri_split_boundaries(x, type = "word")
+
+  # Remove tokens that are purely whitespace
   out <- lapply(out, stringi::stri_subset_charclass, "\\p{WHITESPACE}", negate = TRUE)
+
+  # Return the list of tokens
   out
 }

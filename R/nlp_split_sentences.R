@@ -23,7 +23,7 @@ nlp_split_sentences <- function(tif) {
 
   # Convert doc_id to character and tokenize text
   xx <- data.table::data.table(doc_id = tif$doc_id |> as.character(),
-                               text = sapply(tif$text, sentence_split))
+                               text = sapply(tif$text, .sentence_split))
 
   # Unlist the text and create sentence IDs
   xx1 <- xx[,.(text = unlist(text)), by = doc_id]
@@ -37,12 +37,20 @@ nlp_split_sentences <- function(tif) {
 
 
 
-sentence_split <- function(x) {
-    x <- stringi::stri_replace_all_charclass(x, "[[:whitespace:]]", " ")
-    out <- stringi::stri_split_boundaries(x,
-                                          type = "sentence",
-                                          skip_word_none = FALSE)
-    lapply(out, stringi::stri_trim_both)
-}
+#' Splits text into sentences, normalizes whitespace, trims spaces.
+#'
+#' @param x Character vector to split.
+#' @return List of character vectors with sentences.
+#' @keywords internal
+#' @noRd
+.sentence_split <- function(x) {
+  # Replace various types of whitespace with a single space for consistency
+  x <- stringi::stri_replace_all_charclass(x, "[[:whitespace:]]", " ")
 
+  # Split text into sentences based on sentence boundaries
+  out <- stringi::stri_split_boundaries(x, type = "sentence", skip_word_none = FALSE)
+
+  # Trim leading and trailing spaces from each sentence
+  lapply(out, stringi::stri_trim_both)
+}
 
