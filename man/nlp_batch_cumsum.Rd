@@ -18,7 +18,3 @@ A numeric vector indicating the batch number for each element of \code{x}.
 This function takes a numeric vector and groups its elements into batches.
 Each batch's cumulative sum does not exceed a specified threshold.
 }
-\examples{
-# Example usage
-# wd_batch_text(c(10, 20, 30, 40, 50), 50)
-}

@@ -29,9 +29,6 @@ nlp_search_corpus <- function(tif,
                           highlight))
   } else{
 
-    # Determine the number of cores to use
-    cores <- ifelse(cores > 3, min(parallel::detectCores() - 1, 3), cores)
-
     # Split the dataframe into batches
     batches <- split(tif, ceiling(seq(1, nrow(tif)) / 300))
 

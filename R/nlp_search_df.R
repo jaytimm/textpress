@@ -13,10 +13,8 @@
 #' @return A subset of the df based on the search criteria.
 #' @export
 #' @rdname nlp_search_df
-#' @examples
-#' df <- data.frame(doc_id = 1:3, text = c("apple banana", "banana cherry", "cherry apple"))
-#' search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "or")
-#' search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "and", exclude = "cherry")
+#'
+#'
 nlp_search_df <- function(df,
                           search_col,
                           id_col,

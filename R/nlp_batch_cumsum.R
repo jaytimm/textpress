@@ -6,10 +6,6 @@
 #' @param x A numeric vector to be batched.
 #' @param threshold A numeric threshold for the cumulative sum of each batch.
 #' @return A numeric vector indicating the batch number for each element of `x`.
-#' @examples
-#' # Example usage
-#' # wd_batch_text(c(10, 20, 30, 40, 50), 50)
-
 #' @export
 #' @rdname nlp_batch_cumsum
 #'

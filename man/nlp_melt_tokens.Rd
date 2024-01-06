@@ -19,9 +19,3 @@ A list of vectors, each containing the tokens of a group defined by the \code{by
 \description{
 This function tokenizes a data frame based on a specified token column and groups the data by one or more specified columns.
 }
-\examples{
-# Example usage
-# df <- data.frame(doc_id = c(1, 1, 2, 2), text = c("token1", "token2", "token3", "token4"))
-nlp_df_token(df, "text", by = "doc_id")
-
-}

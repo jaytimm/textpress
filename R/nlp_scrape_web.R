@@ -11,16 +11,10 @@
 #'
 #' @return A data frame containing scraped news data.
 #' @export
-#' @examples
-
+#'
 nlp_scrape_web <- function(x,
                            input = 'search',
                            cores = 3) {
-
-  # Determine the number of cores to use
-  cores <- ifelse(cores > parallel::detectCores() - 1,
-                  parallel::detectCores() - 1,
-                  cores)
 
   # Process input based on the type
   if (input == 'search') {
@@ -169,7 +163,7 @@ nlp_scrape_web <- function(x,
   data.table::setDT(site)
 
   # Compile a regular expression pattern for junk phrases
-  junk1 <- paste0(textpress:::.junk_phrases, collapse = '|')
+  junk1 <- paste0(textpress::.junk_phrases, collapse = '|')
 
   # Trim whitespace from the text column
   site[, text := trimws(text)]

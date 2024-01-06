@@ -26,8 +26,3 @@ A subset of the df based on the search criteria.
 This function searches within a Document-Term Matrix (df) using specified
 inclusion and exclusion criteria and returns a subset of the df based on the search.
 }
-\examples{
-df <- data.frame(doc_id = 1:3, text = c("apple banana", "banana cherry", "cherry apple"))
-search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "or")
-search_df(df, "text", "doc_id", include = c("apple", "banana"), logic = "and", exclude = "cherry")
-}

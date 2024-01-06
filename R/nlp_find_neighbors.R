@@ -65,10 +65,6 @@
 #' @return A data frame with the ranks, terms, and their cosine similarity scores.
 #' @export
 #'
-#' @examples
-#' matrix <- matrix(rnorm(100), ncol = 10)
-#' term <- rnorm(10)
-#' neighbors <- x_get_neighbors(term, matrix, 5)
 #'
 nlp_find_neighbors <- function(x, matrix, n = 10) {
   # Validate inputs

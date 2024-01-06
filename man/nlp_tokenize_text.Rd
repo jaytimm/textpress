@@ -17,8 +17,3 @@ A named list of tokens, where each list item corresponds to a document.
 \description{
 This function tokenizes text data from a data frame using the 'tokenizers' package, preserving the original text structure like capitalization and punctuation.
 }
-\examples{
-# Assuming tif is a data frame with columns 'doc_id' and 'text'
-# tif <- data.frame(doc_id = 1:2, text = c("Sample text 1", "Sample text 2"))
-# tokens <- nlp_tif_token(tif)
-}

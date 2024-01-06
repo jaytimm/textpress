@@ -6,11 +6,6 @@
 #' @param token The name of the column in `df` that contains the tokens.
 #' @param by A character vector indicating the column(s) by which to group the data.
 #' @return A list of vectors, each containing the tokens of a group defined by the `by` parameter.
-#' @examples
-#' # Example usage
-#' # df <- data.frame(doc_id = c(1, 1, 2, 2), text = c("token1", "token2", "token3", "token4"))
-#' nlp_df_token(df, "text", by = "doc_id")
-#'
 #' @export
 #' @rdname nlp_melt_tokens
 #'

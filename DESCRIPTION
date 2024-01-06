@@ -15,5 +15,8 @@ Imports:
     httr,
     purrr,
     Matrix,
-    stringi
+    stringi, 
+    jsonlite,
+    stringr,
+    xml2
 License: GPL-3

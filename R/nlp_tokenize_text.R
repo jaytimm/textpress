@@ -4,10 +4,8 @@
 #' @param tif A data frame containing the text to be tokenized and a document identifier in 'doc_id'.
 #' @param by A character string specifying grouping column.
 #' @return A named list of tokens, where each list item corresponds to a document.
-#' @examples
-#' # Assuming tif is a data frame with columns 'doc_id' and 'text'
-#' # tif <- data.frame(doc_id = 1:2, text = c("Sample text 1", "Sample text 2"))
-#' # tokens <- nlp_tif_token(tif)
+#'
+#'
 #' @export
 #' @rdname nlp_tokenize_text
 #'

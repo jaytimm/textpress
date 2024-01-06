@@ -20,9 +20,3 @@ A data frame with the ranks, terms, and their cosine similarity scores.
 This function identifies the nearest neighbors of a given term or vector
 in a matrix based on cosine similarity.
 }
-\examples{
-matrix <- matrix(rnorm(100), ncol = 10)
-term <- rnorm(10)
-neighbors <- x_get_neighbors(term, matrix, 5)
-
-}

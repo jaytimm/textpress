@@ -17,8 +17,3 @@ A data frame with columns for document ID, sentence ID (if applicable), tokens, 
 \description{
 This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
 }
-\examples{
-# Example usage
-# tok <- list("doc1" = c("token1", "token2"), "doc2" = c("token3", "token4"))
-# nlp_token_df(tok)
-}

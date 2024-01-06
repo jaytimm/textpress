@@ -7,11 +7,6 @@
 #' @importFrom httr POST add_headers content
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr pluck
-#' @examples
-#' # Example usage
-#' # Sys.setenv(OPENAI_API_KEY = "your_api_key_here")
-#' # wd_extract_openai_embs("Example text")
-
 #' @export
 #' @rdname nlp_fetch_openai_embs
 #'

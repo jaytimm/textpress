@@ -22,8 +22,3 @@ A numeric vector representing the embeddings of the input text.
 \description{
 This function sends a text to the OpenAI API and retrieves its embeddings.
 }
-\examples{
-# Example usage
-# Sys.setenv(OPENAI_API_KEY = "your_api_key_here")
-# wd_extract_openai_embs("Example text")
-}
