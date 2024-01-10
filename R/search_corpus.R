@@ -107,9 +107,9 @@ search_corpus <- function(tif,
 
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), '')]
   df4[, text := ifelse(is_target == 1, .insert_highlight(text,
-                                                             start,
-                                                             end,
-                                                             highlight = highlight),
+                                                         start,
+                                                         end,
+                                                         highlight = highlight),
                        text)]
 
   df5 <- df4[, list(text = paste(text, collapse = " ")),
