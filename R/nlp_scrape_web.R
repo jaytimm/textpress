@@ -163,7 +163,7 @@ nlp_scrape_web <- function(x,
   data.table::setDT(site)
 
   # Compile a regular expression pattern for junk phrases
-  junk1 <- paste0(textpress::.junk_phrases, collapse = '|')
+  junk1 <- paste0(.junk_phrases, collapse = '|')
 
   # Trim whitespace from the text column
   site[, text := trimws(text)]
