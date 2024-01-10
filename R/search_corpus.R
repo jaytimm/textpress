@@ -17,7 +17,7 @@ search_corpus <- function(tif,
                           search,
                           n = 0,
                           is_inline = FALSE,
-                          highlight = c('**', '**'),
+                          highlight = c('<b>', '</b>'),
                           cores = 1) {
 
   # If only one core is used, run the non-parallel version of the function
@@ -66,9 +66,9 @@ search_corpus <- function(tif,
 #' @keywords internal
 .search_corpus <- function(tif,
                            search,
-                           n = 0,
-                           is_inline = FALSE,
-                           highlight = c('<', '>')) {
+                           n,
+                           is_inline,
+                           highlight) {
 
   LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
   RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
@@ -116,8 +116,9 @@ search_corpus <- function(tif,
              by = list(i.text_id, start, end)]
 
   df5[, c("doc_id", "sentence_id") := data.table::tstrsplit(i.text_id, "\\.")]
-  patsy <- paste0(".*", LL, "(.*)", RR, ".*")
 
+  # ".*<b>(.*)</b>.*" -- extract found pattern --
+  patsy <- paste0(".*", LL, "(.*)", RR, ".*")
   df5[, pattern := gsub(patsy, "\\1", text)]
 
   if(is_inline){
