@@ -32,7 +32,7 @@ rag_fetch_openai_embs <- function(tif,
 
       txt <- z[[i]][[text]]
 
-      embeddings <- openai_embs(x = txt)
+      embeddings <- .openai_embs(x = txt)
       m99 <- matrix(unlist(embeddings), ncol = 1536, byrow = TRUE)
 
       rownames(m99) <- z[[i]][[text_id]]

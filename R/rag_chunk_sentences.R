@@ -28,20 +28,14 @@ rag_chunk_sentences <- function(df,
 
   neighbors_dt <- unique(neighbors_dt)
 
-  # neighbors_dt <- neighbors_dt[neighbor_id > 0 & neighbor_id <= max(df$sentence_id),
-  #                              unique(.SD),
-  #                              by = .(chunk_id, neighbor_id)]
-
   # Aggregate text by chunk_id
   chunk_dt <- df[, .(chunk = paste(text, collapse = ' ')), by = .(doc_id, chunk_id)]
 
   # Join with original dt to aggregate text by neighbors
   dt_neighbors_joined <- df[neighbors_dt, on = .(doc_id, sentence_id = neighbor_id)]
 
-
-  dt_neighbors_joined[, is_chunk := ifelse(chunk_id == i.chunk_id, 1, 0)]
-
   # Create a grouping variable for consecutive runs of the same value in is_chunk
+  dt_neighbors_joined[, is_chunk := ifelse(chunk_id == i.chunk_id, 1, 0)]
   dt_neighbors_joined[, group := data.table::rleid(is_chunk)]
 
   # Assign row numbers for each consecutive sequence of 1s in is_chunk
@@ -53,7 +47,6 @@ rag_chunk_sentences <- function(df,
   # Highlight start and end of each chunk with asterisks
   dt_neighbors_joined[, text := ifelse(id == 1, paste0('<b>', text), text)]
   dt_neighbors_joined[, text := ifelse(id == chunk_size, paste0(text, '</b>'), text)]
-
 
   # Create a data table of chunks with context
   chunk_with_context_df <- dt_neighbors_joined[!is.na(text),
