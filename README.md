@@ -91,11 +91,11 @@ df_ss |>
 
 | doc_id | sentence_id | text                                                                                                                                                                                                                    |
 |:---|:----|:---------------------------------------------------------------|
-| 3      | 2           | We explore the brief history of the generative <b>artificial intelligence</b> (AI) platform, reflect on its origins and its power to disrupt and transform operations.                                                  |
-| 4      | 1           | Free TV company, Telly, debuted its new <b>artificial intelligence</b> voice assistant, “Hey Telly,” at CES 2024.                                                                                                       |
-| 6      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                     |
-| 7      | 1           | SAN FRANCISCO (Reuters) - <b>Artificial intelligence</b> lab OpenAI has launched its GPT Store, a marketplace for personalized artificial intelligence (AI) applications, the company said in a blog post on Wednesday. |
-| 7      | 1           | SAN FRANCISCO (Reuters) - Artificial intelligence lab OpenAI has launched its GPT Store, a marketplace for personalized <b>artificial intelligence</b> (AI) applications, the company said in a blog post on Wednesday. |
+| 4      | 2           | We explore the brief history of the generative <b>artificial intelligence</b> (AI) platform, reflect on its origins and its power to disrupt and transform operations.                                                  |
+| 5      | 1           | Free TV company, Telly, debuted its new <b>artificial intelligence</b> voice assistant, “Hey Telly,” at CES 2024.                                                                                                       |
+| 7      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                     |
+| 8      | 1           | SAN FRANCISCO (Reuters) - <b>Artificial intelligence</b> lab OpenAI has launched its GPT Store, a marketplace for personalized artificial intelligence (AI) applications, the company said in a blog post on Wednesday. |
+| 8      | 1           | SAN FRANCISCO (Reuters) - Artificial intelligence lab OpenAI has launched its GPT Store, a marketplace for personalized <b>artificial intelligence</b> (AI) applications, the company said in a blog post on Wednesday. |
 
 ## Search inline
 
@@ -142,14 +142,67 @@ inline_ss |>
   select(doc_id:text) |>
   slice(1:5) |>
   ## DT::datatable(escape = F)
-  knitr::kable(escape = F)
+  ## knitr::kable(escape = F)
+  formattable::formattable(align =c("c","c","l"))
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-|:-|:--|:------------------------------------------------------------------|
-| 23     | 14          | The/DT/1 limit/NN/2 really/RB/3 is/VBZ/4 your/PRP/5*i**m**a**g**i**n**a**t**i**o**n*/*N**N*/6, /, /7*b**u**t*/*C**C*/8*i**d**e**a**s*/*N**N**S*/9*c**a**n*/*M**D*/10*s**p**a**n*/*V**B*/11*f**r**o**m*/*I**N*/12*p**r**a**c**t**i**c**a**l*/*J**J*/13*u**s**e*/*N**N*/14*c**a**s**e**s*/*N**N**S*/15*l**i**k**e*/*I**N*/16*S**E**O*/*N**N*/17*h**e**l**p**e**r**s*/*N**N**S*/18*a**n**d*/*C**C*/19*n**u**t**r**i**t**i**o**n*/*N**N*/20*p**l**a**n**n**e**r**s*/*N**N**S*/21, /, /22*t**o*/*I**N*/23*m**o**r**e*/*J**J**R*/24*b**i**z**a**r**r**e*/*N**N*/25*c**o**n**c**e**p**t**s*/*N**N**S*/26*l**i**k**e*/*I**N*/27*B**a**d**R**e**c**i**p**e*/*N**N**P*/28*G**P**T*/*N**N**P*/29–/, /30*a*/*D**T*/31 \< *b* \> *c**u**s**t**o**m*/*J**J*/32*m**o**d**e**l*/*N**N*/33 \< /*b* \> *d**e**s**i**g**n**e**d*/*V**B**N*/34*t**o*/*T**O*/35*p**u**t*/*V**B*/36*y**o**u*/*P**R**P*/37*o**f**f*/*R**P*/38*y**o**u**r*/*P**R**P*/39 dinner/NN/40 by/IN/41 inventing/VBG/42 bad/JJ/43 and/CC/44 amusing/JJ/45 recipes/NNS/46 ././47 |
-| 23     | 22          | Now/RB/1 it’s/PRP/2*t**i**m**e*/*N**N*/3*t**o*/*T**O*/4*t**e**s**t*/*V**B*/5*y**o**u**r*/*P**R**P*/6 <b>custom/JJ/7 model/NN/8</b> ././9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 5      | 14          | “/\`\`/1 Telly/RB/2 ,/,/3 with/IN/4 its/PRP$/5 <b>unique/JJ/6 model/NN/7</b> and/CC/8 innovative/JJ/9 ad/NN/10 inventory/NN/11 ,/,/12 solves/VBZ/13 that/DT/14 problem/NN/15 ././16                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+<table class="table table-condensed">
+<thead>
+<tr>
+<th style="text-align:center;">
+doc_id
+</th>
+<th style="text-align:center;">
+sentence_id
+</th>
+<th style="text-align:left;">
+text
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+25
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:left;">
+The/DT/1 limit/NN/2 really/RB/3 is/VBZ/4
+your/PRP/5*i**m**a**g**i**n**a**t**i**o**n*/*N**N*/6, /, /7*b**u**t*/*C**C*/8*i**d**e**a**s*/*N**N**S*/9*c**a**n*/*M**D*/10*s**p**a**n*/*V**B*/11*f**r**o**m*/*I**N*/12*p**r**a**c**t**i**c**a**l*/*J**J*/13*u**s**e*/*N**N*/14*c**a**s**e**s*/*N**N**S*/15*l**i**k**e*/*I**N*/16*S**E**O*/*N**N*/17*h**e**l**p**e**r**s*/*N**N**S*/18*a**n**d*/*C**C*/19*n**u**t**r**i**t**i**o**n*/*N**N*/20*p**l**a**n**n**e**r**s*/*N**N**S*/21, /, /22*t**o*/*I**N*/23*m**o**r**e*/*J**J**R*/24*b**i**z**a**r**r**e*/*N**N*/25*c**o**n**c**e**p**t**s*/*N**N**S*/26*l**i**k**e*/*I**N*/27*B**a**d**R**e**c**i**p**e*/*N**N**P*/28*G**P**T*/*N**N**P*/29–/, /30*a*/*D**T*/31 \< *b* \> *c**u**s**t**o**m*/*J**J*/32*m**o**d**e**l*/*N**N*/33 \< /*b* \> *d**e**s**i**g**n**e**d*/*V**B**N*/34*t**o*/*T**O*/35*p**u**t*/*V**B*/36*y**o**u*/*P**R**P*/37*o**f**f*/*R**P*/38*y**o**u**r*/*P**R**P*/39
+dinner/NN/40 by/IN/41 inventing/VBG/42 bad/JJ/43 and/CC/44 amusing/JJ/45
+recipes/NNS/46 ././47
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+25
+</td>
+<td style="text-align:center;">
+22
+</td>
+<td style="text-align:left;">
+Now/RB/1
+it’s/PRP/2*t**i**m**e*/*N**N*/3*t**o*/*T**O*/4*t**e**s**t*/*V**B*/5*y**o**u**r*/*P**R**P*/6
+<b>custom/JJ/7 model/NN/8</b> ././9
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:left;">
+“/\`\`/1 Telly/RB/2 ,/,/3 with/IN/4 its/PRP$/5 <b>unique/JJ/6
+model/NN/7</b> and/CC/8 innovative/JJ/9 ad/NN/10 inventory/NN/11 ,/,/12
+solves/VBZ/13 that/DT/14 problem/NN/15 ././16
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Search df
 
@@ -169,9 +222,9 @@ df |>
 
 | text_id | text                                                                                                                                             |
 |:----|:------------------------------------------------------------------|
-| 12.24   | Embrace the future of education by leveraging the capabilities of ChatGPT to unlock your full academic potential .                               |
-| 6.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
-| 6.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
+| 14.24   | Embrace the future of education by leveraging the capabilities of ChatGPT to unlock your full academic potential .                               |
+| 7.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
+| 7.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
 
 ## OpenAI embeddings
 
@@ -210,10 +263,10 @@ textpress::search_semantics(x = query,
 
 | cos_sim | doc_id | sentence_id | text                                                                                                                                                                                                                                |
 |---:|:--|----:|:------------------------------------------------------------|
-|   0.881 | 17     |           1 | Generative AI, particularly OpenAI’s ChatGPT, is making waves in the tech industry, transforming the way we interact with the internet and reshaping our technological experiences.                                                 |
-|   0.879 | 6      |          21 | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI.                                                                        |
-|   0.872 | 18     |           6 | The type of algorithm behind the popular ChatGPT, large language models have taken the world by storm with their ability to understand language, audio, and image inputs, while doling out useful—if not always accurate—responses. |
-|   0.867 | 26     |          10 | ChatGPT is a text-generating AI chatbot developed by OpenAI, a company that has launched into the stratosphere of buzzy tech startups over the past year.                                                                           |
-|   0.865 | 17     |          18 | While the potential benefits of generative AI are vast, it’s important to temper this enthusiasm with a realistic understanding of the challenges ahead.                                                                            |
+|   0.881 | 19     |           1 | Generative AI, particularly OpenAI’s ChatGPT, is making waves in the tech industry, transforming the way we interact with the internet and reshaping our technological experiences.                                                 |
+|   0.879 | 7      |          21 | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI.                                                                        |
+|   0.872 | 20     |           6 | The type of algorithm behind the popular ChatGPT, large language models have taken the world by storm with their ability to understand language, audio, and image inputs, while doling out useful—if not always accurate—responses. |
+|   0.865 | 19     |          18 | While the potential benefits of generative AI are vast, it’s important to temper this enthusiasm with a realistic understanding of the challenges ahead.                                                                            |
+|   0.864 | 24     |           1 | Since ChatGPT was first made public, the conversational chatbot has been harnessed by millions to streamline work processes, grade essays, and even create sub-bar comedy material.                                                 |
 
 ## Summary
