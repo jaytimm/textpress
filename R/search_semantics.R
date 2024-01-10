@@ -66,7 +66,10 @@
 #' @export
 #'
 #'
-nlp_find_neighbors <- function(x, matrix, n = 10) {
+search_semantics <- function(x,
+                             matrix,
+                             n = 10) {
+
   # Validate inputs
   if (!is.character(x) && !is.numeric(x)) {
     stop("The first argument 'x' must be either a character or numeric vector.")
