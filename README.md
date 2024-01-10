@@ -83,11 +83,11 @@ df_ss |>
 
 | doc_id | sentence_id | text                                                                                                                                                                                                                                                                             |
 |:--|:---|:----------------------------------------------------------------|
-| 3      | 2           | We explore the brief history of the generative <b>artificial intelligence</b> (AI) platform, reflect on its origins and its power to disrupt and transform operations.                                                                                                           |
-| 4      | 16          | In April, the Cyberspace Administration of China released draft regulations on the development of generative <b>artificial intelligence</b> models that would require “AI-produced content \[to\] embody core socialist values.”                                                 |
-| 5      | 1           | Free TV company, Telly, debuted its new <b>artificial intelligence</b> voice assistant, “Hey Telly,” at CES 2024.                                                                                                                                                                |
-| 6      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                                                                              |
-| 8      | 2           | ChatGPT maker OpenAI finally announced on Wednesday its app store for the public to try the customized versions of its popular chatbot, ChatGPT, as the <b>artificial intelligence</b> company works to expand the reach of its flagship technology and turn it into a cash cow. |
+| 3      | 16          | In April, the Cyberspace Administration of China released draft regulations on the development of generative <b>artificial intelligence</b> models that would require “AI-produced content \[to\] embody core socialist values.”                                                 |
+| 4      | 1           | Free TV company, Telly, debuted its new <b>artificial intelligence</b> voice assistant, “Hey Telly,” at CES 2024.                                                                                                                                                                |
+| 5      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                                                                              |
+| 7      | 2           | ChatGPT maker OpenAI finally announced on Wednesday its app store for the public to try the customized versions of its popular chatbot, ChatGPT, as the <b>artificial intelligence</b> company works to expand the reach of its flagship technology and turn it into a cash cow. |
+| 8      | 3           | The company has integrated ChatGPT, an <b>artificial intelligence</b>-based chatbot, into its IDA voice assistant, marking a new era in automotive technology.                                                                                                                   |
 
 ## Search inline
 
@@ -119,10 +119,18 @@ inline_ss <- ud_annotated_corpus |>
   group_by(doc_id, sentence_id) |>
   summarise(text = paste0(inline, collapse = " "))
 
-inline_ss$text[1] #|> strwrap(width = 40)
+inline_ss$text[1] |> strwrap(width = 60)
 ```
 
-    ## [1] "On/IN/1 Wednesday/NNP/2 ,/,/3 OpenAI/NNP/4 announced/VBD/5 the/DT/6 launch/NN/7 of/IN/8 its/PRP$/9 GPT/NN/10 Store/NN/11 —/,/12 a/DT/13 way/NN/14 for/IN/15 ChatGPT/NNP/16 users/NNS/17 to/TO/18 share/VB/19 and/CC/20 discover/VB/21 custom/JJ/22 chatbot/NN/23 roles/NNS/24 called/VBN/25 \"/``/26 GPTs/NNS/27 \"/''/28 —/,/29 and/CC/30 ChatGPT/NNP/31 Team/NNP/32 ,/,/33 a/DT/34 collaborative/JJ/35 ChatGPT/NN/36 workspace/NN/37 and/CC/38 subscription/NN/39 plan/NN/40 ././41"
+    ## [1] "On/IN/1 Wednesday/NNP/2 ,/,/3 OpenAI/NNP/4 announced/VBD/5"  
+    ## [2] "the/DT/6 launch/NN/7 of/IN/8 its/PRP$/9 GPT/NN/10"           
+    ## [3] "Store/NN/11 —/,/12 a/DT/13 way/NN/14 for/IN/15"              
+    ## [4] "ChatGPT/NNP/16 users/NNS/17 to/TO/18 share/VB/19 and/CC/20"  
+    ## [5] "discover/VB/21 custom/JJ/22 chatbot/NN/23 roles/NNS/24"      
+    ## [6] "called/VBN/25 \"/``/26 GPTs/NNS/27 \"/''/28 —/,/29 and/CC/30"
+    ## [7] "ChatGPT/NNP/31 Team/NNP/32 ,/,/33 a/DT/34"                   
+    ## [8] "collaborative/JJ/35 ChatGPT/NN/36 workspace/NN/37 and/CC/38" 
+    ## [9] "subscription/NN/39 plan/NN/40 ././41"
 
 ### Search for lexico-grammatical pattern
 
@@ -147,6 +155,8 @@ inline_ss |>
 
 ## Search df
 
+> Identify sentences that contain both `ChatGPT` and `education`.
+
 ``` r
 tokens |>
   textpress::nlp_cast_tokens() |>
@@ -166,12 +176,17 @@ tokens |>
 | text_id | text                                                                                                                                             |
 |:----|:------------------------------------------------------------------|
 | 15.24   | Embrace the future of education by leveraging the capabilities of ChatGPT to unlock your full academic potential .                               |
-| 6.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
-| 6.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
+| 5.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
+| 5.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
 
 ## Retrieval-augmented generation
 
 ### Sentence Window Retrieval
+
+> Chunks built out of (n = `chunk_size`) sentences; context added as (n
+> = `context_size`) sentences as window before and after chunk. Chunks
+> (in bold-face below) are indexed in vector store for retrieval; chunks
+> plus contexts (normal font below) serve as input to LLM.
 
 ``` r
 chunks <- df_ss |>
@@ -182,11 +197,11 @@ set.seed(99)
 chunks |> sample_n(3) |> knitr::kable(escape = F)
 ```
 
-| doc_id | chunk_id | chunk                                                                                                                                                                                                                                                                                                                       | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-|:-|:-|:------------------------|:-------------------------------------------|
-| 21     | 21.5     | They’re reminiscent of BBEdit’s Clippings feature, and unsurprisingly, one of the included Cheat Sheets contains all the placeholders used in building a BBEdit Clipping. There’s also a new Minimap view, which lets you see a large thumbnail of a very long document, highlighting the portion that’s currently visible. | For example, the Markdown Cheat Sheet not only shows various forms of Markdown but if you click on any of the examples, they’ll be automatically inserted into your document. <b>They’re reminiscent of BBEdit’s Clippings feature, and unsurprisingly, one of the included Cheat Sheets contains all the placeholders used in building a BBEdit Clipping. There’s also a new Minimap view, which lets you see a large thumbnail of a very long document, highlighting the portion that’s currently visible.</b> You can navigate anywhere in a document by clicking on the Minimap. |
-| 22     | 22.6     | It accuses the defendants of “copying and using millions of The Times’s copyrighted \[articles\].” The claim is supported by 100 examples of ChatGPT reproducing near-exact copy from New York Times articles.                                                                                                              | But The New York Times’s suit is notable for its scope. <b>It accuses the defendants of “copying and using millions of The Times’s copyrighted \[articles\].” The claim is supported by 100 examples of ChatGPT reproducing near-exact copy from New York Times articles.</b> “Whenever you have a verbatim copy, that’s a replacement, and that’s going to be pretty colorable \[plausible to the court\],” says Ziniti.                                                                                                                                                            |
-| 2      | 2.8      | I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.                                                                                                                                                                                                   | I either queried for news or gave them links to news reports and asked the model to summarize them or write an article based on them. <b>I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.</b> The models sometimes repeat facts at different places or place them where they don’t make sense.                                                                                                                                                                                                              |
+| doc_id | chunk_id | chunk                                                                                                                                                                                                                                                                                                                                                               | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|:-|:-|:-------------------------|:------------------------------------------|
+| 22     | 22.7     | “Whenever you have a verbatim copy, that’s a replacement, and that’s going to be pretty colorable \[plausible to the court\],” says Ziniti. “The New York Times also has enough of a library, going back to 1851, that they can actually say some percentage of the training data was New York Times.”                                                              | The claim is supported by 100 examples of ChatGPT reproducing near-exact copy from New York Times articles. <b>“Whenever you have a verbatim copy, that’s a replacement, and that’s going to be pretty colorable \[plausible to the court\],” says Ziniti. “The New York Times also has enough of a library, going back to 1851, that they can actually say some percentage of the training data was New York Times.”</b> Even so, the suit’s victory isn’t certain.                                                                                                                                                                        |
+| 22     | 22.18    | In the meantime, companies and organizations training AI face a potential minefield—and may want to keep an eye on the source of data used for training. “From an engineering point of view, when you add a new source to your dataset to train on, you keep track of that, figure out where you looked at it, note the terms of use for the website,” says Ziniti. | But even this act is not yet law, and it’s unclear when the regulations it outlines will come into effect. <b>In the meantime, companies and organizations training AI face a potential minefield—and may want to keep an eye on the source of data used for training. “From an engineering point of view, when you add a new source to your dataset to train on, you keep track of that, figure out where you looked at it, note the terms of use for the website,” says Ziniti.</b> She notes that training from sources that include a wide variety of data, such as Common Crawl, is more defensible than training on a narrow dataset. |
+| 2      | 2.8      | I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.                                                                                                                                                                                                                                           | I either queried for news or gave them links to news reports and asked the model to summarize them or write an article based on them. <b>I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.</b> The models sometimes repeat facts at different places or place them where they don’t make sense.                                                                                                                                                                                                                                                                     |
 
 ### OpenAI embeddings
 
@@ -224,12 +239,12 @@ textpress::search_semantics(x = query,
   knitr::kable()
 ```
 
-| cos_sim | doc_id | chunk                                                                                                                                                                                                                                                                                          |
-|--:|:--|:-----------------------------------------------------------------|
-|   0.888 | 6      | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI. While these tools are powerful, they are not infallible.                                                                          |
-|   0.883 | 3      | Many charities will also be wary of AI replacing jobs. While disruption, transformation, and innovation sometimes lead to an upskilling in roles, ChatGPT still needs human intervention.                                                                                                      |
-|   0.883 | 1      | As usual, our standard Ars warning about AI language models applies: “Bring your own data” for analysis, don’t rely on ChatGPT as a factual resource, and don’t rely on its outputs in ways you cannot personally confirm. OpenAI has provided more details about ChatGPT Team on its website. |
-|   0.879 | 3      | There are ethical issues surrounding the use of ChatGPT. The information it pulls together to formulate a response should be taken with a grain of scepticism.                                                                                                                                 |
-|   0.879 | 3      | The model was fine-tuned and optimised to better engage in sustained dialogues, leading to the birth of ChatGPT.” ChatGPT and its predecessors are impactful because they can seem like living people.                                                                                         |
+| cos_sim | doc_id | chunk                                                                                                                                                                                                                                                                                                                                    |
+|--:|:--|:------------------------------------------------------------------|
+|   0.888 | 5      | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI. While these tools are powerful, they are not infallible.                                                                                                                    |
+|   0.883 | 1      | As usual, our standard Ars warning about AI language models applies: “Bring your own data” for analysis, don’t rely on ChatGPT as a factual resource, and don’t rely on its outputs in ways you cannot personally confirm. OpenAI has provided more details about ChatGPT Team on its website.                                           |
+|   0.877 | 15     | In the ever-evolving landscape of education, technology has become a game-changer, revolutionizing the way students approach learning. One such groundbreaking tool that has gained prominence is ChatGPT, a sophisticated language model developed by OpenAI.                                                                           |
+|   0.875 | 5      | Faced with a challenging problem, I wanted to confirm my understanding before guiding hers. As someone studying artificial intelligence in education, I was curious: Could ChatGPT help?                                                                                                                                                 |
+|   0.871 | 19     | Generative artificial intelligence has come to forefront of the technology industry’s mind after OpenAI released ChatGPT in late 2022. Since then, companies from Google (GOOG) (GOOGL) to Amazon (AMZN) and Apple (AAPL) have jumped on the AI bandwagon, trying to incorporate smarter technology into everyday products and services. |
 
 ## Summary
