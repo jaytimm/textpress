@@ -13,12 +13,12 @@
 #' @export
 #'
 #'
-nlp_search_corpus <- function(tif,
-                              search,
-                              n = 0,
-                              is_inline = FALSE,
-                              highlight = c('<', '>'),
-                              cores = 1) {
+search_corpus <- function(tif,
+                          search,
+                          n = 0,
+                          is_inline = FALSE,
+                          highlight = c('**', '**'),
+                          cores = 1) {
 
   # If only one core is used, run the non-parallel version of the function
   if (cores == 1) {

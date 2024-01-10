@@ -12,9 +12,9 @@
 #' @return A data frame containing scraped news data.
 #' @export
 #'
-nlp_scrape_web <- function(x,
-                           input = 'search',
-                           cores = 3) {
+web_scrape_urls <- function(x,
+                            input = 'search',
+                            cores = 3) {
 
   # Process input based on the type
   if (input == 'search') {

@@ -8,10 +8,10 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr pluck
 #' @export
-#' @rdname nlp_fetch_openai_embs
+#' @rdname rag_fetch_openai_embs
 #'
 
-nlp_fetch_openai_embs <- function(tif,
+rag_fetch_openai_embs <- function(tif,
                                   batch_id = 'batch_id',
                                   text = 'text',
                                   text_id = 'text_id',

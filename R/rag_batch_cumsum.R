@@ -7,10 +7,10 @@
 #' @param threshold A numeric threshold for the cumulative sum of each batch.
 #' @return A numeric vector indicating the batch number for each element of `x`.
 #' @export
-#' @rdname nlp_batch_cumsum
+#' @rdname rag_batch_cumsum
 #'
 
-nlp_batch_cumsum <- function(x, threshold) {
+rag_batch_cumsum <- function(x, threshold) {
 
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")
@@ -20,6 +20,8 @@ nlp_batch_cumsum <- function(x, threshold) {
     stop("The 'threshold' must be a single numeric value.")
   }
 
+
+  ## mutate(words = tokenizers::count_words(text))
 
   cumsum <- 0
   group <- 1

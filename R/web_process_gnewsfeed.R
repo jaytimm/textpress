@@ -10,7 +10,7 @@
 #' @examples
 #' nlp_process_gnewsfeed("R language")
 
-nlp_process_gnewsfeed <- function(x){
+web_process_gnewsfeed <- function(x){
 
   mm <- .build_rss(x = x) |> .parse_rss()
   mm$url <- .get_urls(mm$link)

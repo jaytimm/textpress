@@ -12,15 +12,15 @@
 #'
 #' @return A subset of the df based on the search criteria.
 #' @export
-#' @rdname nlp_search_df
+#' @rdname search_df
 #'
 #'
-nlp_search_df <- function(df,
-                          search_col,
-                          id_col,
-                          include,
-                          logic = 'and',
-                          exclude = NULL) {
+search_df <- function(df,
+                      search_col,
+                      id_col,
+                      include,
+                      logic = 'and',
+                      exclude = NULL) {
   # Convert the data frame to a data table
   data.table::setDT(df)
 

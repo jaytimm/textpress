@@ -10,7 +10,7 @@
 #' @export
 #'
 #'
-nlp_chunk_sentences <- function(df,
+rag_chunk_sentences <- function(df,
                                 chunk_size,
                                 context_size) {
 
@@ -26,15 +26,19 @@ nlp_chunk_sentences <- function(df,
                                          sentence_id + context_size)),
                      by = .(chunk_id, doc_id)]
 
-  neighbors_dt <- neighbors_dt[neighbor_id > 0 & neighbor_id <= max(dt$sentence_id),
-                               unique(.SD),
-                               by = .(chunk_id, neighbor_id)]
+  neighbors_dt <- unique(neighbors_dt)
+
+  # neighbors_dt <- neighbors_dt[neighbor_id > 0 & neighbor_id <= max(df$sentence_id),
+  #                              unique(.SD),
+  #                              by = .(chunk_id, neighbor_id)]
 
   # Aggregate text by chunk_id
   chunk_dt <- df[, .(chunk = paste(text, collapse = ' ')), by = .(doc_id, chunk_id)]
 
   # Join with original dt to aggregate text by neighbors
-  dt_neighbors_joined <- dt[neighbors_dt, on = .(doc_id, sentence_id = neighbor_id)]
+  dt_neighbors_joined <- df[neighbors_dt, on = .(doc_id, sentence_id = neighbor_id)]
+
+
   dt_neighbors_joined[, is_chunk := ifelse(chunk_id == i.chunk_id, 1, 0)]
 
   # Create a grouping variable for consecutive runs of the same value in is_chunk
@@ -52,7 +56,7 @@ nlp_chunk_sentences <- function(df,
 
 
   # Create a data table of chunks with context
-  chunk_with_context_df <- dt_neighbors_joined[!is.na(is_chunk),
+  chunk_with_context_df <- dt_neighbors_joined[!is.na(text),
                                                .(chunk_plus_context = paste(text, collapse = ' ')),
                                                by = .(doc_id, i.chunk_id)]
 
