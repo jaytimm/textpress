@@ -13,7 +13,6 @@
 .get_sim <- function(x,
                      y = NULL,
                      norm = c("l2", "none")) {
-
   # Match the 'norm' argument with one of the specified options ("l2", "none")
 
   norm <- match.arg(norm)

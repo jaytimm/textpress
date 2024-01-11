@@ -9,18 +9,18 @@
 #' @noRd
 .build_rss <- function(x = NULL) {
   # Define RSS feed URL components
-  clang_suffix <- 'hl=en-US&gl=US&ceid=US:en&q='
+  clang_suffix <- "hl=en-US&gl=US&ceid=US:en&q="
   base <- "https://news.google.com/news/rss/search?"
   tops <- "https://news.google.com/news/rss/?ned=us&hl=en&gl=us"
 
   # Handle case when no query is provided
-  if(is.null(x)) {
+  if (is.null(x)) {
     return(tops)
   } else {
     # Process the query for URL encoding
-    x <- strsplit(x, ' AND ')[[1]]
+    x <- strsplit(x, " AND ")[[1]]
     y <- unlist(lapply(x, URLencode))
-    y1 <- lapply(y, function(q) gsub('(^.*$)', '%22\\1%22', q))
+    y1 <- lapply(y, function(q) gsub("(^.*$)", "%22\\1%22", q))
 
     # Construct the search URL
     search1 <- paste(y1, collapse = "%20AND%20")
@@ -38,7 +38,7 @@
 #' urls <- c("http://example.com", "http://example.org")
 #' .get_urls(urls)
 #' @noRd
-.get_urls <- function(x){
+.get_urls <- function(x) {
   # Use lapply to process each URL in the vector
   result <- lapply(x, function(q) {
     # Attempt to retrieve HTML content
@@ -77,7 +77,9 @@
   # Try to read the XML content, return NA on error
   doc <- tryCatch(
     xml2::read_xml(x),
-    error = function(e) return(NA)
+    error = function(e) {
+      return(NA)
+    }
   )
 
   if (is.na(doc)) {

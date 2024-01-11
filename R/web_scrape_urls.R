@@ -88,8 +88,7 @@ web_scrape_urls <- function(x,
 #' @importFrom data.table setDT
 #' @noRd
 
-.article_extract <- function (x) {
-
+.article_extract <- function(x) {
   # Apply a function to each URL in the list 'x'
   articles <- lapply(x, function(q) {
     # Retrieve the content of the website for the given URL
@@ -98,7 +97,7 @@ web_scrape_urls <- function(x,
     # Annotate the retrieved website content
     annotated_site <- .annotate_site(site = raw_site)
     # Filter the annotated content to keep relevant parts
-    clean_site <- subset(annotated_site, annotated_site$discard == 'keep')
+    clean_site <- subset(annotated_site, annotated_site$discard == "keep")
 
     # Convert the cleaned data into a data.table format
     data.table::setDT(clean_site)

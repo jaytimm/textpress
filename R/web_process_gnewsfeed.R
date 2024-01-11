@@ -9,9 +9,7 @@
 #' @export
 #' @examples
 #' web_process_gnewsfeed("R language")
-
-web_process_gnewsfeed <- function(x){
-
+web_process_gnewsfeed <- function(x) {
   # Build an RSS feed URL using the provided search query and parse the RSS feed
   mm <- .build_rss(x = x) |> .parse_rss()
 
