@@ -4,6 +4,7 @@
 #'
 #' @param tok A list where each element contains tokens corresponding to a document or a sentence.
 #' @param by A character string specifying grouping column.
+#' @param word_form A character string specifying either token or lemma
 #' @return A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.
 #' @export
 #' @rdname nlp_cast_tokens
@@ -11,7 +12,7 @@
 #'
 nlp_cast_tokens <- function(tok,
                             by = "text_id",
-                            token = "token") {
+                            word_form = "token") {
 
   if (!all(sapply(tok, is.atomic))) {
     stop("`x` must be a list of atomic `vector`s")

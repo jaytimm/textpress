@@ -9,7 +9,7 @@ search_corpus(
   search,
   n = 0,
   is_inline = FALSE,
-  highlight = c("**", "**"),
+  highlight = c("<b>", "</b>"),
   cores = 1
 )
 }
@@ -22,7 +22,7 @@ search_corpus(
 
 \item{is_inline}{Logical, default FALSE. Indicates if the search should be inline.}
 
-\item{highlight}{A character vector of length two, default c('<', '>').
+\item{highlight}{A character vector of length two, default c('\if{html}{\out{<b>}}', '\if{html}{\out{</b>}}').
 Used to highlight the found patterns in the text.}
 
 \item{cores}{Numeric, default 1. The number of cores to use for parallel processing.}

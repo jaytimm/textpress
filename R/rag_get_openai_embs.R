@@ -1,16 +1,23 @@
-#' Extract Embeddings from OpenAI
+#' Fetch OpenAI Embeddings
 #'
-#' This function sends a text to the OpenAI API and retrieves its embeddings.
+#' Retrieves embeddings from OpenAI for a given text or a batch of texts.
+#' It can process a single query or batches of text data from a dataframe.
 #'
-#' @param x A character string representing the text to be embedded.
-#' @return A numeric vector representing the embeddings of the input text.
+#' @param tif A dataframe containing text data.
+#' @param batch_id The name of the column in `tif` identifying each batch. Default is 'batch_id'.
+#' @param text The name of the column in `tif` containing the text data. Default is 'text'.
+#' @param text_id The name of the column in `tif` for text identifiers. Default is 'text_id'.
+#' @param query An optional single text query for fetching embeddings.
+#' @param wait Time in seconds to wait between processing batches. Default is 30 seconds.
+#' @return A matrix of embeddings for either a single query or a combined matrix for all batches.
 #' @importFrom httr POST add_headers content
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr pluck
+#' @importFrom stringr str_trunc
 #' @export
-#' @rdname rag_fetch_openai_embs
-#'
 
+#'
+#'
 rag_fetch_openai_embs <- function(tif,
                                   batch_id = 'batch_id',
                                   text = 'text',
@@ -18,42 +25,46 @@ rag_fetch_openai_embs <- function(tif,
                                   query = NULL,
                                   wait = 30){
 
+  # Check if query is provided and process it
   if(!is.null(query)){
     embeddings <- .openai_embs(x = query)
     m99 <- matrix(unlist(embeddings), ncol = 1536, nrow = 1)
     rownames(m99) <- stringr::str_trunc(query, 100)
-    m99
-  } else{
+    return(m99)
+  } else {
+    # Validate input dataframe
+    if (!("data.frame" %in% class(tif))) {
+      stop("tif must be a dataframe")
+    }
 
+    # Splitting the dataframe into batches based on batch_id
     z <- split(tif, tif[[batch_id]])
     eb_list <- list()
 
-    for(i in 1:length(z)){
-
+    # Process each batch
+    for (i in seq_along(z)) {
       txt <- z[[i]][[text]]
 
       embeddings <- .openai_embs(x = txt)
       m99 <- matrix(unlist(embeddings), ncol = 1536, byrow = TRUE)
-
       rownames(m99) <- z[[i]][[text_id]]
       eb_list[[i]] <- m99
 
+      # Print progress
       print(paste0('Batch ', i, ' of ', length(z)))
       Sys.sleep(wait)
     }
 
-    do.call(rbind, eb_list)
+    # Return combined matrix of all batches
+    return(do.call(rbind, eb_list))
   }
 }
 
-
-
-#' Fetches embeddings from OpenAI API, internal function.
-#'
-#' @param x Text input for embedding generation.
-#' @return A list of embeddings for the given input.
+#' Internal function for fetching embeddings
+#' @param x A character string or vector of texts to fetch embeddings for.
 #' @keywords internal
-#' @noRd
+#'
+#'
 .openai_embs <- function(x) {
   # Add authorization header with OpenAI API key
   auth <- httr::add_headers(Authorization = paste("Bearer", Sys.getenv("OPENAI_API_KEY")))

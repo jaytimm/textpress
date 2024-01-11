@@ -18,5 +18,5 @@ This function takes a search term, builds an RSS feed from Google News, parses i
 and retrieves URLs, returning a dataframe with the relevant article metadata.
 }
 \examples{
-nlp_process_gnewsfeed("R language")
+web_process_gnewsfeed("R language")
 }

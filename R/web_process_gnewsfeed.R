@@ -8,7 +8,7 @@
 #'         including URL, title, date, and other relevant metadata.
 #' @export
 #' @examples
-#' nlp_process_gnewsfeed("R language")
+#' web_process_gnewsfeed("R language")
 
 web_process_gnewsfeed <- function(x){
 

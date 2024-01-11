@@ -18,5 +18,7 @@ Imports:
     stringi, 
     jsonlite,
     stringr,
-    xml2
+    xml2,
+    pbapply,
+    rvest
 License: GPL-3

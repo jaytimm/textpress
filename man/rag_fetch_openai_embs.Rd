@@ -2,7 +2,7 @@
 % Please edit documentation in R/rag_get_openai_embs.R
 \name{rag_fetch_openai_embs}
 \alias{rag_fetch_openai_embs}
-\title{Extract Embeddings from OpenAI}
+\title{Fetch OpenAI Embeddings}
 \usage{
 rag_fetch_openai_embs(
   tif,
@@ -14,11 +14,22 @@ rag_fetch_openai_embs(
 )
 }
 \arguments{
-\item{x}{A character string representing the text to be embedded.}
+\item{tif}{A dataframe containing text data.}
+
+\item{batch_id}{The name of the column in \code{tif} identifying each batch. Default is 'batch_id'.}
+
+\item{text}{The name of the column in \code{tif} containing the text data. Default is 'text'.}
+
+\item{text_id}{The name of the column in \code{tif} for text identifiers. Default is 'text_id'.}
+
+\item{query}{An optional single text query for fetching embeddings.}
+
+\item{wait}{Time in seconds to wait between processing batches. Default is 30 seconds.}
 }
 \value{
-A numeric vector representing the embeddings of the input text.
+A matrix of embeddings for either a single query or a combined matrix for all batches.
 }
 \description{
-This function sends a text to the OpenAI API and retrieves its embeddings.
+Retrieves embeddings from OpenAI for a given text or a batch of texts.
+It can process a single query or batches of text data from a dataframe.
 }
