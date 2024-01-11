@@ -10,31 +10,38 @@
 #' @rdname rag_batch_cumsum
 #'
 
+# Define the function 'rag_batch_cumsum' with parameters 'x' and 'threshold'
 rag_batch_cumsum <- function(x, threshold) {
 
+  # Check if 'x' is a numeric vector
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")
   }
 
+  # Check if 'threshold' is a single numeric value
   if (!is.numeric(threshold) || length(threshold) != 1) {
     stop("The 'threshold' must be a single numeric value.")
   }
 
-
-  ## mutate(words = tokenizers::count_words(text))
-
+  # Initialize variables for cumulative sum and grouping
   cumsum <- 0
   group <- 1
   result <- numeric()
 
+  # Loop through each element in 'x'
   for (i in 1:length(x)) {
-    cumsum <- cumsum + x[i]
+    cumsum <- cumsum + x[i]  # Update the cumulative sum
 
+    # Check if the cumulative sum exceeds the threshold
     if (cumsum > threshold) {
-      group <- group + 1
-      cumsum <- x[i] }
+      group <- group + 1  # Increment the group number
+      cumsum <- x[i]  # Reset the cumulative sum for the new group
+    }
 
-    result = c(result, group)}
+    # Append the current group number to the result vector
+    result = c(result, group)
+  }
 
+  # Return the vector containing group numbers
   return (result)
 }

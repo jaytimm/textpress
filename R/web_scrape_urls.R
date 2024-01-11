@@ -88,19 +88,27 @@ web_scrape_urls <- function(x,
 
 .article_extract <- function (x) {
 
-  # x <- batches[[1]]
-  # q <- x[1]
+  # Apply a function to each URL in the list 'x'
   articles <- lapply(x, function(q) {
+    # Retrieve the content of the website for the given URL
     raw_site <- .get_site(q)
+
+    # Annotate the retrieved website content
     annotated_site <- .annotate_site(site = raw_site)
+
+    # Filter the annotated content to keep relevant parts
     clean_site <- subset(annotated_site, annotated_site$discard == 'keep')
+
+    # Convert the cleaned data into a data.table format
     data.table::setDT(clean_site)
+
+    # Aggregate the text by 'url' and 'h1_title', collapsing it into a single string
     clean_site[, list(text = paste(text, collapse = " ")), by = list(url, h1_title)]
   })
 
+  # Combine the list of data.tables into a single data.table and return it
   data.table::rbindlist(articles)
 }
-
 
 
 #' Get Site Content
@@ -202,9 +210,3 @@ web_scrape_urls <- function(x,
 
   return(site)
 }
-
-
-# x <- 'https://time.com/6343967/bidenomics-is-real-economics/'
-# site <- x |> .get_site()
-# annotated_site <- site |> .annotate_site()
-# clean_site <- annotated_site |> .article_extract()

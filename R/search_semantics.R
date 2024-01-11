@@ -11,31 +11,40 @@
 #' @noRd
 #'
 
+# Define a function '.get_sim' with arguments 'x', 'y', and 'norm'
 .get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
 
+  # Match the 'norm' argument with one of the specified options ("l2", "none")
   norm <- match.arg(norm)
 
+  # Ensure 'x' is either a matrix or a sparse matrix
   stopifnot(is.matrix(x) || inherits(x, "sparseMatrix"))
 
+  # If 'y' is provided, perform checks similar to 'x' and ensure dimension compatibility
   if (!is.null(y)) {
     stopifnot(is.matrix(y) || inherits(y, "sparseMatrix"))
     stopifnot(ncol(x) == ncol(y))
     stopifnot(all(colnames(x) == colnames(y)))
   }
 
+  # Define a nested function 'normalize' to normalize matrices
   normalize <- function(m, norm) {
+    # If no normalization is required, return the matrix as-is
     if (norm == "none") {
       return(m)
     }
 
+    # Calculate the normalization vector based on L2 norm or unit norm
     norm_vec <- if (norm == "l2") {
       1 / sqrt(rowSums(m ^ 2))
     } else {
       rep(1, nrow(m))
     }
 
+    # Replace infinite values in the normalization vector with zeros
     norm_vec[is.infinite(norm_vec)] <- 0
 
+    # Apply normalization to the matrix, supporting both dense and sparse matrices
     if (inherits(m, "sparseMatrix")) {
       Matrix::rowScale(m, norm_vec)
     } else {
@@ -43,14 +52,18 @@
     }
   }
 
+  # Normalize 'x' and optionally 'y' using the specified norm
   x <- normalize(x, norm)
   if (!is.null(y)) {
     y <- normalize(y, norm)
+    # Return the cross-product of the normalized matrices
     return(tcrossprod(x, y))
   } else {
+    # Return the cross-product of 'x' with itself if 'y' is not provided
     return(tcrossprod(x))
   }
 }
+
 
 
 #' Find Nearest Neighbors Based on Cosine Similarity
