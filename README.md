@@ -1,3 +1,6 @@
+[![R build
+status](https://github.com/jaytimm/textpress/workflows/R-CMD-check/badge.svg)](https://github.com/jaytimm/textpress/actions)
+
 # textpress
 
 A lightweight, versatile NLP companion in R. Provides basic features for
@@ -83,11 +86,11 @@ df_ss |>
 
 | doc_id | sentence_id | text                                                                                                                                                                                                                                                                             |
 |:--|:---|:----------------------------------------------------------------|
-| 3      | 16          | In April, the Cyberspace Administration of China released draft regulations on the development of generative <b>artificial intelligence</b> models that would require “AI-produced content \[to\] embody core socialist values.”                                                 |
-| 4      | 1           | Free TV company, Telly, debuted its new <b>artificial intelligence</b> voice assistant, “Hey Telly,” at CES 2024.                                                                                                                                                                |
-| 5      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                                                                              |
-| 7      | 2           | ChatGPT maker OpenAI finally announced on Wednesday its app store for the public to try the customized versions of its popular chatbot, ChatGPT, as the <b>artificial intelligence</b> company works to expand the reach of its flagship technology and turn it into a cash cow. |
-| 8      | 3           | The company has integrated ChatGPT, an <b>artificial intelligence</b>-based chatbot, into its IDA voice assistant, marking a new era in automotive technology.                                                                                                                   |
+| 3      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                                                                              |
+| 4      | 3           | DOE’s decision is supposed to set the foundation for future agency uses of generative <b>artificial intelligence</b>, Chad Smith, a spokesperson for the department, told FedScoop.                                                                                              |
+| 6      | 2           | ChatGPT maker OpenAI finally announced on Wednesday its app store for the public to try the customized versions of its popular chatbot, ChatGPT, as the <b>artificial intelligence</b> company works to expand the reach of its flagship technology and turn it into a cash cow. |
+| 7      | 3           | The company has integrated ChatGPT, an <b>artificial intelligence</b>-based chatbot, into its IDA voice assistant, marking a new era in automotive technology.                                                                                                                   |
+| 12     | 1           | The field of <b>artificial intelligence</b> (AI) has witnessed a remarkable surge in innovation, with ChatGPT from OpenAI leading the charge.                                                                                                                                    |
 
 ## Search inline
 
@@ -152,7 +155,7 @@ inline_ss |>
 | doc_id | sentence_id | text                                                                                                                                                                                                                                           |
 |:--|:----|:---------------------------------------------------------------|
 | 17     | 11          | Each/DT/1 API/NN/2 has/VBZ/3 to/TO/4 be/VB/5 continuously/RB/6 <b>tested/JJ/7 and/CC/8 verified/JJ/9</b> to/TO/10 ensure/VB/11 your/PRP$/12 software/NN/13 functions/NNS/14 as/IN/15 it/PRP/16 should/MD/17 ././18                             |
-| 23     | 31          | Make/VB/1 sure/JJ/2 the/DT/3 affirmation/NN/4 is/VBZ/5 <b>achievable/JJ/6 and/CC/7 positive/JJ/8</b> ,/,/9 and/CC/10 no/RB/11 longer/RBR/12 than/IN/13 \[/-LRB-/14 insert/VB/15 word/NN/16 limit/NN/17 \]/-RRB-/18 words/NNS/19 ././20 ”/’’/21 |
+| 22     | 31          | Make/VB/1 sure/JJ/2 the/DT/3 affirmation/NN/4 is/VBZ/5 <b>achievable/JJ/6 and/CC/7 positive/JJ/8</b> ,/,/9 and/CC/10 no/RB/11 longer/RBR/12 than/IN/13 \[/-LRB-/14 insert/VB/15 word/NN/16 limit/NN/17 \]/-RRB-/18 words/NNS/19 ././20 ”/’’/21 |
 
 ## Search df
 
@@ -176,8 +179,8 @@ tokens |>
 
 | text_id | text                                                                                                                                             |
 |:----|:------------------------------------------------------------------|
-| 5.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
-| 5.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
+| 3.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
+| 3.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
 
 ## Retrieval-augmented generation
 
@@ -197,11 +200,11 @@ set.seed(99)
 chunks |> sample_n(3) |> select(-chunk) |> knitr::kable(escape = F)
 ```
 
-| doc_id | chunk_id | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|:-|:--|:------------------------------------------------------------------|
-| 21     | 21.2     | The publication recently filed a lawsuit against OpenAI and Microsoft that claims copyright infringement, trademark dilution, and unfair competition. <b>And it’s not pulling its punches. The suit seeks not just monetary compensation but also the destruction of all the defendant’s LLM models and training data, as well as a halt to unlicensed training on the publication’s articles.</b> “When you have these big technology shifts, the law has to adjust,” says Cecilia Ziniti, a Silicon Valley attorney. |
-| 21     | 21.13    | OpenAI also reached an agreement with the Associated Press. <b>“The fact that OpenAI made deals with others shows there is a market for this particular use for data,” says Ziniti. Masnick is more skeptical that these agreements will be a factor, but notes that “a judge can decide whatever they want….</b> It’s not very predictable.”                                                                                                                                                                          |
-| 2      | 2.8      | I either queried for news or gave them links to news reports and asked the model to summarize them or write an article based on them. <b>I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.</b> The models sometimes repeat facts at different places or place them where they don’t make sense.                                                                                                                                                |
+| doc_id | chunk_id | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|:-|:--|:-------------------------------------------------------------------|
+| 22     | 22.2     | But its use isn’t reserved for workspaces and classrooms. <b>Thanks to its massive corpus of training data and sophisticated algorithms its applications are quite literally endless – creating valuable opportunities for users looking to unlock their best self in 2024, and beyond. Whether you’re in your ‘new year, new me’ era, or you simply want to build healthier habits and stick to them year-round, we’ve rounded up some of the top self-improvement prompts to feed ChatGPT this January.</b> We also offer advice on what makes a great prompt, to help you get the most out of generative AI. |
+| 22     | 22.13    | Some of my personal, professional, and academic goals include: \[include examples of goals\]. <b>Use a mixture of inspiring imagery and language, and don’t make the vision board any bigger than \[insert size limit here\]. “Use a neutral color palette and cursive fonts like this vision board: \[insert photo of vision board here\].”</b> Daily affirmations are positive mantras you repeat routinely to encourage optimism and success.                                                                                                                                                                |
+| 2      | 2.8      | I either queried for news or gave them links to news reports and asked the model to summarize them or write an article based on them. <b>I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.</b> The models sometimes repeat facts at different places or place them where they don’t make sense.                                                                                                                                                                                                                                         |
 
 ### OpenAI embeddings
 
@@ -239,12 +242,12 @@ textpress::search_semantics(x = query,
   knitr::kable()
 ```
 
-| cos_sim | doc_id | chunk                                                                                                                                                                                                                                                                                                                                    |
-|--:|:--|:------------------------------------------------------------------|
-|   0.877 | 5      | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI. While these tools are powerful, they are not infallible.                                                                                                                    |
-|   0.874 | 1      | As usual, our standard Ars warning about AI language models applies: “Bring your own data” for analysis, don’t rely on ChatGPT as a factual resource, and don’t rely on its outputs in ways you cannot personally confirm. OpenAI has provided more details about ChatGPT Team on its website.                                           |
-|   0.869 | 5      | Faced with a challenging problem, I wanted to confirm my understanding before guiding hers. As someone studying artificial intelligence in education, I was curious: Could ChatGPT help?                                                                                                                                                 |
-|   0.862 | 18     | Generative artificial intelligence has come to forefront of the technology industry’s mind after OpenAI released ChatGPT in late 2022. Since then, companies from Google (GOOG) (GOOGL) to Amazon (AMZN) and Apple (AAPL) have jumped on the AI bandwagon, trying to incorporate smarter technology into everyday products and services. |
-|   0.860 | 16     | There has never been a better time to learn anything than today with AI tools like ChatGPT. I know that many people are skeptical of these AI tools, thinking that they will take your job or disrupt your life.                                                                                                                         |
+| cos_sim | doc_id | chunk                                                                                                                                                                                                                                                                                                                 |
+|--:|:--|:-----------------------------------------------------------------|
+|   0.877 | 3      | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI. While these tools are powerful, they are not infallible.                                                                                                 |
+|   0.874 | 1      | As usual, our standard Ars warning about AI language models applies: “Bring your own data” for analysis, don’t rely on ChatGPT as a factual resource, and don’t rely on its outputs in ways you cannot personally confirm. OpenAI has provided more details about ChatGPT Team on its website.                        |
+|   0.873 | 16     | The issues surrounding its tendency to basically steal preexisting content will undoubtedly continue to mount for the AI company, unless they can prove that what ChatGPT is doing is indeed “fair use.” Mind Matters features original news and analysis at the intersection of artificial and natural intelligence. |
+|   0.869 | 3      | Faced with a challenging problem, I wanted to confirm my understanding before guiding hers. As someone studying artificial intelligence in education, I was curious: Could ChatGPT help?                                                                                                                              |
+|   0.865 | 16     | ChatGPT, the large language model developed by OpenAI, might seem like it generates novel content, but of course we know that it partakes in what’s generally called “scraping.” It takes pre-existing material on the Internet in response to the prompt a human user inserts.                                       |
 
 ## Summary

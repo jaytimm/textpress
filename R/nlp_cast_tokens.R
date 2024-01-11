@@ -27,6 +27,6 @@ nlp_cast_tokens <- function(tok,
                    check.names = FALSE,
                    row.names = NULL)
 
-  colnames(df) <- c(by, token)
+  colnames(df) <- c(by, word_form)
   return(data.table::data.table(df))
 }
