@@ -13,8 +13,11 @@
 nlp_cast_tokens <- function(tok,
                             by = "text_id",
                             word_form = "token") {
+<<<<<<< HEAD
 
   # Check if all elements in 'tok' are atomic vectors. Stop if not.
+=======
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   if (!all(sapply(tok, is.atomic))) {
     stop("`tok` must be a list of atomic vectors")
   }
@@ -28,9 +31,10 @@ nlp_cast_tokens <- function(tok,
   # 1. Replicated names of 'tok' elements, replicated by the length of each element
   # 2. Unlisted elements of 'tok', concatenated into a single vector
   df <- data.frame(rep(names(tok), sapply(tok, length)),
-                   unlist(tok, use.names = FALSE),
-                   check.names = FALSE,
-                   row.names = NULL)
+    unlist(tok, use.names = FALSE),
+    check.names = FALSE,
+    row.names = NULL
+  )
 
   # Set the column names of the data frame to 'by' and 'word_form'
   colnames(df) <- c(by, word_form)

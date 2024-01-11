@@ -9,10 +9,14 @@
 #' @export
 #' @examples
 #' web_process_gnewsfeed("R language")
+<<<<<<< HEAD
 
 web_process_gnewsfeed <- function(x){
 
   # Build an RSS feed URL using the provided search query and parse the RSS feed
+=======
+web_process_gnewsfeed <- function(x) {
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   mm <- .build_rss(x = x) |> .parse_rss()
 
   # Use the parsed RSS feed to extract URLs from the links and add them to 'mm'

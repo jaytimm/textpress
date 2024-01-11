@@ -9,6 +9,7 @@
 #' @noRd
 #'
 .build_rss <- function(x = NULL) {
+<<<<<<< HEAD
 
   # Define the suffix and base URL for constructing the RSS feed URL
   clang_suffix <- 'hl=en-US&gl=US&ceid=US:en&q='
@@ -31,6 +32,18 @@
     y1 <- lapply(y, function(q) gsub('(^.*$)', '%22\\1%22', q))
 
     # Join the encoded search terms with '%20AND%20'
+=======
+  clang_suffix <- "hl=en-US&gl=US&ceid=US:en&q="
+  base <- "https://news.google.com/news/rss/search?"
+  tops <- "https://news.google.com/news/rss/?ned=us&hl=en&gl=us"
+
+  if (is.null(x)) {
+    rss <- tops
+  } else {
+    x <- strsplit(x, " AND ")[[1]]
+    y <- unlist(lapply(x, function(q) gsub(" ", "%20", q)))
+    y1 <- lapply(y, function(q) gsub("(^.*$)", "%22\\1%22", q))
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     search1 <- paste(y1, collapse = "%20AND%20")
 
     # Construct the final RSS feed URL
@@ -55,16 +68,23 @@
 #' @importFrom httr GET timeout
 #' @noRd
 #'
+<<<<<<< HEAD
 .get_urls <- function(x){
 
   # Use 'lapply' to apply a function to each element in 'x'
   lapply(x, function(q){
 
     # Try to read the HTML content of the URL 'q' with a 60-second timeout
+=======
+.get_urls <- function(x) {
+  lapply(x, function(q) {
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     site <- tryCatch(
       xml2::read_html(httr::GET(q, httr::timeout(60))),
-      error = function(e) 'no')
+      error = function(e) "no"
+    )
 
+<<<<<<< HEAD
     # Check if the site was successfully read
     if(length(site) == 1) {
       # If not, return NA
@@ -77,6 +97,16 @@
       gsub('Opening ', '', linkto)
       # Return the modified text (URLs), but without names
       #linkto |> unname()
+=======
+    if (length(site) == 1) {
+      NA
+    } else {
+      linkto <- site |>
+        xml2::xml_find_all("c-wiz") |>
+        xml2::xml_text()
+      gsub("Opening ", "", linkto)
+      # linkto |> unname()
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     }
   }) |> unlist() # Unlist to convert the list to a vector
 }
@@ -93,9 +123,13 @@
 #' @importFrom xml2 read_xml xml_text xml_find_all
 #' @noRd
 #'
+<<<<<<< HEAD
 .parse_rss <- function(x){
 
   # Attempt to read the XML content from the input 'x'
+=======
+.parse_rss <- function(x) {
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   doc <- tryCatch(
     xml2::read_xml(x),
     error = function(e) paste("Error")
@@ -108,6 +142,7 @@
   } else {
     # If the XML was successfully read, extract various elements
 
+<<<<<<< HEAD
     # Extract the titles from the XML and remove any trailing content after ' - '
     title1 <- xml2::xml_text(xml2::xml_find_all(doc,"//item/title"))
     title <- gsub(' - .*$', '', title1)
@@ -122,14 +157,32 @@
     source1 <- sub('^.* - ', '', title1)
     source2 <- xml2::xml_text(xml2::xml_find_all(doc,"//channel/title"))
     if(grepl('Google News', source2)) {
+=======
+  if (any(doc == "Error")) {
+    return(NA)
+  } else {
+    title1 <- xml2::xml_text(xml2::xml_find_all(doc, "//item/title"))
+    title <- gsub(" - .*$", "", title1)
+    link <- xml2::xml_text(xml2::xml_find_all(doc, "//item/link"))
+    pubDate <- xml2::xml_text(xml2::xml_find_all(doc, "//item/pubDate"))
+
+    source1 <- sub("^.* - ", "", title1)
+    source2 <- xml2::xml_text(xml2::xml_find_all(doc, "//channel/title"))
+    if (grepl("Google News", source2)) {
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
       source <- source1
     } else {
       source <- source2
     }
 
+<<<<<<< HEAD
     # Format the publication date
     date <- gsub("^.+, ","",pubDate)
     date <- gsub(" [0-9]*:.+$","", date)
+=======
+    date <- gsub("^.+, ", "", pubDate)
+    date <- gsub(" [0-9]*:.+$", "", date)
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     date <- as.Date(date, "%d %b %Y")
 
     # Combine the extracted data into a data frame

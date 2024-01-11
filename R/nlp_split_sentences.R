@@ -15,23 +15,24 @@
 #' @rdname nlp_split_sentences
 #'
 nlp_split_sentences <- function(tif) {
-
   # Validate input
   if (!("doc_id" %in% names(tif) && "text" %in% names(tif))) {
     stop("The input data frame must contain 'doc_id' and 'text' columns.")
   }
 
   # Convert doc_id to character and tokenize text
-  xx <- data.table::data.table(doc_id = tif$doc_id |> as.character(),
-                               text = sapply(tif$text, .sentence_split))
+  xx <- data.table::data.table(
+    doc_id = tif$doc_id |> as.character(),
+    text = sapply(tif$text, .sentence_split)
+  )
 
   # Unlist the text and create sentence IDs
-  xx1 <- xx[,.(text = unlist(text)), by = doc_id]
+  xx1 <- xx[, .(text = unlist(text)), by = doc_id]
   xx1[, sentence_id := seq_len(.N), by = doc_id]
-  xx1[, text_id := paste0(doc_id, '.', sentence_id)]
+  xx1[, text_id := paste0(doc_id, ".", sentence_id)]
 
   # Reorder columns
-  data.table::setcolorder(xx1, c('doc_id', 'sentence_id', 'text_id', 'text'))
+  data.table::setcolorder(xx1, c("doc_id", "sentence_id", "text_id", "text"))
   return(xx1)
 }
 
@@ -53,4 +54,3 @@ nlp_split_sentences <- function(tif) {
   # Trim leading and trailing spaces from each sentence
   lapply(out, stringi::stri_trim_both)
 }
-

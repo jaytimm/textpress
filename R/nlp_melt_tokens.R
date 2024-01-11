@@ -12,10 +12,16 @@
 #'
 # Define the function 'nlp_melt_tokens' with parameters 'df', 'word_form', and an optional 'by'
 nlp_melt_tokens <- function(df,
+<<<<<<< HEAD
                             word_form,
                             by = c('doc_id')){
 
   # Check if the first argument 'df' is a data frame
+=======
+                            token,
+                            by = c("doc_id")) {
+  # Validate input
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   if (!is.data.frame(df)) {
     stop("The first argument must be a data frame.")
   }
@@ -32,10 +38,15 @@ nlp_melt_tokens <- function(df,
 
   # Extract columns specified in 'by' and create a list of these columns
   nn <- lapply(1:length(by), function(x) df[[by[x]]])
+<<<<<<< HEAD
 
   # Create a new column 'id99' in 'df' by concatenating the columns in 'nn' with a separator ':'
   df$id99 <- do.call("paste", c(nn, sep=":"))
 
   # Split the data frame 'df' into a list of vectors based on 'word_form', grouped by 'id99'
   split(df[[word_form]], df$id99)
+=======
+  df$id99 <- do.call("paste", c(nn, sep = ":"))
+  split(df[[token]], df$id99)
+>>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
 }

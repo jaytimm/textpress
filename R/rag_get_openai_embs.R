@@ -19,14 +19,13 @@
 #'
 #'
 rag_fetch_openai_embs <- function(tif,
-                                  batch_id = 'batch_id',
-                                  text = 'text',
-                                  text_id = 'text_id',
+                                  batch_id = "batch_id",
+                                  text = "text",
+                                  text_id = "text_id",
                                   query = NULL,
-                                  wait = 30){
-
+                                  wait = 30) {
   # Check if query is provided and process it
-  if(!is.null(query)){
+  if (!is.null(query)) {
     embeddings <- .openai_embs(x = query)
     m99 <- matrix(unlist(embeddings), ncol = 1536, nrow = 1)
     rownames(m99) <- stringr::str_trunc(query, 100)
@@ -51,7 +50,7 @@ rag_fetch_openai_embs <- function(tif,
       eb_list[[i]] <- m99
 
       # Print progress
-      print(paste0('Batch ', i, ' of ', length(z)))
+      print(paste0("Batch ", i, " of ", length(z)))
       Sys.sleep(wait)
     }
 
@@ -74,9 +73,10 @@ rag_fetch_openai_embs <- function(tif,
 
   # Send POST request to OpenAI API
   resp <- httr::POST("https://api.openai.com/v1/embeddings",
-                     auth,
-                     body = body,
-                     encode = "json")
+    auth,
+    body = body,
+    encode = "json"
+  )
 
   # Extract and return embeddings from the response
   httr::content(resp, as = "text", encoding = "UTF-8") |>

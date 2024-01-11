@@ -19,7 +19,7 @@ search_df <- function(df,
                       search_col,
                       id_col,
                       include,
-                      logic = 'and',
+                      logic = "and",
                       exclude = NULL) {
   # Convert the data frame to a data table
   data.table::setDT(df)
@@ -33,15 +33,15 @@ search_df <- function(df,
   }
 
   # Convert search criteria to lowercase for case-insensitive matching
-  #df[, (search_col) := tolower(get(search_col))]
+  # df[, (search_col) := tolower(get(search_col))]
 
   include <- tolower(include)
   exclude <- tolower(exclude)
 
   # Apply 'or' or 'and' logic for inclusion criteria
-  if (logic == 'or') {
+  if (logic == "or") {
     df <- df[get(search_col) |> tolower() %in% include, .SD, by = .(get(id_col))]
-  } else {  # 'and' logic
+  } else { # 'and' logic
     ids <- df[get(search_col) |> tolower() %in% include, unique(get(id_col))]
     for (term in include) {
       ids <- intersect(ids, df[get(search_col) |> tolower() == term, unique(get(id_col))])
