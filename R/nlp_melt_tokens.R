@@ -12,8 +12,7 @@
 #'
 nlp_melt_tokens <- function(df,
                             token,
-                            by = c('doc_id')){
-
+                            by = c("doc_id")) {
   # Validate input
   if (!is.data.frame(df)) {
     stop("The first argument must be a data frame.")
@@ -28,7 +27,6 @@ nlp_melt_tokens <- function(df,
 
 
   nn <- lapply(1:length(by), function(x) df[[by[x]]])
-  df$id99 <- do.call("paste", c(nn, sep=":"))
+  df$id99 <- do.call("paste", c(nn, sep = ":"))
   split(df[[token]], df$id99)
-
-  }
+}

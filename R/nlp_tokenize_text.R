@@ -10,8 +10,7 @@
 #' @rdname nlp_tokenize_text
 #'
 nlp_tokenize_text <- function(tif,
-                              by = 'text_id') {
-
+                              by = "text_id") {
   # Check if 'tif' is a data frame
   if (!is.data.frame(tif)) {
     stop("Input 'df' must be a data frame.")
@@ -27,10 +26,10 @@ nlp_tokenize_text <- function(tif,
   # Tokenizing
   tokens <- lapply(tif$text, function(text) {
     unlist(.token_split(text))
-    })
+  })
 
   # Naming the list
-  names(tokens) <-  tif[[by]]
+  names(tokens) <- tif[[by]]
   return(tokens)
 }
 

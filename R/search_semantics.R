@@ -12,7 +12,6 @@
 #'
 
 .get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
-
   norm <- match.arg(norm)
 
   stopifnot(is.matrix(x) || inherits(x, "sparseMatrix"))
@@ -29,7 +28,7 @@
     }
 
     norm_vec <- if (norm == "l2") {
-      1 / sqrt(rowSums(m ^ 2))
+      1 / sqrt(rowSums(m^2))
     } else {
       rep(1, nrow(m))
     }
@@ -69,7 +68,6 @@
 search_semantics <- function(x,
                              matrix,
                              n = 10) {
-
   # Validate inputs
   if (!is.character(x) && !is.numeric(x)) {
     stop("The first argument 'x' must be either a character or numeric vector.")
@@ -100,10 +98,11 @@ search_semantics <- function(x,
   top_n_scores <- sim_scores[top_n_indices]
 
   # Create a data frame with results
-  data.frame(rank = 1:n,
-             term1 = rownames(t0),
-             term2 = rownames(matrix)[top_n_indices],
-             cos_sim = round(top_n_scores, 3),
-             row.names = NULL)
+  data.frame(
+    rank = 1:n,
+    term1 = rownames(t0),
+    term2 = rownames(matrix)[top_n_indices],
+    cos_sim = round(top_n_scores, 3),
+    row.names = NULL
+  )
 }
-

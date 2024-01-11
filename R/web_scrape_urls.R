@@ -13,22 +13,17 @@
 #' @export
 #'
 web_scrape_urls <- function(x,
-                            input = 'search',
+                            input = "search",
                             cores = 3) {
-
   # Process input based on the type
-  if (input == 'search') {
-
+  if (input == "search") {
     # Process for search term
     mm <- .build_rss(x = x) |> .parse_rss()
     mm$url <- .get_urls(mm$link)
-  } else if (input == 'rss') {
-
+  } else if (input == "rss") {
     # Process for RSS feed URL
     mm <- .parse_rss(x)
-
-  } else if (input == 'urls') {
-
+  } else if (input == "urls") {
     # Directly process list of URLs with no metadata
     mm <- data.frame(url = x)
   } else {
@@ -41,14 +36,18 @@ web_scrape_urls <- function(x,
 
   # Set up a parallel cluster
   clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(cl = clust,
-                          varlist = c(".article_extract"),
-                          envir = environment())
+  parallel::clusterExport(
+    cl = clust,
+    varlist = c(".article_extract"),
+    envir = environment()
+  )
 
   # Execute the task function in parallel
-  results <- pbapply::pblapply(X = batches,
-                               FUN = .article_extract,
-                               cl = clust)
+  results <- pbapply::pblapply(
+    X = batches,
+    FUN = .article_extract,
+    cl = clust
+  )
 
   # Stop the cluster
   parallel::stopCluster(clust)
@@ -57,17 +56,20 @@ web_scrape_urls <- function(x,
   combined_results <- data.table::rbindlist(results)
 
   # If RSS metadata is available (not for simple URLs), merge it with results
-  if (input != 'urls') {
+  if (input != "urls") {
     combined_results <- merge(combined_results,
-                              mm,
-                              by = "url",
-                              all = TRUE)
+      mm,
+      by = "url",
+      all = TRUE
+    )
 
-    combined_results[, c('url',
-                         'date',
-                         'source',
-                         'title',
-                         'text')]
+    combined_results[, c(
+      "url",
+      "date",
+      "source",
+      "title",
+      "text"
+    )]
   }
 
   # Select and return relevant columns
@@ -86,14 +88,13 @@ web_scrape_urls <- function(x,
 #' @importFrom data.table setDT
 #' @noRd
 
-.article_extract <- function (x) {
-
+.article_extract <- function(x) {
   # x <- batches[[1]]
   # q <- x[1]
   articles <- lapply(x, function(q) {
     raw_site <- .get_site(q)
     annotated_site <- .annotate_site(site = raw_site)
-    clean_site <- subset(annotated_site, annotated_site$discard == 'keep')
+    clean_site <- subset(annotated_site, annotated_site$discard == "keep")
     data.table::setDT(clean_site)
     clean_site[, list(text = paste(text, collapse = " ")), by = list(url, h1_title)]
   })
@@ -125,9 +126,9 @@ web_scrape_urls <- function(x,
   w1 <- w2 <- NA
 
   # Check if site reading was successful
-  if (!any(site == 'Error')) {
+  if (!any(site == "Error")) {
     # Extract nodes of specific types
-    ntype1 <- 'p,h1,h2,h3'
+    ntype1 <- "p,h1,h2,h3"
     w0 <- rvest::html_nodes(site, ntype1)
 
     # If nodes are found, update type and text
@@ -158,34 +159,33 @@ web_scrape_urls <- function(x,
 #' @keywords internal
 
 .annotate_site <- function(site) {
-
   # Convert to data.table
   data.table::setDT(site)
 
   # Compile a regular expression pattern for junk phrases
-  junk1 <- paste0(.junk_phrases, collapse = '|')
+  junk1 <- paste0(.junk_phrases, collapse = "|")
 
   # Trim whitespace from the text column
   site[, text := trimws(text)]
 
   # Extract the last title from the site, if any
-  site[, h1_title := ifelse(type == 'h1', text, NA)]
+  site[, h1_title := ifelse(type == "h1", text, NA)]
   site[, h1_title := data.table::last(na.omit(h1_title)), by = .(url)]
 
   # Assign a sequential number to each row within each URL group
   site[, place := seq_len(.N), by = .(url)]
 
   # Mark paragraphs and non-paragraph nodes
-  site[, not_pnode := data.table::fifelse(type == 'p', 0, 1)]
+  site[, not_pnode := data.table::fifelse(type == "p", 0, 1)]
 
   # Check for ellipses at the end of text
-  site[, has_ellipses := data.table::fifelse(grepl('\\.\\.\\.(.)?$', text), 1, 0)]
+  site[, has_ellipses := data.table::fifelse(grepl("\\.\\.\\.(.)?$", text), 1, 0)]
 
   # Identify text without standard sentence-ending punctuation, ignoring quotes
-  site[, no_stop := data.table::fifelse(grepl('(\\.|\\!|\\?)(.)?$', gsub("\"|'", '', text)), 0, 1)]
+  site[, no_stop := data.table::fifelse(grepl("(\\.|\\!|\\?)(.)?$", gsub("\"|'", "", text)), 0, 1)]
 
   # Identify specific patterns that indicate non-relevant text
-  site[, has_latest := ifelse(grepl('^latest( .*)? news$|^more( .*)? stories$|^related news$', text, ignore.case = TRUE), 1, NA)]
+  site[, has_latest := ifelse(grepl("^latest( .*)? news$|^more( .*)? stories$|^related news$", text, ignore.case = TRUE), 1, NA)]
 
   site[, has_latest := ifelse(place == 1, 0L, has_latest)]
   site[, has_latest := data.table::nafill(has_latest, type = "locf")]
@@ -198,7 +198,7 @@ web_scrape_urls <- function(x,
 
   # Combine flags to determine if the row should be discarded
   site[, discard := rowSums(.SD[, .(not_pnode, has_latest, has_ellipses, no_stop, less_10, has_junk)])]
-  site[, discard := data.table::fifelse(discard > 0, 'junk', 'keep')]
+  site[, discard := data.table::fifelse(discard > 0, "junk", "keep")]
 
   return(site)
 }

@@ -13,7 +13,6 @@
 nlp_cast_tokens <- function(tok,
                             by = "text_id",
                             word_form = "token") {
-
   if (!all(sapply(tok, is.atomic))) {
     stop("`x` must be a list of atomic `vector`s")
   }
@@ -23,9 +22,10 @@ nlp_cast_tokens <- function(tok,
   }
 
   df <- data.frame(rep(names(tok), sapply(tok, length)),
-                   unlist(tok, use.names = FALSE),
-                   check.names = FALSE,
-                   row.names = NULL)
+    unlist(tok, use.names = FALSE),
+    check.names = FALSE,
+    row.names = NULL
+  )
 
   colnames(df) <- c(by, word_form)
   return(data.table::data.table(df))

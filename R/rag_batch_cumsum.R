@@ -11,7 +11,6 @@
 #'
 
 rag_batch_cumsum <- function(x, threshold) {
-
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")
   }
@@ -32,9 +31,11 @@ rag_batch_cumsum <- function(x, threshold) {
 
     if (cumsum > threshold) {
       group <- group + 1
-      cumsum <- x[i] }
+      cumsum <- x[i]
+    }
 
-    result = c(result, group)}
+    result <- c(result, group)
+  }
 
-  return (result)
+  return(result)
 }
