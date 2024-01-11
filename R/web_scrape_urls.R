@@ -88,30 +88,19 @@ web_scrape_urls <- function(x,
 #' @importFrom data.table setDT
 #' @noRd
 
-<<<<<<< HEAD
 .article_extract <- function (x) {
 
   # Apply a function to each URL in the list 'x'
-=======
-.article_extract <- function(x) {
-  # x <- batches[[1]]
-  # q <- x[1]
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   articles <- lapply(x, function(q) {
     # Retrieve the content of the website for the given URL
     raw_site <- .get_site(q)
 
     # Annotate the retrieved website content
     annotated_site <- .annotate_site(site = raw_site)
-<<<<<<< HEAD
-
     # Filter the annotated content to keep relevant parts
     clean_site <- subset(annotated_site, annotated_site$discard == 'keep')
 
     # Convert the cleaned data into a data.table format
-=======
-    clean_site <- subset(annotated_site, annotated_site$discard == "keep")
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     data.table::setDT(clean_site)
 
     # Aggregate the text by 'url' and 'h1_title', collapsing it into a single string

@@ -10,14 +10,12 @@
 #' @return A matrix of cosine similarity values.
 #' @noRd
 #'
-
-# Define a function '.get_sim' with arguments 'x', 'y', and 'norm'
-.get_sim <- function(x, y = NULL, norm = c("l2", "none")) {
-<<<<<<< HEAD
+.get_sim <- function(x,
+                     y = NULL,
+                     norm = c("l2", "none")) {
 
   # Match the 'norm' argument with one of the specified options ("l2", "none")
-=======
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
+
   norm <- match.arg(norm)
 
   # Ensure 'x' is either a matrix or a sparse matrix

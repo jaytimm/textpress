@@ -12,11 +12,8 @@
 
 # Define the function 'rag_batch_cumsum' with parameters 'x' and 'threshold'
 rag_batch_cumsum <- function(x, threshold) {
-<<<<<<< HEAD
 
   # Check if 'x' is a numeric vector
-=======
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")
   }
@@ -37,7 +34,6 @@ rag_batch_cumsum <- function(x, threshold) {
 
     # Check if the cumulative sum exceeds the threshold
     if (cumsum > threshold) {
-<<<<<<< HEAD
       group <- group + 1  # Increment the group number
       cumsum <- x[i]  # Reset the cumulative sum for the new group
     }
@@ -48,14 +44,4 @@ rag_batch_cumsum <- function(x, threshold) {
 
   # Return the vector containing group numbers
   return (result)
-=======
-      group <- group + 1
-      cumsum <- x[i]
-    }
-
-    result <- c(result, group)
-  }
-
-  return(result)
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
 }

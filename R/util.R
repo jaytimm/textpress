@@ -1,166 +1,89 @@
-#' Build RSS URL for Google News
+#' Build RSS Feed URL
 #'
-#' Constructs an RSS URL for Google News based on the provided search query.
-#' If no query is provided, returns the URL for the top news.
-#'
-#' @param x Optional search query as a character string.
-#' @return A character string containing the RSS URL.
-#' @importFrom stringr str_split
+#' This function constructs an RSS feed URL based on the given query. If no query is provided, it defaults to the top news URL.
+#' @param x A string query to search in the RSS feed, defaults to NULL for top news.
+#' @return A string containing the URL of the RSS feed.
+#' @examples
+#' .build_rss() # returns top news RSS feed
+#' .build_rss("technology AND innovation") # returns RSS feed for technology and innovation news
 #' @noRd
-#'
 .build_rss <- function(x = NULL) {
-<<<<<<< HEAD
-
-  # Define the suffix and base URL for constructing the RSS feed URL
+  # Define RSS feed URL components
   clang_suffix <- 'hl=en-US&gl=US&ceid=US:en&q='
   base <- "https://news.google.com/news/rss/search?"
   tops <- "https://news.google.com/news/rss/?ned=us&hl=en&gl=us"
 
-  # If 'x' is NULL, use the default top stories RSS feed
+  # Handle case when no query is provided
   if(is.null(x)) {
-    rss <- tops
+    return(tops)
   } else {
-    # If 'x' is not NULL, process the search query
-
-    # Split the search query 'x' on ' AND ' and extract the first element
+    # Process the query for URL encoding
     x <- strsplit(x, ' AND ')[[1]]
-
-    # Replace spaces in each search term with '%20' for URL encoding
-    y <- unlist(lapply(x, function(q) gsub(' ', '%20', q)))
-
-    # Enclose each term in quotes and URL encode it
+    y <- unlist(lapply(x, URLencode))
     y1 <- lapply(y, function(q) gsub('(^.*$)', '%22\\1%22', q))
 
-    # Join the encoded search terms with '%20AND%20'
-=======
-  clang_suffix <- "hl=en-US&gl=US&ceid=US:en&q="
-  base <- "https://news.google.com/news/rss/search?"
-  tops <- "https://news.google.com/news/rss/?ned=us&hl=en&gl=us"
-
-  if (is.null(x)) {
-    rss <- tops
-  } else {
-    x <- strsplit(x, " AND ")[[1]]
-    y <- unlist(lapply(x, function(q) gsub(" ", "%20", q)))
-    y1 <- lapply(y, function(q) gsub("(^.*$)", "%22\\1%22", q))
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
+    # Construct the search URL
     search1 <- paste(y1, collapse = "%20AND%20")
-
-    # Construct the final RSS feed URL
-    rss <- paste0(base, clang_suffix, search1)
+    return(paste0(base, clang_suffix, search1))
   }
-
-  # Return the constructed RSS feed URL
-  return(rss)
 }
 
 
-
-
-#' Extract URLs from Google News RSS
+#' Retrieve URLs from a List of Web Pages
 #'
-#' Fetches and parses the HTML content of Google News RSS feed
-#' to extract the news article URLs.
-#'
-#' @param x A character vector of RSS feed URLs.
-#' @return A character vector of extracted article URLs.
-#' @importFrom xml2 read_html
-#' @importFrom httr GET timeout
+#' This function takes a vector of URLs, attempts to retrieve HTML content from each, and extracts specific text elements.
+#' @param x A character vector of URLs.
+#' @return A character vector with the extracted text from each URL or NA if retrieval fails.
+#' @examples
+#' urls <- c("http://example.com", "http://example.org")
+#' .get_urls(urls)
 #' @noRd
-#'
-<<<<<<< HEAD
 .get_urls <- function(x){
-
-  # Use 'lapply' to apply a function to each element in 'x'
-  lapply(x, function(q){
-
-    # Try to read the HTML content of the URL 'q' with a 60-second timeout
-=======
-.get_urls <- function(x) {
-  lapply(x, function(q) {
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
+  # Use lapply to process each URL in the vector
+  result <- lapply(x, function(q) {
+    # Attempt to retrieve HTML content
     site <- tryCatch(
       xml2::read_html(httr::GET(q, httr::timeout(60))),
-      error = function(e) "no"
+      error = function(e) NA
     )
 
-<<<<<<< HEAD
-    # Check if the site was successfully read
-    if(length(site) == 1) {
-      # If not, return NA
+    # If retrieval fails, return NA
+    if (is.na(site)) {
       NA
     } else {
-      # If the site was read successfully, find all elements with the tag 'c-wiz'
-      linkto <- site |> xml2::xml_find_all("c-wiz") |> xml2::xml_text()
-
-      # Remove the prefix 'Opening ' from the text of these elements
-      gsub('Opening ', '', linkto)
-      # Return the modified text (URLs), but without names
-      #linkto |> unname()
-=======
-    if (length(site) == 1) {
-      NA
-    } else {
-      linkto <- site |>
-        xml2::xml_find_all("c-wiz") |>
+      # Extract and process text elements
+      linkto <- xml2::xml_find_all(site, "c-wiz") |>
         xml2::xml_text()
       gsub("Opening ", "", linkto)
-      # linkto |> unname()
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     }
-  }) |> unlist() # Unlist to convert the list to a vector
+  })
+
+  # Unlist and return the result
+  unlist(result)
 }
 
 
 
 #' Parse RSS Feed
 #'
-#' Parses an RSS feed and extracts relevant information such as titles,
-#' links, publication dates, and sources.
-#'
-#' @param x A character string of the RSS feed URL.
-#' @return A data frame with columns for date, source, title, and link.
-#' @importFrom xml2 read_xml xml_text xml_find_all
+#' This function takes an RSS feed XML content and extracts relevant information such as title, link, publication date, and source.
+#' @param x XML content of an RSS feed.
+#' @return A data frame containing columns for date, source, title, and link. Returns NA in case of an error.
+#' @examples
+#' rss_content <- xml2::read_xml("http://example.com/rss")
+#' .parse_rss(rss_content)
 #' @noRd
-#'
-<<<<<<< HEAD
-.parse_rss <- function(x){
-
-  # Attempt to read the XML content from the input 'x'
-=======
 .parse_rss <- function(x) {
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
+  # Try to read the XML content, return NA on error
   doc <- tryCatch(
     xml2::read_xml(x),
-    error = function(e) paste("Error")
+    error = function(e) return(NA)
   )
 
-  # Check if an error occurred during XML reading
-  if(any(doc == 'Error')) {
-    # If there's an error, return NA
+  if (is.na(doc)) {
     return(NA)
   } else {
-    # If the XML was successfully read, extract various elements
-
-<<<<<<< HEAD
-    # Extract the titles from the XML and remove any trailing content after ' - '
-    title1 <- xml2::xml_text(xml2::xml_find_all(doc,"//item/title"))
-    title <- gsub(' - .*$', '', title1)
-
-    # Extract the links from the XML
-    link <- xml2::xml_text(xml2::xml_find_all(doc,"//item/link"))
-
-    # Extract the publication dates from the XML
-    pubDate <- xml2::xml_text(xml2::xml_find_all(doc,"//item/pubDate"))
-
-    # Extract the source of the news from the title or the channel title
-    source1 <- sub('^.* - ', '', title1)
-    source2 <- xml2::xml_text(xml2::xml_find_all(doc,"//channel/title"))
-    if(grepl('Google News', source2)) {
-=======
-  if (any(doc == "Error")) {
-    return(NA)
-  } else {
+    # Extracting the necessary elements from the XML
     title1 <- xml2::xml_text(xml2::xml_find_all(doc, "//item/title"))
     title <- gsub(" - .*$", "", title1)
     link <- xml2::xml_text(xml2::xml_find_all(doc, "//item/link"))
@@ -168,24 +91,16 @@
 
     source1 <- sub("^.* - ", "", title1)
     source2 <- xml2::xml_text(xml2::xml_find_all(doc, "//channel/title"))
-    if (grepl("Google News", source2)) {
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
-      source <- source1
-    } else {
-      source <- source2
-    }
 
-<<<<<<< HEAD
-    # Format the publication date
-    date <- gsub("^.+, ","",pubDate)
-    date <- gsub(" [0-9]*:.+$","", date)
-=======
+    # Determine the source based on the XML structure
+    source <- if (grepl("Google News", source2)) source1 else source2
+
+    # Formatting the publication date
     date <- gsub("^.+, ", "", pubDate)
     date <- gsub(" [0-9]*:.+$", "", date)
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
     date <- as.Date(date, "%d %b %Y")
 
-    # Combine the extracted data into a data frame
+    # Returning the results as a data frame
     data.frame(date, source, title, link)
   }
 }

@@ -13,11 +13,9 @@
 nlp_cast_tokens <- function(tok,
                             by = "text_id",
                             word_form = "token") {
-<<<<<<< HEAD
 
   # Check if all elements in 'tok' are atomic vectors. Stop if not.
-=======
->>>>>>> eacaa60f063c49bc7c6c4d833c86772231b3b657
+
   if (!all(sapply(tok, is.atomic))) {
     stop("`tok` must be a list of atomic vectors")
   }
