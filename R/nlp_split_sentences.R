@@ -34,9 +34,12 @@ nlp_split_sentences <- function(tif,
   }
 
   # Replace abbreviations with placeholders
-  tif[, text := unlist(lapply(text, function(t) .replace_abbreviations(t,
-                                                                       abbreviations,
-                                                                       operation = "replace")))]
+  tif[, text := unlist(lapply(text, function(t) {
+    .replace_abbreviations(t,
+      abbreviations,
+      operation = "replace"
+    )
+  }))]
 
 
   # Split text into paragraphs based on the specified delimiter
@@ -49,7 +52,7 @@ nlp_split_sentences <- function(tif,
   paragraphs <- paragraphs[paragraph != ""]
 
   # Filter rows where text does not end with standard sentence-ending punctuation
-  paragraphs <- paragraphs[grepl("(\\.|\\!|\\?)([^\\.!\\?\"])?$|^$", gsub("\"|'", "", paragraph)),]
+  paragraphs <- paragraphs[grepl("(\\.|\\!|\\?)([^\\.!\\?\"])?$|^$", gsub("\"|'", "", paragraph)), ]
 
   # Assign paragraph_id within each document
   paragraphs[, paragraph_id := seq_len(.N), by = .(doc_id)]

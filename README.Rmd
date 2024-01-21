@@ -8,7 +8,7 @@ always_allow_html: true
 `r badger::badge_github_actions("jaytimm/textpress")`
 
 ```{r include=FALSE}
-Sys.setenv(OPENAI_API_KEY = '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')
+Sys.setenv(OPENAI_API_KEY = "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")
 # A combo of text2df, quicknews, chittr, and textsearch
 ```
 
@@ -32,9 +32,11 @@ devtools::install_github("jaytimm/textpress")
 
 ```{r message=FALSE, warning=FALSE}
 library(dplyr)
-articles <- textpress::web_scrape_urls(x = 'ChatGPT',
-                                       input = 'search',
-                                       cores = 6) |>
+articles <- textpress::web_scrape_urls(
+  x = "ChatGPT",
+  input = "search",
+  cores = 6
+) |>
   select(url, date:title, text) |>
   filter(!is.na(text)) |>
   slice(5:30)
@@ -52,7 +54,9 @@ df_ss <- articles |>
   mutate(doc_id = row_number()) |>
   textpress::nlp_split_sentences()
 
-df_ss |> slice(1:5) |> knitr::kable()
+df_ss |>
+  slice(1:5) |>
+  knitr::kable()
 ```
 
 
@@ -75,12 +79,13 @@ tokens[1]
 
 ```{r message=FALSE, warning=FALSE}
 df_ss |>
-  textpress::search_corpus(search = 'artificial intelligence',
-                           highlight = c('<b>', '</b>'),
-                           n = 0,
-                           ## cores = 5,
-                           is_inline = F) |>
-
+  textpress::search_corpus(
+    search = "artificial intelligence",
+    highlight = c("<b>", "</b>"),
+    n = 0,
+    ## cores = 5,
+    is_inline = F
+  ) |>
   select(doc_id:text) |>
   slice(1:5) |>
   knitr::kable(escape = F)
@@ -91,22 +96,27 @@ df_ss |>
 ## Search inline
 
 ```{r include=FALSE}
-model = udpipe::udpipe_load_model('/home/jtimm/pCloudDrive/nlp/udpipe-model/english-ewt-ud-2.5-191206.udpipe')
+model <- udpipe::udpipe_load_model("/home/jtimm/pCloudDrive/nlp/udpipe-model/english-ewt-ud-2.5-191206.udpipe")
 ```
 
 
 ### Annotate corpus with `udpipe`
 
 ```{r}
-ud_annotated_corpus <- udpipe::udpipe(object = model,
-                                      x = tokens,
-                                      tagger = 'default',
-                                      parser = 'none')
+ud_annotated_corpus <- udpipe::udpipe(
+  object = model,
+  x = tokens,
+  tagger = "default",
+  parser = "none"
+)
 ```
 
 
 ```{r echo=FALSE}
-ud_annotated_corpus |> select(doc_id, start:xpos) |> slice(1:5) |> knitr::kable()
+ud_annotated_corpus |>
+  select(doc_id, start:xpos) |>
+  slice(1:5) |>
+  knitr::kable()
 ```
 
 
@@ -114,10 +124,12 @@ ud_annotated_corpus |> select(doc_id, start:xpos) |> slice(1:5) |> knitr::kable(
 
 ```{r message=FALSE, warning=FALSE}
 inline_ss <- ud_annotated_corpus |>
-  mutate(inline = paste0(token, '/', xpos, '/', token_id)) |>
-  tidyr::separate(col = doc_id, 
-                  into = c('doc_id', 'sentence_id'), 
-                  sep = '\\.') |>
+  mutate(inline = paste0(token, "/", xpos, "/", token_id)) |>
+  tidyr::separate(
+    col = doc_id,
+    into = c("doc_id", "sentence_id"),
+    sep = "\\."
+  ) |>
   group_by(doc_id, sentence_id) |>
   summarise(text = paste0(inline, collapse = " "))
 
@@ -129,16 +141,17 @@ inline_ss$text[1] |> strwrap(width = 55)
 
 ```{r}
 inline_ss |>
-  textpress::search_corpus(search = 'JJ and JJ',
-                           highlight = c('<b>', '</b>'),
-                           n = 0,
-                           is_inline = T) |>
-
+  textpress::search_corpus(
+    search = "JJ and JJ",
+    highlight = c("<b>", "</b>"),
+    n = 0,
+    is_inline = T
+  ) |>
   select(doc_id:text) |>
   filter(tokenizers::count_words(text) < 75) |>
   slice(3:4) |>
   ## DT::datatable(escape = F)
-  knitr::kable(escape = F) 
+  knitr::kable(escape = F)
 ```
 
 
@@ -150,15 +163,15 @@ inline_ss |>
 ```{r message=FALSE, warning=FALSE}
 tokens |>
   textpress::nlp_cast_tokens() |>
-  
-  textpress::search_df(search_col = 'token',
-                       id_col = 'text_id',
-                       include = c('ChatGPT', 'education'),
-                       logic = 'and',
-                       exclude = NULL) |>
-
+  textpress::search_df(
+    search_col = "token",
+    id_col = "text_id",
+    include = c("ChatGPT", "education"),
+    logic = "and",
+    exclude = NULL
+  ) |>
   group_by(text_id) |>
-  summarize(text = paste0(token, collapse = ' ')) |>
+  summarize(text = paste0(token, collapse = " ")) |>
   slice(1:5) |>
   knitr::kable()
 ```
@@ -173,11 +186,16 @@ tokens |>
 
 ```{r}
 chunks <- df_ss |>
-  textpress::rag_chunk_sentences(chunk_size = 2, 
-                                 context_size = 1) 
+  textpress::rag_chunk_sentences(
+    chunk_size = 2,
+    context_size = 1
+  )
 
 set.seed(99)
-chunks |> sample_n(3) |> select(-chunk) |> knitr::kable(escape = F)
+chunks |>
+  sample_n(3) |>
+  select(-chunk) |>
+  knitr::kable(escape = F)
 ```
 
 
@@ -186,15 +204,17 @@ chunks |> sample_n(3) |> select(-chunk) |> knitr::kable(escape = F)
 ```{r}
 vstore <- chunks |>
   mutate(words = tokenizers::count_words(chunk)) |>
-  
-  ### -- ?? -- 
+  ### -- ?? --
   filter(words > 20, words < 60) |>
-  mutate(batch_id = textpress::rag_batch_cumsum(x = words,
-                                                threshold = 10000)) |>
-
-  textpress::rag_fetch_openai_embs(text_id = 'chunk_id',
-                                   text = 'chunk',
-                                   batch_id = 'batch_id')
+  mutate(batch_id = textpress::rag_batch_cumsum(
+    x = words,
+    threshold = 10000
+  )) |>
+  textpress::rag_fetch_openai_embs(
+    text_id = "chunk_id",
+    text = "chunk",
+    batch_id = "batch_id"
+  )
 ```
 
 
@@ -202,8 +222,8 @@ vstore <- chunks |>
 ### Semantic search
 
 ```{r}
-q <- 'What are some concerns about the impact of
-      advanced AI models like ChatGPT?'
+q <- "What are some concerns about the impact of
+      advanced AI models like ChatGPT?"
 ```
 
 
@@ -211,11 +231,12 @@ q <- 'What are some concerns about the impact of
 ```{r}
 query <- textpress::rag_fetch_openai_embs(query = q)
 
-textpress::search_semantics(x = query,
-                            matrix = vstore,
-                            n = 5) |>
-
-  left_join(chunks, by = c('term2' = 'chunk_id')) |>
+textpress::search_semantics(
+  x = query,
+  matrix = vstore,
+  n = 5
+) |>
+  left_join(chunks, by = c("term2" = "chunk_id")) |>
   select(cos_sim:chunk) |>
   knitr::kable()
 ```

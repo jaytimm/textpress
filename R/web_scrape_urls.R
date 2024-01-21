@@ -15,7 +15,6 @@
 web_scrape_urls <- function(x,
                             input = "search",
                             cores = 3) {
-
   # Process input based on the type
   if (input == "search") {
     mm <- .build_rss(x = x) |> .parse_rss()
@@ -63,9 +62,9 @@ web_scrape_urls <- function(x,
   # If RSS metadata is available (not for simple URLs), merge it with results
   if (input != "urls") {
     combined_results <- merge(combined_results,
-                              mm,
-                              by = "url",
-                              all = TRUE
+      mm,
+      by = "url",
+      all = TRUE
     )
 
     combined_results[, c(
