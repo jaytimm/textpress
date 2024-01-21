@@ -2,21 +2,35 @@
 % Please edit documentation in R/nlp_split_sentences.R
 \name{nlp_split_sentences}
 \alias{nlp_split_sentences}
-\title{Split Text into Sentences}
+\title{Split Text into Sentences and Paragraphs}
 \usage{
-nlp_split_sentences(tif)
+nlp_split_sentences(
+  tif,
+  paragraph_delim = "\\n+",
+  abbreviations = textpress::abbreviations
+)
 }
 \arguments{
 \item{tif}{A data frame with at least two columns: \code{doc_id} and \code{text}.}
+
+\item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
+
+\item{abbreviations}{A character vector of abbreviations to be handled during sentence splitting.
+Defaults to textpress::abbreviations.}
 }
 \value{
-A data frame with four columns: \code{doc_id}, \code{sentence_id}, \code{text}, and \code{words}.
+A data.table with columns: \code{doc_id}, \code{paragraph_id}, \code{sentence_id},
+\code{text_id}, and \code{text}. Each row represents a sentence, along with its associated
+document, paragraph, and sentence identifiers.
 }
 \description{
-This function splits the text from a given data frame into individual sentences.
+This function splits text from a given data frame into individual sentences and paragraphs,
+based on a specified paragraph delimiter. It handles abbreviations by temporarily
+replacing them with placeholders to prevent incorrect sentence boundaries.
 }
 \examples{
-# Example usage
-df <- data.frame(doc_id = 1:2, text = c("Hello world. This is a test.", "Another sentence. And another."))
+df <- data.frame(doc_id = 1:2, text = c("Hello world.\nThis is a test.", "Another sentence.\nAnd another."))
 nlp_split_sentences(df)
+nlp_split_sentences(df, paragraph_delim = "\n+")
+nlp_split_sentences(df, abbreviations = c("Mr\\\\.", "Dr\\\\.", "etc\\\\."))
 }

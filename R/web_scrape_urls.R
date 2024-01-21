@@ -15,42 +15,47 @@
 web_scrape_urls <- function(x,
                             input = "search",
                             cores = 3) {
+
   # Process input based on the type
   if (input == "search") {
-    # Process for search term
     mm <- .build_rss(x = x) |> .parse_rss()
     mm$url <- .get_urls(mm$link)
   } else if (input == "rss") {
-    # Process for RSS feed URL
     mm <- .parse_rss(x)
   } else if (input == "urls") {
-    # Directly process list of URLs with no metadata
     mm <- data.frame(url = x)
   } else {
     stop("Invalid input type. Please choose from 'search', 'rss', or 'urls'.")
   }
 
-
   # Split urls into batches
   batches <- split(mm$url, ceiling(seq_along(mm$url) / 20))
 
-  # Set up a parallel cluster
-  clust <- parallel::makeCluster(cores)
-  parallel::clusterExport(
-    cl = clust,
-    varlist = c(".article_extract"),
-    envir = environment()
-  )
+  if (cores == 1) {
+    # Sequential processing
+    results <- lapply(
+      X = batches,
+      FUN = .article_extract
+    )
+  } else {
+    # Set up a parallel cluster
+    clust <- parallel::makeCluster(cores)
+    parallel::clusterExport(
+      cl = clust,
+      varlist = c(".article_extract"),
+      envir = environment()
+    )
 
-  # Execute the task function in parallel
-  results <- pbapply::pblapply(
-    X = batches,
-    FUN = .article_extract,
-    cl = clust
-  )
+    # Execute the task function in parallel
+    results <- pbapply::pblapply(
+      X = batches,
+      FUN = .article_extract,
+      cl = clust
+    )
 
-  # Stop the cluster
-  parallel::stopCluster(clust)
+    # Stop the cluster
+    parallel::stopCluster(clust)
+  }
 
   # Combine the results
   combined_results <- data.table::rbindlist(results)
@@ -58,9 +63,9 @@ web_scrape_urls <- function(x,
   # If RSS metadata is available (not for simple URLs), merge it with results
   if (input != "urls") {
     combined_results <- merge(combined_results,
-      mm,
-      by = "url",
-      all = TRUE
+                              mm,
+                              by = "url",
+                              all = TRUE
     )
 
     combined_results[, c(
@@ -96,14 +101,12 @@ web_scrape_urls <- function(x,
 
     # Annotate the retrieved website content
     annotated_site <- .annotate_site(site = raw_site)
+
     # Filter the annotated content to keep relevant parts
     clean_site <- subset(annotated_site, annotated_site$discard == "keep")
 
-    # Convert the cleaned data into a data.table format
-    data.table::setDT(clean_site)
-
     # Aggregate the text by 'url' and 'h1_title', collapsing it into a single string
-    clean_site[, list(text = paste(text, collapse = " ")), by = list(url, h1_title)]
+    clean_site[, list(text = paste(text, collapse = "\n\n")), by = list(url, h1_title)]
   })
 
   # Combine the list of data.tables into a single data.table and return it
@@ -163,7 +166,8 @@ web_scrape_urls <- function(x,
 #' @param site A data.table representing the scraped website data.
 #' @return A data.table with annotations.
 #' @importFrom data.table setDT fifelse nafill last
-#' @keywords internal
+#' @importFrom stringr str_trim
+#' @noRd
 
 .annotate_site <- function(site) {
   # Convert to data.table
@@ -173,7 +177,7 @@ web_scrape_urls <- function(x,
   junk1 <- paste0(.junk_phrases, collapse = "|")
 
   # Trim whitespace from the text column
-  site[, text := trimws(text)]
+  site[, text := stringr::str_trim(text)]
 
   # Extract the last title from the site, if any
   site[, h1_title := ifelse(type == "h1", text, NA)]
@@ -209,3 +213,42 @@ web_scrape_urls <- function(x,
 
   return(site)
 }
+
+
+
+#' Internal Junk Phrases for Text Filtering
+#'
+#' A vector of regular expressions used internally for identifying and
+#' filtering common unwanted phrases in text data. This is particularly
+#' useful for processing web-scraped content or emails within package functions.
+#'
+#' @details
+#' `junk_phrases` contains regular expressions matching various common
+#' phrases often found in promotional, instructional, or administrative
+#' web content. These expressions are used in internal functions to
+#' filter out such content during text processing.
+#'
+#' @noRd
+#'
+.junk_phrases <- c(
+  "your (email )?inbox",
+  "all rights reserved",
+  "free subsc",
+  "^please",
+  "^sign up",
+  "Check out",
+  "^Get",
+  "^got",
+  "^you must",
+  "^you can",
+  "^Thanks",
+  "^We ",
+  "^We've",
+  "login",
+  "log in",
+  "logged in",
+  "Data is a real-time snapshot",
+  "^do you",
+  "^subscribe to",
+  "your comment"
+)

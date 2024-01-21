@@ -1,0 +1,240 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+always_allow_html: true
+---
+
+`r badger::badge_github_actions("jaytimm/textpress")`
+
+```{r include=FALSE}
+Sys.setenv(OPENAI_API_KEY = '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')
+# A combo of text2df, quicknews, chittr, and textsearch
+```
+
+
+
+# textpress
+
+A lightweight, versatile NLP companion in R.  Provides basic features for (1) text processing, (2) corpus search, and (3) web scraping.  Additionally, the package provides utility functions for (4) building basic Retrieval-Augmented Generation (RAG) systems, including functionality for (5) building text embeddings via OpenAI. Ideal for users who need a basic, unobtrusive NLP tool in R.
+
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("jaytimm/textpress")
+```
+
+
+## Usage
+
+## Web scraping
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+articles <- textpress::web_scrape_urls(x = 'ChatGPT',
+                                       input = 'search',
+                                       cores = 6) |>
+  select(url, date:title, text) |>
+  filter(!is.na(text)) |>
+  slice(5:30)
+```
+
+
+
+
+## Text processing
+
+### Split sentences
+
+```{r message=FALSE, warning=FALSE}
+df_ss <- articles |>
+  mutate(doc_id = row_number()) |>
+  textpress::nlp_split_sentences()
+
+df_ss |> slice(1:5) |> knitr::kable()
+```
+
+
+
+### Tokenization
+
+```{r message=TRUE, warning=FALSE}
+tokens <- df_ss |> textpress::nlp_tokenize_text()
+```
+
+```{r echo=FALSE}
+tokens[1]
+```
+
+
+
+
+
+## Search text
+
+```{r message=FALSE, warning=FALSE}
+df_ss |>
+  textpress::search_corpus(search = 'artificial intelligence',
+                           highlight = c('<b>', '</b>'),
+                           n = 0,
+                           ## cores = 5,
+                           is_inline = F) |>
+
+  select(doc_id:text) |>
+  slice(1:5) |>
+  knitr::kable(escape = F)
+```
+
+
+
+## Search inline
+
+```{r include=FALSE}
+model = udpipe::udpipe_load_model('/home/jtimm/pCloudDrive/nlp/udpipe-model/english-ewt-ud-2.5-191206.udpipe')
+```
+
+
+### Annotate corpus with `udpipe`
+
+```{r}
+ud_annotated_corpus <- udpipe::udpipe(object = model,
+                                      x = tokens,
+                                      tagger = 'default',
+                                      parser = 'none')
+```
+
+
+```{r echo=FALSE}
+ud_annotated_corpus |> select(doc_id, start:xpos) |> slice(1:5) |> knitr::kable()
+```
+
+
+### Build inline text
+
+```{r message=FALSE, warning=FALSE}
+inline_ss <- ud_annotated_corpus |>
+  mutate(inline = paste0(token, '/', xpos, '/', token_id)) |>
+  tidyr::separate(col = doc_id, 
+                  into = c('doc_id', 'sentence_id'), 
+                  sep = '\\.') |>
+  group_by(doc_id, sentence_id) |>
+  summarise(text = paste0(inline, collapse = " "))
+
+inline_ss$text[1] |> strwrap(width = 55)
+```
+
+
+### Search for lexico-grammatical pattern
+
+```{r}
+inline_ss |>
+  textpress::search_corpus(search = 'JJ and JJ',
+                           highlight = c('<b>', '</b>'),
+                           n = 0,
+                           is_inline = T) |>
+
+  select(doc_id:text) |>
+  filter(tokenizers::count_words(text) < 75) |>
+  slice(3:4) |>
+  ## DT::datatable(escape = F)
+  knitr::kable(escape = F) 
+```
+
+
+
+## Search df
+
+> Identify sentences that contain both `ChatGPT` and `education`. OR paragrahs -- or whatever -- 
+
+```{r message=FALSE, warning=FALSE}
+tokens |>
+  textpress::nlp_cast_tokens() |>
+  
+  textpress::search_df(search_col = 'token',
+                       id_col = 'text_id',
+                       include = c('ChatGPT', 'education'),
+                       logic = 'and',
+                       exclude = NULL) |>
+
+  group_by(text_id) |>
+  summarize(text = paste0(token, collapse = ' ')) |>
+  slice(1:5) |>
+  knitr::kable()
+```
+
+
+
+## Retrieval-augmented generation
+
+### Sentence Window Retrieval
+
+> Chunks built out of (n = `chunk_size`) sentences; context added as (n = `context_size`) sentences as window before and after chunk.  Chunks (in bold-face below) are indexed in vector store for retrieval; chunks plus contexts (normal font below) serve as input to LLM.
+
+```{r}
+chunks <- df_ss |>
+  textpress::rag_chunk_sentences(chunk_size = 2, 
+                                 context_size = 1) 
+
+set.seed(99)
+chunks |> sample_n(3) |> select(-chunk) |> knitr::kable(escape = F)
+```
+
+
+### OpenAI embeddings
+
+```{r}
+vstore <- chunks |>
+  mutate(words = tokenizers::count_words(chunk)) |>
+  
+  ### -- ?? -- 
+  filter(words > 20, words < 60) |>
+  mutate(batch_id = textpress::rag_batch_cumsum(x = words,
+                                                threshold = 10000)) |>
+
+  textpress::rag_fetch_openai_embs(text_id = 'chunk_id',
+                                   text = 'chunk',
+                                   batch_id = 'batch_id')
+```
+
+
+
+### Semantic search
+
+```{r}
+q <- 'What are some concerns about the impact of
+      advanced AI models like ChatGPT?'
+```
+
+
+
+```{r}
+query <- textpress::rag_fetch_openai_embs(query = q)
+
+textpress::search_semantics(x = query,
+                            matrix = vstore,
+                            n = 5) |>
+
+  left_join(chunks, by = c('term2' = 'chunk_id')) |>
+  select(cos_sim:chunk) |>
+  knitr::kable()
+```
+
+
+
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+### Word-level
+
+# mesht <- pubmedtk::data_mesh_thesuarus()
+# embs <- pubmedtk::data_mesh_embeddings()
+#
+# textpress::nlp_find_neighbors(x = 'Artificial Intelligence',
+#                          matrix = embs,
+#                          n = 10) |>
+#   knitr::kable()
+```
+
+
+## Summary
+
