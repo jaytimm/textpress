@@ -7,11 +7,11 @@
 #' @param threshold A numeric threshold for the cumulative sum of each batch.
 #' @return A numeric vector indicating the batch number for each element of `x`.
 #' @export
-#' @rdname rag_batch_cumsum
+#' @rdname rag_batch_wordcount
 #'
 
 # Define the function 'rag_batch_cumsum' with parameters 'x' and 'threshold'
-rag_batch_cumsum <- function(x, threshold) {
+rag_batch_wordcount <- function(x, threshold) {
   # Check if 'x' is a numeric vector
   if (!is.numeric(x)) {
     stop("The first argument 'x' must be a numeric vector.")

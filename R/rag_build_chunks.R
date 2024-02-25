@@ -1,20 +1,28 @@
 #' Chunk Sentences for NLP
 #'
 #' This function processes text data for NLP tasks by dividing text into chunks
-#' based on sentence IDs, and includes additional context around each chunk.
+#' based on sentences or paragraphs, and includes additional context around each chunk.
 #'
 #' @param df A data.table object containing the text data.
+#' @param chunk_level The level at which to chunk the text: "sentence" or "paragraph"
 #' @param chunk_size The number of sentences in each chunk.
 #' @param context_size The number of sentences around each chunk to include as context.
 #' @return A data.table object with chunks of text and their context.
 #' @export
 #'
 #'
-rag_chunk_sentences <- function(df,
-                                chunk_size,
-                                context_size) {
+rag_build_chunks <- function(df,
+                             chunk_level,
+                             chunk_size,
+                             context_size) {
   # Ensure dt is a data.table
   data.table::setDT(df)
+
+  # If chunk_level is "paragraph", collapse text to paragraph_id and rename to sentence_id
+  if (chunk_level == "paragraph") {
+    df <- df[, .(text = paste(text, collapse = " ")), by = .(doc_id, paragraph_id)]
+    data.table::setnames(df, "paragraph_id", "sentence_id")
+  }
 
   # Create chunk_id based on doc_id and sentence_id
   df[, chunk_id := paste0(doc_id, ".", ceiling(sentence_id / chunk_size))]
@@ -52,8 +60,8 @@ rag_chunk_sentences <- function(df,
 
   # Create a data table of chunks with context
   chunk_with_context_df <- dt_neighbors_joined[!is.na(text),
-    .(chunk_plus_context = paste(text, collapse = " ")),
-    by = .(doc_id, i.chunk_id)
+                                               .(chunk_plus_context = paste(text, collapse = " ")),
+                                               by = .(doc_id, i.chunk_id)
   ]
 
   # Rename column for clarity
@@ -61,10 +69,10 @@ rag_chunk_sentences <- function(df,
 
   # Merge chunk and context data
   result_df <- merge(chunk_dt,
-    chunk_with_context_df,
-    by = c("doc_id", "chunk_id"),
-    all.x = TRUE,
-    sort = FALSE
+                     chunk_with_context_df,
+                     by = c("doc_id", "chunk_id"),
+                     all.x = TRUE,
+                     sort = FALSE
   )
 
   return(result_df)

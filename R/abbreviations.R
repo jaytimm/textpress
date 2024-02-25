@@ -11,6 +11,7 @@
 abbreviations <- c(
   "\\b[A-Z]\\.",
   "No.",
+  "Inc.",
   "St.",
   "U.S.A.",
   "Mr.",

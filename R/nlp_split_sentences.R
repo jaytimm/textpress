@@ -67,7 +67,7 @@ nlp_split_sentences <- function(tif,
   sentences$text <- .replace_abbreviations(sentences$text, abbreviations, operation = "revert")
 
   # Assign sentence_id within each paragraph
-  sentences[, sentence_id := seq_len(.N), by = .(doc_id, paragraph_id)]
+  sentences[, sentence_id := seq_len(.N), by = .(doc_id)]
 
   # Create a combined text identifier
   sentences[, text_id := paste0(doc_id, ".", paragraph_id, ".", sentence_id)]
