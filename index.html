@@ -426,7 +426,7 @@
 </blockquote>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chunks</span> <span class="op">&lt;-</span> <span class="va">df_ss</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/rag_chunk_sentences.html">rag_chunk_sentences</a></span><span class="op">(</span>chunk_size <span class="op">=</span> <span class="fl">2</span>, </span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu">rag_chunk_sentences</span><span class="op">(</span>chunk_size <span class="op">=</span> <span class="fl">2</span>, </span>
 <span>                                 context_size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">99</span><span class="op">)</span></span>
@@ -468,7 +468,7 @@
 <code class="sourceCode R"><span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">chunks</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>words <span class="op">=</span> <span class="fu">tokenizers</span><span class="fu">::</span><span class="fu">count_words</span><span class="op">(</span><span class="va">chunk</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">words</span> <span class="op">&gt;</span> <span class="fl">20</span>, <span class="va">words</span> <span class="op">&lt;</span> <span class="fl">60</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>batch_id <span class="op">=</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/rag_batch_cumsum.html">rag_batch_cumsum</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">words</span>,</span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>batch_id <span class="op">=</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu">rag_batch_cumsum</span><span class="op">(</span>x <span class="op">=</span> <span class="va">words</span>,</span>
 <span>                                                threshold <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/rag_fetch_openai_embs.html">rag_fetch_openai_embs</a></span><span class="op">(</span>text_id <span class="op">=</span> <span class="st">'chunk_id'</span>,</span>

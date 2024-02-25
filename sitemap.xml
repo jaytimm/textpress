@@ -37,10 +37,10 @@
     <loc>/reference/nlp_tokenize_text.html</loc>
   </url>
   <url>
-    <loc>/reference/rag_batch_cumsum.html</loc>
+    <loc>/reference/rag_batch_wordcount.html</loc>
   </url>
   <url>
-    <loc>/reference/rag_chunk_sentences.html</loc>
+    <loc>/reference/rag_build_chunks.html</loc>
   </url>
   <url>
     <loc>/reference/rag_fetch_openai_embs.html</loc>

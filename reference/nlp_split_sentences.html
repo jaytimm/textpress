@@ -84,24 +84,27 @@ document, paragraph, and sentence identifiers.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Hello world.\nThis is a test."</span>, <span class="st">"Another sentence.\nAnd another."</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">nlp_split_sentences</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    doc_id paragraph_id sentence_id text_id              text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;        &lt;int&gt;       &lt;int&gt;  &lt;char&gt;            &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:      1            1           1   1.1.1      Hello world.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           1   1.2.1   This is a test.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           2   1.2.2   This is a test.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3:      2            1           1   2.1.1 Another sentence.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           1   2.2.1      And another.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           2   2.2.2      And another.</span>
 <span class="r-in"><span><span class="fu">nlp_split_sentences</span><span class="op">(</span><span class="va">df</span>, paragraph_delim <span class="op">=</span> <span class="st">"\n+"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Invalid .internal.selfref detected and fixed by taking a (shallow) copy of the data.table so that := can add this new column by reference. At an earlier point, this data.table has been copied by R (or was created manually using structure() or similar). Avoid names&lt;- and attr&lt;- which in R currently (and oddly) may copy the whole data.table. Use set* syntax instead to avoid copying: ?set, ?setnames and ?setattr. If this message doesn't help, please report your use case to the data.table issue tracker so the root cause can be fixed or this message improved.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    doc_id paragraph_id sentence_id text_id              text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;        &lt;int&gt;       &lt;int&gt;  &lt;char&gt;            &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:      1            1           1   1.1.1      Hello world.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           1   1.2.1   This is a test.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           2   1.2.2   This is a test.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3:      2            1           1   2.1.1 Another sentence.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           1   2.2.1      And another.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           2   2.2.2      And another.</span>
 <span class="r-in"><span><span class="fu">nlp_split_sentences</span><span class="op">(</span><span class="va">df</span>, abbreviations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mr\\."</span>, <span class="st">"Dr\\."</span>, <span class="st">"etc\\."</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Invalid .internal.selfref detected and fixed by taking a (shallow) copy of the data.table so that := can add this new column by reference. At an earlier point, this data.table has been copied by R (or was created manually using structure() or similar). Avoid names&lt;- and attr&lt;- which in R currently (and oddly) may copy the whole data.table. Use set* syntax instead to avoid copying: ?set, ?setnames and ?setattr. If this message doesn't help, please report your use case to the data.table issue tracker so the root cause can be fixed or this message improved.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    doc_id paragraph_id sentence_id text_id              text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;        &lt;int&gt;       &lt;int&gt;  &lt;char&gt;            &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:      1            1           1   1.1.1      Hello world.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           1   1.2.1   This is a test.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2           2   1.2.2   This is a test.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3:      2            1           1   2.1.1 Another sentence.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           1   2.2.1      And another.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2           2   2.2.2      And another.</span>
 </code></pre></div>
     </div>
   </div>
