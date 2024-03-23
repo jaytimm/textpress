@@ -1,82 +1,67 @@
-#' Split Text into Sentences and Paragraphs
+#' Split Text into Sentences
 #'
-#' This function splits text from a given data frame into individual sentences and paragraphs,
-#' based on a specified paragraph delimiter. It handles abbreviations by temporarily
-#' replacing them with placeholders to prevent incorrect sentence boundaries.
+#' This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 #'
-#' @param tif A data frame with at least two columns: `doc_id` and `text`.
-#' @param paragraph_delim A regular expression pattern used to split text into paragraphs.
-#' @param abbreviations A character vector of abbreviations to be handled during sentence splitting.
-#'        Defaults to textpress::abbreviations.
-#' @return A data.table with columns: `doc_id`, `paragraph_id`, `sentence_id`,
-#'         `text_id`, and `text`. Each row represents a sentence, along with its associated
-#'         document, paragraph, and sentence identifiers.
-#' @importFrom data.table data.table
-#' @importFrom stringi stri_split_regex stri_replace_all_charclass stri_trim_both
-#' @examples
-#' df <- data.frame(doc_id = 1:2, text = c("Hello world.\nThis is a test.", "Another sentence.\nAnd another."))
-#' nlp_split_sentences(df)
-#' nlp_split_sentences(df, paragraph_delim = "\n+")
-#' nlp_split_sentences(df, abbreviations = c("Mr\\.", "Dr\\.", "etc\\."))
+#' @param tif A data frame containing text to be split into sentences.
+#' @param by A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.
+#' @param abbreviations A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.
+#'
+#' @return A data.table with columns specified in 'by', 'sentence_id', and 'text'.
+#'
+#' @importFrom data.table setDT
+#' @importFrom textpress abbreviations
 #' @export
+#'
+#' @examples
+#' df <- data.frame(doc_id = 1:2, text = c("Dr. Smith went to Paris. He enjoyed it.", "Ms. Johnson visited New York. She loved it."))
+#' nlp_split_sentences(df, by = c("doc_id"))
 
 nlp_split_sentences <- function(tif,
-                                paragraph_delim = "\n+",
+                                by = c("doc_id"),
                                 abbreviations = textpress::abbreviations) {
   # Validate input data frame structure
-  if (!("doc_id" %in% names(tif) && "text" %in% names(tif))) {
-    stop("The input data frame must contain 'doc_id' and 'text' columns.", call. = FALSE)
+  if (!all(by %in% names(tif))) {
+    stop("The input data frame must contain specified 'by' columns.", call. = FALSE)
   }
 
   # Convert to data.table if not already
   if (!data.table::is.data.table(tif)) {
-    tif <- data.table::setDT(tif)
+    data.table::setDT(tif)
   }
 
   # Replace abbreviations with placeholders
   tif[, text := unlist(lapply(text, function(t) {
-    .replace_abbreviations(t,
-      abbreviations,
-      operation = "replace"
-    )
+    .replace_abbreviations(t, abbreviations, operation = "replace")
   }))]
 
+  # Split text into sentences
+  tif[, sentences := lapply(text, .sentence_split), by = by]
 
-  # Split text into paragraphs based on the specified delimiter
-  tif[, paragraphs := stringi::stri_split_regex(text, paragraph_delim)]
-
-  # Create a long data.table of paragraphs
-  paragraphs <- tif[, .(paragraph = unlist(paragraphs, use.names = FALSE)), by = .(doc_id)]
-
-  # Filter out empty paragraphs
-  paragraphs <- paragraphs[paragraph != ""]
-
-  # Filter rows where text does not end with standard sentence-ending punctuation
-  paragraphs <- paragraphs[grepl("(\\.|\\!|\\?)([^\\.!\\?\"])?$|^$", gsub("\"|'", "", paragraph)), ]
-
-  # Assign paragraph_id within each document
-  paragraphs[, paragraph_id := seq_len(.N), by = .(doc_id)]
-
-  # Split paragraphs into sentences and create a nested list
-  paragraphs[, sentences := lapply(paragraph, .sentence_split), by = .(doc_id, paragraph_id)]
-
-  # Flatten the nested list into a long data.table of sentences
-  sentences <- paragraphs[, .(text = unlist(sentences, use.names = FALSE)), by = .(doc_id, paragraph_id)]
+  # Flatten the list into a long data.table of sentences
+  sentences <- tif[, .(text = unlist(sentences, use.names = FALSE)), by = by]
 
   # Revert placeholders back to abbreviations
   sentences$text <- .replace_abbreviations(sentences$text, abbreviations, operation = "revert")
 
-  # Assign sentence_id within each paragraph
-  sentences[, sentence_id := seq_len(.N), by = .(doc_id)]
-
-  # Create a combined text identifier
-  sentences[, text_id := paste0(doc_id, ".", paragraph_id, ".", sentence_id)]
+  # Assign sentence_id within each group specified by 'by'
+  sentences[, sentence_id := seq_len(.N), by = by]
 
   # Reorder columns for output
-  data.table::setcolorder(sentences, c("doc_id", "paragraph_id", "sentence_id", "text_id", "text"))
+  if ("paragraph_id" %in% by) {
+    output_columns <- c(by, "sentence_id", "text")
+  } else {
+    output_columns <- c("doc_id", "sentence_id", "text")
+  }
+
+  data.table::setcolorder(sentences, output_columns)
+  sentences[, (names(sentences)) := lapply(.SD, as.character), .SDcols = names(sentences)]
 
   return(sentences)
 }
+
+
+
+
 
 
 #' Splits text into sentences, normalizes whitespace, trims spaces.
@@ -112,6 +97,7 @@ nlp_split_sentences <- function(tif,
 #' @noRd
 .replace_abbreviations <- function(text, abbreviations, operation = "replace") {
   # Create substitutions for the abbreviations by replacing the period with an underscore
+  abbreviations <- c(abbreviations, toupper(abbreviations))
   substitutions <- gsub("\\.", "_", abbreviations)
 
   if (operation == "replace") {
@@ -123,7 +109,10 @@ nlp_split_sentences <- function(tif,
         text <- gsub("(\\b[A-Z])\\.", "\\1_", text)
       } else {
         # For fixed abbreviations, replace them with their corresponding substitutions
-        text <- gsub(abbreviations[i], substitutions[i], text, fixed = TRUE)
+        text <- gsub(abbreviations[i],
+                     substitutions[i],
+                     text,
+                     fixed = TRUE)
       }
     }
   } else if (operation == "revert") {
@@ -135,7 +124,10 @@ nlp_split_sentences <- function(tif,
         text <- gsub("(\\b[A-Z])_", "\\1.", text)
       } else {
         # For fixed abbreviations, revert them back to their original form
-        text <- gsub(substitutions[i], abbreviations[i], text, fixed = TRUE)
+        text <- gsub(substitutions[i],
+                     abbreviations[i],
+                     text,
+                     fixed = TRUE)
       }
     }
   } else {

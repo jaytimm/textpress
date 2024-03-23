@@ -4,12 +4,15 @@
 \alias{nlp_tokenize_text}
 \title{Tokenize Text Data (mostly) Non-Destructively}
 \usage{
-nlp_tokenize_text(tif, by = "text_id")
+nlp_tokenize_text(
+  tif,
+  text_hierarchy = c("doc_id", "paragraph_id", "sentence_id")
+)
 }
 \arguments{
 \item{tif}{A data frame containing the text to be tokenized and a document identifier in 'doc_id'.}
 
-\item{by}{A character string specifying grouping column.}
+\item{text_hierarchy}{A character string specifying grouping column.}
 }
 \value{
 A named list of tokens, where each list item corresponds to a document.

@@ -6,6 +6,7 @@
 #' @param search The search pattern or query.
 #' @param n Numeric, default 0. Specifies the context size around the found patterns.
 #' @param is_inline Logical, default FALSE. Indicates if the search should be inline.
+#' @param text_hierarchy A character vector indicating the column(s) by which to group the data.
 #' @param highlight A character vector of length two, default c('<b>', '</b>').
 #'                  Used to highlight the found patterns in the text.
 #' @param cores Numeric, default 1. The number of cores to use for parallel processing.
@@ -17,20 +18,22 @@
 #' @export
 #'
 #'
-search_corpus <- function(tif,
-                          search,
-                          n = 0,
-                          is_inline = FALSE,
-                          highlight = c("<b>", "</b>"),
-                          cores = 1) {
+ling_search_corpus <- function(tif,
+                               text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
+                               search,
+                               context_size = 0,
+                               is_inline = FALSE,
+                               highlight = c("<b>", "</b>"),
+                               cores = 1) {
   # If only one core is used, run the non-parallel version of the function
   if (cores == 1) {
     return(.search_corpus(
-      tif,
-      search,
-      n,
-      is_inline,
-      highlight
+      tif = tif,
+      search = search,
+      context_size = context_size,
+      text_hierarchy = text_hierarchy,
+      is_inline = is_inline,
+      highlight = highlight
     ))
   } else {
     # Split the dataframe into batches
@@ -52,7 +55,8 @@ search_corpus <- function(tif,
       .search_corpus(
         batch,
         search,
-        n,
+        text_hierarchy,
+        context_size,
         is_inline,
         highlight
       )
@@ -73,11 +77,22 @@ search_corpus <- function(tif,
 }
 
 
+
+
 #' @keywords internal
-.search_corpus <- function(tif, search, n, is_inline, highlight) {
+.search_corpus <- function(tif,
+                           search,
+                           text_hierarchy,
+                           context_size,
+                           is_inline,
+                           highlight) {
   # Escaping regex special characters in highlight markers
   LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
   RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
+
+  # Determine the chunk level and grouping variables
+  search_level <- tail(text_hierarchy, 1)
+  grouping_vars <- head(text_hierarchy, -1)
 
   # Converting input data to data.table if not already
   data.table::setDT(tif)
@@ -93,8 +108,7 @@ search_corpus <- function(tif,
   }
 
   # Create a unique identifier for each text entry
-  tif[, text_id := paste0(doc_id, ".", sentence_id)]
-  tif[, sentence_id := as.integer(sentence_id)]
+  tif[, text_id := do.call(paste, c(.SD, list(sep = "."))), .SDcols = text_hierarchy]
 
   # Locate all occurrences of the search pattern in each text entry
   found <- stringi::stri_locate_all(tif$text, regex = term2)
@@ -104,20 +118,30 @@ search_corpus <- function(tif,
   found1 <- lapply(found, data.frame)
   df1 <- data.table::rbindlist(found1, idcol = "text_id", use.names = FALSE)
   df1 <- subset(df1, !is.na(start))
-  df1[, c("doc_id", "sentence_id") := data.table::tstrsplit(text_id, "\\.")]
 
-  # Determine neighboring text entries to include as context
-  df1[, neighbors := lapply(
-    as.integer(sentence_id),
-    function(x) list(c((x - n):(x + n)))
-  )]
-  df3 <- df1[, .(sentence_id = unlist(neighbors)),
-    by = list(text_id, doc_id, start, end)
-  ]
-  df3[, is_target := ifelse(text_id == paste0(doc_id, ".", sentence_id), 1, 0)]
+  ## --
+  df1[, (text_hierarchy) := data.table::tstrsplit(text_id, "\\.")]
+
+  # Create a function to generate neighbors
+  generate_neighbors <- function(x, n) {
+    seq(max(1, x - n), x + n)
+  }
+
+  # Apply this function to each row for the specified column
+  df1$neighbors <- lapply(as.numeric(df1[[search_level]]),
+                          generate_neighbors,
+                          n = context_size)
+
+  ## --
+  df3 <- df1[, setNames(list(unlist(neighbors)), search_level),
+             by = c("text_id", grouping_vars, "start", "end")]
+
+  df3[, is_target := ifelse(text_id == do.call(paste, c(.SD, sep = ".")), 1, 0), .SDcols = text_hierarchy]
+  df3[, (text_hierarchy) := lapply(.SD, as.character), .SDcols = text_hierarchy]
 
   # Join the context sentences with the main dataframe
-  df4 <- tif[df3, on = c("doc_id", "sentence_id"), nomatch = 0]
+  join_columns <- setNames(text_hierarchy, text_hierarchy)
+  df4 <- tif[df3, on = join_columns, nomatch = 0]
 
   # Insert highlight tags around the found patterns
   df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), "")]
@@ -125,11 +149,11 @@ search_corpus <- function(tif,
 
   # Combine text entries to form the context around each found pattern
   df5 <- df4[, list(text = paste(text, collapse = " ")),
-    by = list(i.text_id, start, end)
+             by = list(i.text_id, start, end)
   ]
 
   # Extract document and sentence identifiers
-  df5[, c("doc_id", "sentence_id") := data.table::tstrsplit(i.text_id, "\\.")]
+  df5[, (text_hierarchy) := data.table::tstrsplit(i.text_id, "\\.")]
 
   # Extract and clean the found pattern from the highlighted text
   patsy <- paste0(".*", LL, "(.*)", RR, ".*")
@@ -145,7 +169,7 @@ search_corpus <- function(tif,
   }
 
   # Return the final dataframe with relevant columns
-  df5[, c("doc_id", "sentence_id", "text", "start", "end", "pattern", "pattern2", "pos"), with = FALSE]
+  df5[, c(text_hierarchy, "text", "start", "end", "pattern", "pattern2", "pos"), with = FALSE]
 }
 
 

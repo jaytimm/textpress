@@ -34,5 +34,6 @@ abbreviations <- c(
   "Sep.",
   "Oct.",
   "Nov.",
-  "Dec."
+  "Dec.",
+  "Reps."
 )

@@ -2,35 +2,28 @@
 % Please edit documentation in R/nlp_split_sentences.R
 \name{nlp_split_sentences}
 \alias{nlp_split_sentences}
-\title{Split Text into Sentences and Paragraphs}
+\title{Split Text into Sentences}
 \usage{
 nlp_split_sentences(
   tif,
-  paragraph_delim = "\\n+",
+  by = c("doc_id"),
   abbreviations = textpress::abbreviations
 )
 }
 \arguments{
-\item{tif}{A data frame with at least two columns: \code{doc_id} and \code{text}.}
+\item{tif}{A data frame containing text to be split into sentences.}
 
-\item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
+\item{by}{A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.}
 
-\item{abbreviations}{A character vector of abbreviations to be handled during sentence splitting.
-Defaults to textpress::abbreviations.}
+\item{abbreviations}{A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.}
 }
 \value{
-A data.table with columns: \code{doc_id}, \code{paragraph_id}, \code{sentence_id},
-\code{text_id}, and \code{text}. Each row represents a sentence, along with its associated
-document, paragraph, and sentence identifiers.
+A data.table with columns specified in 'by', 'sentence_id', and 'text'.
 }
 \description{
-This function splits text from a given data frame into individual sentences and paragraphs,
-based on a specified paragraph delimiter. It handles abbreviations by temporarily
-replacing them with placeholders to prevent incorrect sentence boundaries.
+This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 }
 \examples{
-df <- data.frame(doc_id = 1:2, text = c("Hello world.\nThis is a test.", "Another sentence.\nAnd another."))
-nlp_split_sentences(df)
-nlp_split_sentences(df, paragraph_delim = "\n+")
-nlp_split_sentences(df, abbreviations = c("Mr\\\\.", "Dr\\\\.", "etc\\\\."))
+df <- data.frame(doc_id = 1:2, text = c("Dr. Smith went to Paris. He enjoyed it.", "Ms. Johnson visited New York. She loved it."))
+nlp_split_sentences(df, by = c("doc_id"))
 }

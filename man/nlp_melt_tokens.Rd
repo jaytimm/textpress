@@ -4,14 +4,18 @@
 \alias{nlp_melt_tokens}
 \title{Tokenize Data Frame by Specified Column(s)}
 \usage{
-nlp_melt_tokens(df, word_form, by = c("doc_id"))
+nlp_melt_tokens(
+  df,
+  melt_col = "token",
+  parent_cols = c("doc_id", "sentence_id")
+)
 }
 \arguments{
 \item{df}{A data frame containing the data to be tokenized.}
 
-\item{word_form}{The name of the column in \code{df} that contains the tokens.}
+\item{melt_col}{The name of the column in \code{df} that contains the tokens.}
 
-\item{by}{A character vector indicating the column(s) by which to group the data.}
+\item{parent_cols}{A character vector indicating the column(s) by which to group the data.}
 }
 \value{
 A list of vectors, each containing the tokens of a group defined by the \code{by} parameter.

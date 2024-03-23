@@ -4,17 +4,13 @@
 \alias{nlp_cast_tokens}
 \title{Convert Token List to Data Frame}
 \usage{
-nlp_cast_tokens(tok, by = "text_id", word_form = "token")
+nlp_cast_tokens(tok)
 }
 \arguments{
 \item{tok}{A list where each element contains tokens corresponding to a document or a sentence.}
-
-\item{by}{A character string specifying grouping column.}
-
-\item{word_form}{A character string specifying either token or lemma}
 }
 \value{
-A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.
+A data frame with columns for token name and token.
 }
 \description{
 This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.

@@ -3,16 +3,12 @@
 #' This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
 #'
 #' @param tok A list where each element contains tokens corresponding to a document or a sentence.
-#' @param by A character string specifying grouping column.
-#' @param word_form A character string specifying either token or lemma
-#' @return A data frame with columns for document ID, sentence ID (if applicable), tokens, and their respective identifiers.
+#' @return A data frame with columns for token name and token.
 #' @export
 #' @rdname nlp_cast_tokens
 #'
 #'
-nlp_cast_tokens <- function(tok,
-                            by = "text_id",
-                            word_form = "token") {
+nlp_cast_tokens <- function(tok) {
   # Check if all elements in 'tok' are atomic vectors. Stop if not.
 
   if (!all(sapply(tok, is.atomic))) {
@@ -34,7 +30,7 @@ nlp_cast_tokens <- function(tok,
   )
 
   # Set the column names of the data frame to 'by' and 'word_form'
-  colnames(df) <- c(by, word_form)
+  colnames(df) <- c('id', 'token')
 
   # Convert the data frame to a data table and return it
   return(data.table::data.table(df))
