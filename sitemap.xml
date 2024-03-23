@@ -16,13 +16,22 @@
     <loc>/reference/dot-insert_highlight.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-openai_embs.html</loc>
-  </url>
-  <url>
     <loc>/reference/dot-translate_query.html</loc>
   </url>
   <url>
+    <loc>/reference/emb_call_huggingface.html</loc>
+  </url>
+  <url>
+    <loc>/reference/emb_semantic_search.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ling_search_corpus.html</loc>
+  </url>
+  <url>
+    <loc>/reference/nlp_build_chunks.html</loc>
   </url>
   <url>
     <loc>/reference/nlp_cast_tokens.html</loc>
@@ -31,28 +40,13 @@
     <loc>/reference/nlp_melt_tokens.html</loc>
   </url>
   <url>
+    <loc>/reference/nlp_split_paragraphs.html</loc>
+  </url>
+  <url>
     <loc>/reference/nlp_split_sentences.html</loc>
   </url>
   <url>
     <loc>/reference/nlp_tokenize_text.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rag_batch_wordcount.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rag_build_chunks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rag_fetch_openai_embs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/search_corpus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/search_df.html</loc>
-  </url>
-  <url>
-    <loc>/reference/search_semantics.html</loc>
   </url>
   <url>
     <loc>/reference/textpress-package.html</loc>
