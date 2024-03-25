@@ -46,12 +46,12 @@ based on a specified paragraph delimiter.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nlp_split_paragraphs</span><span class="op">(</span><span class="va">df</span>, paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nlp_split_paragraphs</span><span class="op">(</span><span class="va">tif</span>, paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>df</dt>
+    <dl><dt>tif</dt>
 <dd><p>A data frame with at least two columns: <code>doc_id</code> and <code>text</code>.</p></dd>
 
 
@@ -67,18 +67,6 @@ based on a specified paragraph delimiter.</p>
 Each row represents a paragraph, along with its associated document and paragraph identifiers.</p>
     </div>
 
-    <div id="ref-examples">
-    <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Hello world.\nThis is a test."</span>, <span class="st">"Another text.\nAnd another."</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">nlp_split_paragraphs</span><span class="op">(</span><span class="va">df</span>, paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    doc_id paragraph_id            text</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;char&gt;       &lt;char&gt;          &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:      1            1    Hello world.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:      1            2 This is a test.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3:      2            1   Another text.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4:      2            2    And another.</span>
-</code></pre></div>
-    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

@@ -13,22 +13,19 @@
     <loc>/reference/abbreviations.html</loc>
   </url>
   <url>
+    <loc>/reference/api_huggingface_embeddings.html</loc>
+  </url>
+  <url>
+    <loc>/reference/api_openai_completions.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-insert_highlight.html</loc>
   </url>
   <url>
     <loc>/reference/dot-translate_query.html</loc>
   </url>
   <url>
-    <loc>/reference/emb_call_huggingface.html</loc>
-  </url>
-  <url>
-    <loc>/reference/emb_semantic_search.html</loc>
-  </url>
-  <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ling_search_corpus.html</loc>
   </url>
   <url>
     <loc>/reference/nlp_build_chunks.html</loc>
@@ -47,6 +44,12 @@
   </url>
   <url>
     <loc>/reference/nlp_tokenize_text.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sem_nearest_neighbors.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sem_search_corpus.html</loc>
   </url>
   <url>
     <loc>/reference/textpress-package.html</loc>
