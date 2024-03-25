@@ -4,7 +4,7 @@
 #'
 #' @param tif A data frame or data.table containing the text corpus.
 #' @param search The search pattern or query.
-#' @param n Numeric, default 0. Specifies the context size around the found patterns.
+#' @param context_size Numeric, default 0. Specifies the context size, in sentences, around the found patterns.
 #' @param is_inline Logical, default FALSE. Indicates if the search should be inline.
 #' @param text_hierarchy A character vector indicating the column(s) by which to group the data.
 #' @param highlight A character vector of length two, default c('<b>', '</b>').
@@ -18,7 +18,7 @@
 #' @export
 #'
 #'
-ling_search_corpus <- function(tif,
+sem_search_corpus <- function(tif,
                                text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
                                search,
                                context_size = 0,
@@ -90,12 +90,20 @@ ling_search_corpus <- function(tif,
   LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
   RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
 
+  data.table::setDT(tif)
+
+  if(length(text_hierarchy) == 1) {
+    text_hierarchy <- c('dummy', text_hierarchy)
+    tif[, dummy := '1']
+  }
+
+
   # Determine the chunk level and grouping variables
   search_level <- tail(text_hierarchy, 1)
   grouping_vars <- head(text_hierarchy, -1)
 
   # Converting input data to data.table if not already
-  data.table::setDT(tif)
+
 
   # Prepare search term based on inline flag
   if (is_inline) {
@@ -169,7 +177,14 @@ ling_search_corpus <- function(tif,
   }
 
   # Return the final dataframe with relevant columns
-  df5[, c(text_hierarchy, "text", "start", "end", "pattern", "pattern2", "pos"), with = FALSE]
+  df5[, c(setdiff(text_hierarchy, 'dummy'),
+          "text",
+          "start",
+          "end",
+          "pattern",
+          "pattern2",
+          "pos"),
+      with = FALSE]
 }
 
 

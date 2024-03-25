@@ -7,7 +7,6 @@
 #'
 #'
 #' @export
-#' @rdname nlp_tokenize_text
 #'
 nlp_tokenize_text <- function(tif,
                               text_hierarchy = c("doc_id", "paragraph_id", "sentence_id")) {

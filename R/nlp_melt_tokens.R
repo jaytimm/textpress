@@ -10,7 +10,6 @@
 #' @rdname nlp_melt_tokens
 #'
 #'
-# Define the function 'nlp_melt_tokens' with parameters 'df', 'word_form', and an optional 'by'
 nlp_melt_tokens <- function(df,
                             melt_col = "token",
                             parent_cols = c("doc_id", "sentence_id")) {

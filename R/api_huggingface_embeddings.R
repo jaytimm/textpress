@@ -14,7 +14,7 @@
 #' @return A matrix containing embeddings, with each row corresponding to a text input.
 #'
 #' @export
-emb_call_huggingface <- function(tif,
+api_huggingface_embeddings <- function(tif,
                                  text_hierarchy,
                                  api_token,
                                  api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
@@ -37,7 +37,12 @@ emb_call_huggingface <- function(tif,
     eb_list <- list()
 
     # Loop through each batch
+    # Initialize progress bar
+    pb <- txtProgressBar(min = 0, max = length(batches), style = 3)
+
     for (i in seq_along(batches)) {
+
+      setTxtProgressBar(pb, i)
       # Generate row names based on 'by' columns
       rns <- do.call(paste, c(batches[[i]][, text_hierarchy, with = FALSE], sep = '.'))
       # Fetch embeddings for the batch
@@ -50,6 +55,9 @@ emb_call_huggingface <- function(tif,
       # Pause between processing batches
       Sys.sleep(sleep_duration)
     }
+
+    # Close progress bar
+    close(pb)
 
     # Combine results from all batches into one matrix
     return(do.call(rbind, eb_list))

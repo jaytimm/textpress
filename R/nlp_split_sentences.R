@@ -3,7 +3,7 @@
 #' This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 #'
 #' @param tif A data frame containing text to be split into sentences.
-#' @param by A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.
+#' @param text_hierarchy A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.
 #' @param abbreviations A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.
 #'
 #' @return A data.table with columns specified in 'by', 'sentence_id', and 'text'.
@@ -12,15 +12,12 @@
 #' @importFrom textpress abbreviations
 #' @export
 #'
-#' @examples
-#' df <- data.frame(doc_id = 1:2, text = c("Dr. Smith went to Paris. He enjoyed it.", "Ms. Johnson visited New York. She loved it."))
-#' nlp_split_sentences(df, by = c("doc_id"))
-
+#'
 nlp_split_sentences <- function(tif,
-                                by = c("doc_id"),
+                                text_hierarchy = c("doc_id"),
                                 abbreviations = textpress::abbreviations) {
   # Validate input data frame structure
-  if (!all(by %in% names(tif))) {
+  if (!all(text_hierarchy %in% names(tif))) {
     stop("The input data frame must contain specified 'by' columns.", call. = FALSE)
   }
 
@@ -35,20 +32,23 @@ nlp_split_sentences <- function(tif,
   }))]
 
   # Split text into sentences
-  tif[, sentences := lapply(text, .sentence_split), by = by]
+  tif <- tif[, .(sentences = lapply(text, .sentence_split)), by = text_hierarchy]
+
 
   # Flatten the list into a long data.table of sentences
-  sentences <- tif[, .(text = unlist(sentences, use.names = FALSE)), by = by]
+  sentences <- tif[, .(text = unlist(sentences, use.names = FALSE)), by = text_hierarchy]
 
   # Revert placeholders back to abbreviations
   sentences$text <- .replace_abbreviations(sentences$text, abbreviations, operation = "revert")
 
   # Assign sentence_id within each group specified by 'by'
-  sentences[, sentence_id := seq_len(.N), by = by]
+  sentences[, sentence_id := seq_len(.N), by = text_hierarchy]
 
+
+  ### This is no good --
   # Reorder columns for output
-  if ("paragraph_id" %in% by) {
-    output_columns <- c(by, "sentence_id", "text")
+  if ("paragraph_id" %in% text_hierarchy) {
+    output_columns <- c(text_hierarchy, "sentence_id", "text")
   } else {
     output_columns <- c("doc_id", "sentence_id", "text")
   }
@@ -58,8 +58,6 @@ nlp_split_sentences <- function(tif,
 
   return(sentences)
 }
-
-
 
 
 

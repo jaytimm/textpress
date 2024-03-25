@@ -10,10 +10,7 @@
 #' @return A data.table with the chunked text and their respective contexts.
 #' @import data.table
 #' @export
-#' @examples
-#' tif <- data.table::data.table(text = c("This is a sample text for chunking"),
-#'                              id = 1:5)
-#' chunked_df <- nlp_build_chunks(tif, chunk_size = 2, context_size = 1, text_hierarchy = "id")
+#'
 nlp_build_chunks <- function(tif,
                              text_hierarchy,
                              chunk_size,
@@ -48,11 +45,11 @@ nlp_build_chunks <- function(tif,
   chunk_dt <- tif[, .(chunk = paste(text, collapse = " ")), by = c(grouping_vars, "chunk_id")]
 
   # Prepare conditions for joining with neighbor data
-  join_conditions <- setNames(rep(names(df)[names(df) %in% grouping_vars], 1), grouping_vars)
+  join_conditions <- setNames(rep(names(tif)[names(tif) %in% grouping_vars], 1), grouping_vars)
   join_conditions[chunk_level] <- "neighbor_id"
 
   # Join df with neighbors to get context
-  dt_neighbors_joined <- df[neighbors_dt, on = join_conditions]
+  dt_neighbors_joined <- tif[neighbors_dt, on = join_conditions]
 
   # Combine chunk text with context
   chunk_with_context_df <- dt_neighbors_joined[!is.na(text),

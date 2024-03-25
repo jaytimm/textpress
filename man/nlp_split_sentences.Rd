@@ -6,14 +6,14 @@
 \usage{
 nlp_split_sentences(
   tif,
-  by = c("doc_id"),
+  text_hierarchy = c("doc_id"),
   abbreviations = textpress::abbreviations
 )
 }
 \arguments{
 \item{tif}{A data frame containing text to be split into sentences.}
 
-\item{by}{A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.}
+\item{text_hierarchy}{A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.}
 
 \item{abbreviations}{A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.}
 }
@@ -22,8 +22,4 @@ A data.table with columns specified in 'by', 'sentence_id', and 'text'.
 }
 \description{
 This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
-}
-\examples{
-df <- data.frame(doc_id = 1:2, text = c("Dr. Smith went to Paris. He enjoyed it.", "Ms. Johnson visited New York. She loved it."))
-nlp_split_sentences(df, by = c("doc_id"))
 }

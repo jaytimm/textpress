@@ -3,26 +3,24 @@
 #' Splits text from the 'text' column of a data frame into individual paragraphs,
 #' based on a specified paragraph delimiter.
 #'
-#' @param df A data frame with at least two columns: `doc_id` and `text`.
+#' @param tif A data frame with at least two columns: `doc_id` and `text`.
 #' @param paragraph_delim A regular expression pattern used to split text into paragraphs.
 #' @return A data.table with columns: `doc_id`, `paragraph_id`, and `text`.
 #'         Each row represents a paragraph, along with its associated document and paragraph identifiers.
 #' @importFrom data.table data.table
 #' @importFrom stringi stri_split_regex
-#' @examples
-#' df <- data.frame(doc_id = 1:2, text = c("Hello world.\nThis is a test.", "Another text.\nAnd another."))
-#' nlp_split_paragraphs(df, paragraph_delim = "\\n+")
 #' @export
-nlp_split_paragraphs <- function(df, paragraph_delim = "\\n+") {
-  if (!"text" %in% names(df)) {
+#'
+nlp_split_paragraphs <- function(tif, paragraph_delim = "\\n+") {
+  if (!"text" %in% names(tif)) {
     stop("The data frame must contain a 'text' column.", call. = FALSE)
   }
 
-  df <- data.table::setDT(df)
+  df <- data.table::setDT(tif)
 
   # Split text into paragraphs based on the specified delimiter
-  df[, text := stringi::stri_split_regex(text, paragraph_delim, simplify = FALSE)]
-  df_long <- df[, .(text = unlist(text, use.names = FALSE)), by = .(doc_id)]
+  tif[, text := stringi::stri_split_regex(text, paragraph_delim, simplify = FALSE)]
+  df_long <- tif[, .(text = unlist(text, use.names = FALSE)), by = .(doc_id)]
 
   # Filter out empty paragraphs
   df_long <- df_long[!(text == "" | text == " ")]

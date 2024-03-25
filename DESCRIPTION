@@ -13,12 +13,11 @@ RoxygenNote: 7.3.1
 Imports: 
     data.table,
     httr,
-    purrr,
     Matrix,
+    rvest,
     stringi, 
     jsonlite,
     stringr,
     xml2,
-    pbapply,
-    rvest
+    pbapply
 License: GPL-3
