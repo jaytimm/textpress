@@ -8,9 +8,11 @@
 #'
 #' @return A data.table with columns specified in 'by', 'sentence_id', and 'text'.
 #'
-#' @importFrom data.table setDT
-#' @importFrom textpress abbreviations
 #' @export
+#' @examples
+#' tif <- data.frame(doc_id = c('1'),
+#'                   text = c("Hello world. This is an example. No, this is a party!"))
+#' sentences <- nlp_split_paragraphs(tif)
 #'
 #'
 nlp_split_sentences <- function(tif,

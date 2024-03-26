@@ -4,9 +4,15 @@
 #' @param tif A data frame containing the text to be tokenized and a document identifier in 'doc_id'.
 #' @param text_hierarchy A character string specifying grouping column.
 #' @return A named list of tokens, where each list item corresponds to a document.
-#'
-#'
 #' @export
+#' @examples
+#' tif <- data.frame(doc_id = c('1', '1', '2'),
+#'                   sentence_id = c('1', '2', '1'),
+#'                   text = c("Hello world.",
+#'                            "This is an example.",
+#'                            "This is a party!"))
+#' tokens <- nlp_tokenize_text(tif, text_hierarchy = c('doc_id', 'sentence_id'))
+#'
 #'
 nlp_tokenize_text <- function(tif,
                               text_hierarchy = c("doc_id", "paragraph_id", "sentence_id")) {

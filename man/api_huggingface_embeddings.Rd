@@ -23,7 +23,7 @@ api_huggingface_embeddings(
 
 \item{api_token}{Token for accessing the Hugging Face API.}
 
-\item{api_url}{The URL of the Hugging Face API endpoint (default is set to a specific model endpoint).}
+\item{api_url}{The URL of the Hugging Face API endpoint (default is all-MiniLM-L6-v2).}
 
 \item{query}{An optional single text query for which embeddings are required.}
 
@@ -38,4 +38,17 @@ A matrix containing embeddings, with each row corresponding to a text input.
 }
 \description{
 Retrieves embeddings for text data using Hugging Face's API. It can process a batch of texts or a single query.  Mostly for demo purposes.
+}
+\examples{
+\dontrun{
+api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+ tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
+ embeddings <- api_huggingface_embeddings(tif,
+                                          text_hierarchy = 'doc_id',
+                                          api_token = api_token,
+                                          api_url = api_url)
+}
+
+
+
 }

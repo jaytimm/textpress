@@ -21,12 +21,26 @@
 #' @param openai_organization Optional organization identifier for the API.
 #' @param is_json_output If TRUE, ensures output is valid JSON, default TRUE.
 #' @return Returns a string with the API response, or JSON if is_json_output is TRUE.
-#' @importFrom httr POST content http_error status_code add_headers
-#' @importFrom jsonlite fromJSON
 #' @export
 #' @examples
-#' # Example usage (requires OpenAI API key):
-#' # api_openai_completions(messages = list(list("role" = "user", "content" = "Hello")))
+#' \dontrun{
+#' create_chat_completion(
+#'    model = "gpt-3.5-turbo",
+#'    messages = list(
+#'        list(
+#'            "role" = "system",
+#'            "content" = "You are an expert at life."
+#'        ),
+#'        list(
+#'            "role" = "user",
+#'            "content" = "Where is the party at?"
+#'        )
+#'    )
+#' )
+#' }
+#'
+#'
+#'
 api_openai_completions <- function(model = 'gpt-3.5-turbo',
                                    messages = NULL,
                                    temperature = 1,
@@ -58,10 +72,18 @@ api_openai_completions <- function(model = 'gpt-3.5-turbo',
         "Content-Type" = "application/json"
       ),
       body = list(
-        model = model, messages = messages, temperature = temperature,
-        top_p = top_p, n = n, stream = stream, stop = stop,
-        max_tokens = max_tokens, presence_penalty = presence_penalty,
-        frequency_penalty = frequency_penalty, logit_bias = logit_bias, user = user
+        model = model,
+        messages = messages,
+        temperature = temperature,
+        top_p = top_p,
+        n = n,
+        stream = stream,
+        stop = stop,
+        max_tokens = max_tokens,
+        presence_penalty = presence_penalty,
+        frequency_penalty = frequency_penalty,
+        logit_bias = logit_bias,
+        user = user
       ),
       encode = "json"
     )

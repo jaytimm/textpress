@@ -36,3 +36,13 @@ A data.table with the search results.
 \description{
 Searches a text corpus for specified patterns, with support for parallel processing.
 }
+\examples{
+tif <- data.frame(doc_id = c('1', '1', '2'),
+                  sentence_id = c('1', '2', '1'),
+                  text = c("Hello world.",
+                           "This is an example.",
+                           "This is a party!"))
+sem_search_corpus(tif, search = 'This is', text_hierarchy = c('doc_id', 'sentence_id'))
+
+
+}

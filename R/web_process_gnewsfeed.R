@@ -8,14 +8,17 @@
 #'         including URL, title, date, and other relevant metadata.
 #' @export
 #' @examples
-#' web_process_gnewsfeed("R language")
+#' \dontrun{
+#' meta <- web_process_gnewsfeed("Bidenomics")
+#' }
+#'
 web_process_gnewsfeed <- function(x) {
   # Build an RSS feed URL using the provided search query and parse the RSS feed
-  mm <- .build_rss(x = x) |> .parse_rss()
-
+  mm <- .build_rss(x)
+  mm1 <- .parse_rss(mm)
   # Use the parsed RSS feed to extract URLs from the links and add them to 'mm'
-  mm$url <- .get_urls(mm$link)
+  mm1$url <- .get_urls(mm1$link)
 
   # Return the modified data frame 'mm' with the added URL information
-  return(mm)
+  return(mm1)
 }

@@ -12,70 +12,15 @@ Sys.setenv(OPENAI_API_KEY = "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
 # A combo of text2df, quicknews, chittr, and textsearch
 ```
 
-Enhanced Use Case: Real-Time News Analysis, Summary Generation, and Qualitative Exploration
 
-Scenario:
-Data journalists are exploring an unfolding global event, such as a major environmental crisis. They aim to provide a detailed summary and an exploratory analysis that captures various perspectives and narratives present in the news.
-
-Workflow:
-
-Scraping Recent Articles:
-
-The team gathers the latest news articles on the topic from diverse sources, ensuring the content is fresh and not included in language model training sets.
-Structuring and Segmenting Text:
-
-Articles are processed into a structured format, preserving the document hierarchy. This step is crucial for maintaining the integrity of the data for in-depth analysis.
-Smart Chunking for Context Preservation:
-
-The team then divides the text into smart, context-aware chunks. This chunking balances the need for granular analysis with the necessity of context preservation.
-Qualitative Exploration:
-
-Here, the package’s search capabilities come into play. Journalists explore different facets of the crisis by searching for specific themes, such as economic impact, environmental damage, or political responses.
-This search isn't just keyword-based; it’s about understanding context, changes in sentiment, and differing narratives across sources.
-Embedding Generation and RAG for Summary:
-
-Embeddings for text chunks are generated, enabling nuanced semantic analysis. A query embedding related to the crisis's key aspects is also created.
-Using RAG techniques, they extract relevant chunks and employ a model like OpenAI’s GPT to synthesize these into a coherent summary.
-Crafting a Comprehensive Report:
-
-With a structured summary and insights from the exploratory search, the journalists write a detailed article. This report combines quantitative summaries with qualitative analysis, offering a multi-dimensional view of the crisis.
-Outcome:
-This enhanced workflow demonstrates the package's robustness in handling complex NLP tasks. It combines the efficiency of automated summarization with the depth of qualitative exploration, enabling journalists to produce a report that's not only comprehensive but rich in context and varied perspectives.
-
-
-
-TextPress: An Educational Tool for Mastering NLP in R
-
-textpress isn't just a tool for practicing data scientists and researchers; it's also a remarkable educational resource. For students, educators, and self-learners in the field of NLP, textpress offers a clear window into the world of text processing and analysis.
-
-Educational Benefits of TextPress:
-
-Understanding NLP Structures: textpress simplifies complex NLP concepts, making it an ideal tool for teaching the fundamental structures and operations in NLP, from tokenization to embedding generation.
-
-Exploring Corpus Search: The package's corpus search capabilities provide a hands-on experience in exploring and analyzing large text datasets. It's a practical way to understand how different search algorithms and techniques work in real-world scenarios.
-
-Learning RAG Primitives: With its lean approach to integrating with RAG systems, textpress serves as a practical guide to understanding the building blocks of advanced NLP systems, including how retrieval and generation models interact.
-
-Demystifying Advanced NLP: By offering easy-to-understand functions and a straightforward approach, textpress helps demystify the complexities of modern NLP. It breaks down advanced concepts into digestible elements, ideal for learners at all levels.
-
-Practical Application and Experimentation: textpress encourages experimentation, allowing learners to apply concepts in real-life scenarios, a crucial aspect of understanding and mastering NLP.
-
-A Tool for Educators and Learners Alike:
-
-Educators: Incorporate textpress into your curriculum to provide students with a hands-on experience in NLP. Its simplicity and clarity make it perfect for classroom demonstrations and assignments.
-
-Students and Self-Learners: Use textpress as a learning companion to explore the field of NLP. Whether it's for a class project or self-study, it offers a user-friendly pathway to understanding complex NLP tasks.
-
-Research and Project Development: For advanced learners embarking on research or developing NLP projects, textpress provides a solid foundation, making it easier to explore sophisticated NLP applications.
-
-Conclusion:
-
-With textpress, learning NLP in R becomes an intuitive and engaging experience. It stands out as a tool that not only performs tasks efficiently but also educates, opening up the world of NLP to a broader audience.
-
-----------
 # textpress
 
-A lightweight, versatile NLP companion in R, `textpress` is the simplest NLP package you will find.  No substantial dependencies. A basic data.frame-centric approach.  With an eye towards easy integration into LLM-based RAG systems.  The package provides basic features for (1) text processing, (2) corpus search, and (3) web scraping.  Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.  Ideal for users who need a basic, unobtrusive NLP tool in R.
+A lightweight, versatile NLP companion in R.  A small menu approach. No substantial dependencies. Data-frame-centric.  Transparent & step wise. Easy integration into LLM-based RAG systems.  The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping.  Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.  Ideal for users who need a basic, unobtrusive NLP tool in R.  
+
+`textpress` does not provide any language models, part-of-speech tagging, topic models, etc., but it can be used in conjunction with other packages that provide these features.  At some point, Python becomes ... 
+
+
+
 
 
 ## Installation
@@ -89,41 +34,91 @@ devtools::install_github("jaytimm/textpress")
 
 ## Web scraping
 
-```{r message=FALSE, warning=FALSE}
+### Articles & metadata from GoogleNews
+
+```{r}
 library(dplyr)
-articles <- textpress::web_scrape_urls(
-  x = "ChatGPT",
-  input = "search",
-  cores = 6
-) |>
-  select(url, date:title, text) |>
-  filter(!is.na(text)) |>
-  slice(5:30)
+meta <- textpress::web_process_gnewsfeed(x = 'Wildlife Conservation Efforts')
+meta |> select(date, source, title, url) |> head() |> knitr::kable()
 ```
 
+
+
+
+### Scrape URLs
+
+> Preserves article structure via html nodes.  Insomuchas distinct html nodes are used for delineating paragraphs, eg, as opposed to creating space for online ads, etc.  Two newlines ('\n\n') are used when concatenating individual nodes as full text.
+
+```{r message=FALSE, warning=FALSE}
+articles <- textpress::web_scrape_urls(
+  x = meta$url,
+  input = "urls",
+  cores = 8
+  )
+
+pretty_prompt <- function(x, width = 50L, char_length = NULL) {
+  # Truncate the text to the character limit if specified
+  if (!is.null(char_length) && nchar(x) > char_length) {
+    x <- substr(x, 1, char_length)
+  }
+  
+  # Wrap the text and write lines
+  wrapped_text <- strwrap(x, width = width)
+  writeLines(wrapped_text)
+}
+
+articles$text[1] |> pretty_prompt(char_length = 900)
+```
+
+
+
+### One fell swoop
+
+> Alternatively:
+
+```{r eval=FALSE}
+articles <- textpress::web_scrape_urls(
+  x = "Wildlife Conservation Efforts",
+  input = "search",
+  cores = 6
+  )
+```
 
 
 
 ## Text processing
 
-### Split sentences
+### Split paragraphs
 
 ```{r message=FALSE, warning=FALSE}
-df_ss <- articles |>
-  mutate(doc_id = row_number()) |>
-  textpress::nlp_split_sentences()
-
-df_ss |>
-  slice(1:5) |>
-  knitr::kable()
+tif_paragraphs <- articles1 |>
+  textpress::nlp_split_paragraphs(paragraph_delim = "\\n+")
+##  "\t " -- as empty paragraphs remain -- 
 ```
+
+
+
+### Split sentences
+
+> A super-simple sentence tokenizer.  The most commomn abbreviations are ignored when tokenizing.  This list is small, but accounts for most problematic abbreviations.  
+
+```{r}
+textpress::abbreviations
+```
+
+
+```{r}
+tif_sentences <- tif_paragraphs |>
+  textpress::nlp_split_sentences(text_hierarchy = c('doc_id', 'paragraph_id'))
+```
+
 
 
 
 ### Tokenization
 
 ```{r message=TRUE, warning=FALSE}
-tokens <- df_ss |> textpress::nlp_tokenize_text()
+tokens <- tif_sentences |> textpress::nlp_tokenize_text()
 ```
 
 ```{r echo=FALSE}
@@ -131,97 +126,57 @@ tokens[1]
 ```
 
 
+### Cast tokens to a data frame
+
+```{r}
+dtm <- tokens |> 
+  textpress::nlp_cast_tokens() |>
+  
+  tidyr::separate(col = 'id', 
+                  into = c('doc_id', 'paragraph_id', 'sentence_id'), 
+                  sep = '\\.')
+
+dtm |> slice(1:10) |> knitr::kable()
+```
+
 
 
 
 ## Search text
 
+>> THIS IS THROWING ERRORs now -- when cores > 1 -- 
+
 ```{r message=FALSE, warning=FALSE}
-df_ss |>
-  textpress::search_corpus(
-    search = "artificial intelligence",
+search_results <- tif_sentences |>
+  textpress::sem_search_corpus(
+    search = "climate change",
     highlight = c("<b>", "</b>"),
-    n = 0,
-    ## cores = 5,
+    context_size = 0,
+    cores = 1,
     is_inline = F
-  ) |>
+  )
+
+search_results |>
   select(doc_id:text) |>
-  slice(1:5) |>
+  sample_n(10) |>
+  arrange(doc_id) |>
   knitr::kable(escape = F)
 ```
 
-
-
-## Search inline
-
-```{r include=FALSE}
-model <- udpipe::udpipe_load_model("/home/jtimm/pCloudDrive/nlp/udpipe-model/english-ewt-ud-2.5-191206.udpipe")
-```
-
-
-### Annotate corpus with `udpipe`
-
-```{r}
-ud_annotated_corpus <- udpipe::udpipe(
-  object = model,
-  x = tokens,
-  tagger = "default",
-  parser = "none"
-)
-```
-
-
-```{r echo=FALSE}
-ud_annotated_corpus |>
-  select(doc_id, start:xpos) |>
-  slice(1:5) |>
-  knitr::kable()
-```
-
-
-### Build inline text
-
-```{r message=FALSE, warning=FALSE}
-inline_ss <- ud_annotated_corpus |>
-  mutate(inline = paste0(token, "/", xpos, "/", token_id)) |>
-  tidyr::separate(
-    col = doc_id,
-    into = c("doc_id", "sentence_id"),
-    sep = "\\."
-  ) |>
-  group_by(doc_id, sentence_id) |>
-  summarise(text = paste0(inline, collapse = " "))
-
-inline_ss$text[1] |> strwrap(width = 55)
-```
-
-
-### Search for lexico-grammatical pattern
-
-```{r}
-inline_ss |>
-  textpress::search_corpus(
-    search = "JJ and JJ",
-    highlight = c("<b>", "</b>"),
-    n = 0,
-    is_inline = T
-  ) |>
-  select(doc_id:text) |>
-  filter(tokenizers::count_words(text) < 75) |>
-  slice(3:4) |>
-  ## DT::datatable(escape = F)
-  knitr::kable(escape = F)
-```
 
 
 
 ## Search df
+
+> This still has value -- needs to be reframed -- 
+
 
 > Identify sentences that contain both `ChatGPT` and `education`. OR paragrahs -- or whatever -- 
 
 ```{r message=FALSE, warning=FALSE}
 tokens |>
   textpress::nlp_cast_tokens() |>
+  
   textpress::search_df(
     search_col = "token",
     id_col = "text_id",
@@ -244,37 +199,46 @@ tokens |>
 > Chunks built out of (n = `chunk_size`) sentences; context added as (n = `context_size`) sentences as window before and after chunk.  Chunks (in bold-face below) are indexed in vector store for retrieval; chunks plus contexts (normal font below) serve as input to LLM.
 
 ```{r}
-chunks <- df_ss |>
-  textpress::rag_chunk_sentences(
+## chunk_id output is presently concatenated -- 
+
+tif_chunks <- tif_sentences |>
+  textpress::nlp_build_chunks(
+    text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
     chunk_size = 2,
     context_size = 1
   )
 
 set.seed(99)
-chunks |>
+tif_chunks |>
   sample_n(3) |>
   select(-chunk) |>
   knitr::kable(escape = F)
 ```
 
 
-### OpenAI embeddings
+
+
+### HuggingFace embeddings
+
+> API call -- for lightweight embedding building.  DEmo, etc.  Easy enough to --- 
 
 ```{r}
-vstore <- chunks |>
-  mutate(words = tokenizers::count_words(chunk)) |>
-  ### -- ?? --
-  filter(words > 20, words < 60) |>
-  mutate(batch_id = textpress::rag_batch_cumsum(
-    x = words,
-    threshold = 10000
-  )) |>
-  textpress::rag_fetch_openai_embs(
-    text_id = "chunk_id",
-    text = "chunk",
-    batch_id = "batch_id"
-  )
+api_token <- "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"
 ```
+
+
+```{r}
+api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+
+vstore <- tif_chunks  |>
+  textpress::api_huggingface_embeddings(#text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
+                                        text_hierarchy = c('chunk_id'),
+                                        api_token = api_token,
+                                        api_url = api_url)
+
+## Error in dimnames(x) <- dn :   length of 'dimnames' [1] not equal to array extent
+```
+
 
 
 

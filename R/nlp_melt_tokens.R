@@ -7,7 +7,12 @@
 #' @param parent_cols A character vector indicating the column(s) by which to group the data.
 #' @return A list of vectors, each containing the tokens of a group defined by the `by` parameter.
 #' @export
-#' @rdname nlp_melt_tokens
+#' @examples
+#' dtm <- data.frame(doc_id = as.character(c(1, 1, 1, 1, 1, 1, 1, 1)),
+#'                   sentence_id = as.character(c(1, 1, 1, 2, 2, 2, 2, 2)),
+#'                   token = c("Hello", "world", ".", "This", "is", "an", "example", "."))
+#'
+#' tokens <- nlp_melt_tokens(dtm, melt_col = 'token', parent_cols = c('doc_id', 'sentence_id'))
 #'
 #'
 nlp_melt_tokens <- function(df,

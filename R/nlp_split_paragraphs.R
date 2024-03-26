@@ -7,9 +7,13 @@
 #' @param paragraph_delim A regular expression pattern used to split text into paragraphs.
 #' @return A data.table with columns: `doc_id`, `paragraph_id`, and `text`.
 #'         Each row represents a paragraph, along with its associated document and paragraph identifiers.
-#' @importFrom data.table data.table
-#' @importFrom stringi stri_split_regex
 #' @export
+#' @examples
+#' tif <- data.frame(doc_id = c('1', '2'),
+#'                   text = c("Hello world.\n\nMind your business!",
+#'                            "This is an example.n\nThis is a party!"))
+#' paragraphs <- nlp_split_paragraphs(tif)
+#'
 #'
 nlp_split_paragraphs <- function(tif, paragraph_delim = "\\n+") {
   if (!"text" %in% names(tif)) {

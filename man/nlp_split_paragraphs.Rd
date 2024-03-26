@@ -19,3 +19,11 @@ Each row represents a paragraph, along with its associated document and paragrap
 Splits text from the 'text' column of a data frame into individual paragraphs,
 based on a specified paragraph delimiter.
 }
+\examples{
+tif <- data.frame(doc_id = c('1', '2'),
+                  text = c("Hello world.\n\nMind your business!",
+                           "This is an example.n\nThis is a party!"))
+paragraphs <- nlp_split_paragraphs(tif)
+
+
+}

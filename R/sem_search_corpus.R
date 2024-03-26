@@ -11,11 +11,14 @@
 #'                  Used to highlight the found patterns in the text.
 #' @param cores Numeric, default 1. The number of cores to use for parallel processing.
 #' @return A data.table with the search results.
-#' @importFrom data.table rbindlist setDT
-#' @importFrom parallel makeCluster stopCluster clusterExport
-#' @importFrom pbapply pblapply
-#' @importFrom stringi stri_locate_all stri_sub
 #' @export
+#' @examples
+#' tif <- data.frame(doc_id = c('1', '1', '2'),
+#'                   sentence_id = c('1', '2', '1'),
+#'                   text = c("Hello world.",
+#'                            "This is an example.",
+#'                            "This is a party!"))
+#'sem_search_corpus(tif, search = 'This is', text_hierarchy = c('doc_id', 'sentence_id'))
 #'
 #'
 sem_search_corpus <- function(tif,

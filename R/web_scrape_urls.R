@@ -11,14 +11,22 @@
 #'
 #' @return A data frame containing scraped news data.
 #' @export
+#' @examples
+#' \dontrun{
+#' url <- 'https://www.nytimes.com/2024/03/25/nyregion/trump-bond-reduced.html'
+#' article_tif <- web_scrape_urls(x = url, input = 'urls', cores = 1)
+#'}
+#'
 #'
 web_scrape_urls <- function(x,
                             input = "search",
                             cores = 3) {
   # Process input based on the type
   if (input == "search") {
-    mm <- .build_rss(x = x) |> .parse_rss()
-    mm$url <- .get_urls(mm$link)
+    mm <- .build_rss(x)
+    mm1 <- .parse_rss(mm)
+    mm1$url <- .get_urls(mm1$link)
+
   } else if (input == "rss") {
     mm <- .parse_rss(x)
   } else if (input == "urls") {

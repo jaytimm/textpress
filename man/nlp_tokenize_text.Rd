@@ -20,3 +20,13 @@ A named list of tokens, where each list item corresponds to a document.
 \description{
 This function tokenizes text data from a data frame using the 'tokenizers' package, preserving the original text structure like capitalization and punctuation.
 }
+\examples{
+tif <- data.frame(doc_id = c('1', '1', '2'),
+                  sentence_id = c('1', '2', '1'),
+                  text = c("Hello world.",
+                           "This is an example.",
+                           "This is a party!"))
+tokens <- nlp_tokenize_text(tif, text_hierarchy = c('doc_id', 'sentence_id'))
+
+
+}

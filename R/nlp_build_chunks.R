@@ -8,9 +8,20 @@
 #' @param context_size An integer specifying the size of the context around each chunk.
 #' @param text_hierarchy A character vector specifying the columns used for grouping and chunking.
 #' @return A data.table with the chunked text and their respective contexts.
-#' @import data.table
 #' @export
+#' @examples
+#' # Creating a data frame
+#' tif <- data.frame(doc_id = c('1', '1', '2'),
+#'                  sentence_id = c('1', '2', '1'),
+#'                  text = c("Hello world.",
+#'                           "This is an example.",
+#'                           "This is a party!"))
 #'
+#' chunks <- nlp_build_chunks(tif,
+#'                            chunk_size = 2,
+#'                            context_size = 1,
+#'                            text_hierarchy = c('doc_id', 'sentence_id'))
+
 nlp_build_chunks <- function(tif,
                              text_hierarchy,
                              chunk_size,

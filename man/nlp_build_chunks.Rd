@@ -22,3 +22,16 @@ A data.table with the chunked text and their respective contexts.
 This function processes a data frame for NLP analysis by dividing text into chunks and providing context.
 It generates chunks of text with a specified size and includes context based on the specified context size.
 }
+\examples{
+# Creating a data frame
+tif <- data.frame(doc_id = c('1', '1', '2'),
+                 sentence_id = c('1', '2', '1'),
+                 text = c("Hello world.",
+                          "This is an example.",
+                          "This is a party!"))
+
+chunks <- nlp_build_chunks(tif,
+                           chunk_size = 2,
+                           context_size = 1,
+                           text_hierarchy = c('doc_id', 'sentence_id'))
+}

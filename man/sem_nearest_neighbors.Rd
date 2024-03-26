@@ -20,3 +20,19 @@ A data frame with the ranks, terms, and their cosine similarity scores.
 This function identifies the nearest neighbors of a given term or vector
 in a matrix based on cosine similarity.
 }
+\examples{
+\dontrun{
+ api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+ api_token <- ''
+ matrix <- api_huggingface_embeddings(tif,
+                                      text_hierarchy = c('doc_id', 'sentence_id'),
+                                      api_token = api_token,
+                                      api_url = '')
+ query <- api_huggingface_embeddings(query = "Where's the party at?",
+                                     api_token = api_token,
+                                     api_url = api_url)
+ neighbors <- sem_nearest_neighbors(x = query, matrix = matrix)
+}
+
+
+}

@@ -63,6 +63,22 @@ functionality to re-call the API if the returned 'message.content' is not proper
 formed JSON, ensuring more robust API interaction.
 }
 \examples{
-# Example usage (requires OpenAI API key):
-# api_openai_completions(messages = list(list("role" = "user", "content" = "Hello")))
+\dontrun{
+create_chat_completion(
+   model = "gpt-3.5-turbo",
+   messages = list(
+       list(
+           "role" = "system",
+           "content" = "You are an expert at life."
+       ),
+       list(
+           "role" = "user",
+           "content" = "Where is the party at?"
+       )
+   )
+)
+}
+
+
+
 }

@@ -5,8 +5,12 @@
 #' @param tok A list where each element contains tokens corresponding to a document or a sentence.
 #' @return A data frame with columns for token name and token.
 #' @export
-#' @rdname nlp_cast_tokens
-#'
+#' @examples
+#' tokens <- list(c("Hello", "world", "."),
+#'                c("This", "is", "an", "example", "." ),
+#'                c("This", "is", "a", "party", "!"))
+#' names(tokens) <- c('1.1', '1.2', '2.1')
+#' dtm <- nlp_cast_tokens(tokens)
 #'
 nlp_cast_tokens <- function(tok) {
   # Check if all elements in 'tok' are atomic vectors. Stop if not.

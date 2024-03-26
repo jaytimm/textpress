@@ -23,3 +23,10 @@ A data.table with columns specified in 'by', 'sentence_id', and 'text'.
 \description{
 This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 }
+\examples{
+tif <- data.frame(doc_id = c('1'),
+                  text = c("Hello world. This is an example. No, this is a party!"))
+sentences <- nlp_split_paragraphs(tif)
+
+
+}

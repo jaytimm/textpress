@@ -5,15 +5,26 @@
 #' @param tif A data frame containing text data.
 #' @param text_hierarchy A character vector indicating the columns used to create row names.
 #' @param api_token Token for accessing the Hugging Face API.
-#' @param api_url The URL of the Hugging Face API endpoint (default is set to a specific model endpoint).
+#' @param api_url The URL of the Hugging Face API endpoint (default is all-MiniLM-L6-v2).
 #' @param query An optional single text query for which embeddings are required.
 #' @param dims The dimension of the output embeddings.
 #' @param batch_size Number of rows in each batch sent to the API.
 #' @param sleep_duration Duration in seconds to pause between processing batches.
 #'
 #' @return A matrix containing embeddings, with each row corresponding to a text input.
-#'
 #' @export
+#' @examples
+#' \dontrun{
+#' api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+#'  tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
+#'  embeddings <- api_huggingface_embeddings(tif,
+#'                                           text_hierarchy = 'doc_id',
+#'                                           api_token = api_token,
+#'                                           api_url = api_url)
+#' }
+#'
+#'
+#'
 api_huggingface_embeddings <- function(tif,
                                  text_hierarchy,
                                  api_token,

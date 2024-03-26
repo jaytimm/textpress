@@ -22,3 +22,11 @@ a Google News search query, a direct list of news URLs, or an RSS feed URL. Depe
 it either performs a Google News search and processes the resulting RSS feeds, directly scrapes the
 provided URLs, or processes an RSS feed to extract URLs for scraping.
 }
+\examples{
+\dontrun{
+url <- 'https://www.nytimes.com/2024/03/25/nyregion/trump-bond-reduced.html'
+article_tif <- web_scrape_urls(x = url, input = 'urls', cores = 1)
+}
+
+
+}

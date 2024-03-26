@@ -15,3 +15,11 @@ A data frame with columns for token name and token.
 \description{
 This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
 }
+\examples{
+tokens <- list(c("Hello", "world", "."),
+               c("This", "is", "an", "example", "." ),
+               c("This", "is", "a", "party", "!"))
+names(tokens) <- c('1.1', '1.2', '2.1')
+dtm <- nlp_cast_tokens(tokens)
+
+}
