@@ -28,15 +28,15 @@ web_scrape_urls <- function(x,
     mm1$url <- .get_urls(mm1$link)
 
   } else if (input == "rss") {
-    mm <- .parse_rss(x)
+    mm1 <- .parse_rss(x)
   } else if (input == "urls") {
-    mm <- data.frame(url = x)
+    mm1 <- data.frame(url = x)
   } else {
     stop("Invalid input type. Please choose from 'search', 'rss', or 'urls'.")
   }
 
   # Split urls into batches
-  batches <- split(mm$url, ceiling(seq_along(mm$url) / 20))
+  batches <- split(mm1$url, ceiling(seq_along(mm1$url) / 20))
 
   if (cores == 1) {
     # Sequential processing
@@ -70,7 +70,7 @@ web_scrape_urls <- function(x,
   # If RSS metadata is available (not for simple URLs), merge it with results
   if (input != "urls") {
     combined_results <- merge(combined_results,
-      mm,
+      mm1,
       by = "url",
       all = TRUE
     )

@@ -2,10 +2,11 @@
 
 export(abbreviations)
 export(api_huggingface_embeddings)
-export(api_openai_completions)
+export(api_openai_chat_completions)
 export(nlp_build_chunks)
 export(nlp_cast_tokens)
 export(nlp_melt_tokens)
+export(nlp_pretty_text)
 export(nlp_split_paragraphs)
 export(nlp_split_sentences)
 export(nlp_tokenize_text)

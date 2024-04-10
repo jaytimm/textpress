@@ -1,6 +1,6 @@
-#' Fetch Completions from OpenAI API with JSON Validation
+#' Fetch Chat Completions from OpenAI API with JSON Validation
 #'
-#' Interacts with the OpenAI API to obtain completions based on the GPT model. The function
+#' Interacts with the OpenAI API to obtain chat completions based on the GPT model. The function
 #' supports various customization parameters for the request. Additionally, it includes
 #' functionality to re-call the API if the returned 'message.content' is not properly
 #' formed JSON, ensuring more robust API interaction.
@@ -24,7 +24,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' create_chat_completion(
+#' api_openai_chat_completions(
 #'    model = "gpt-3.5-turbo",
 #'    messages = list(
 #'        list(
@@ -41,22 +41,22 @@
 #'
 #'
 #'
-api_openai_completions <- function(model = 'gpt-3.5-turbo',
-                                   messages = NULL,
-                                   temperature = 1,
-                                   top_p = 1,
-                                   n = 1,
-                                   stream = FALSE,
-                                   stop = NULL,
-                                   max_tokens = NULL,
-                                   presence_penalty = 0,
-                                   frequency_penalty = 0,
-                                   logit_bias = NULL,
-                                   user = NULL,
-                                   openai_api_key = Sys.getenv("OPENAI_API_KEY"),
-                                   openai_organization = NULL,
+api_openai_chat_completions <- function(model = 'gpt-3.5-turbo',
+                                                 messages = NULL,
+                                                 temperature = 1,
+                                                 top_p = 1,
+                                                 n = 1,
+                                                 stream = FALSE,
+                                                 stop = NULL,
+                                                 max_tokens = NULL,
+                                                 presence_penalty = 0,
+                                                 frequency_penalty = 0,
+                                                 logit_bias = NULL,
+                                                 user = NULL,
+                                                 openai_api_key = Sys.getenv("OPENAI_API_KEY"),
+                                                 openai_organization = NULL,
 
-                                   is_json_output = TRUE) {
+                                                 is_json_output = TRUE) {
 
   # Ensure that the OpenAI API key is provided
   if (is.null(openai_api_key) || openai_api_key == "") {
@@ -93,7 +93,8 @@ api_openai_completions <- function(model = 'gpt-3.5-turbo',
       stop("API request failed with status code: ", httr::status_code(response), call. = FALSE)
     }
 
-    httr::content(response, "text", encoding = "UTF-8")
+    out <- httr::content(response, "text", encoding = "UTF-8")
+    jsonlite::fromJSON(out, flatten = TRUE)
   }
 
   # Make the initial API call

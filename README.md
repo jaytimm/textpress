@@ -3,12 +3,14 @@ status](https://github.com/jaytimm/textpress/workflows/R-CMD-check/badge.svg)](h
 
 # textpress
 
-A lightweight, versatile NLP companion in R. Provides basic features for
-(1) text processing, (2) corpus search, and (3) web scraping.
-Additionally, the package provides utility functions for (4) building
-basic Retrieval-Augmented Generation (RAG) systems, as well as
-functionality for (5) building text embeddings via OpenAI. Ideal for
-users who need a basic, unobtrusive NLP tool in R.
+A lightweight, versatile NLP companion in R. No substantial
+dependencies. Data-frame-centric. Transparent & step wise. Easy
+integration into LLM-based RAG systems. The package provides features
+for (1) basic text processing, (2) corpus search, and (3) web scraping.
+Additionally included are utility functions for (4) building text
+embeddings via the HuggingFace API, and (5) fetching chat completions
+via the OpenAI API. Ideal for users who need a basic, unobtrusive NLP
+tool in R.
 
 ## Installation
 
@@ -20,234 +22,396 @@ devtools::install_github("jaytimm/textpress")
 
 ## Web scraping
 
+### Articles & metadata from GoogleNews
+
 ``` r
 library(dplyr)
-articles <- textpress::web_scrape_urls(x = 'ChatGPT',
-                                       input = 'search',
-                                       cores = 12) |>
-  select(url, date:title, text) |>
-  filter(!is.na(text)) |>
-  slice(5:30)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+meta <- textpress::web_process_gnewsfeed(x = 'Bidenomics')
+meta |> select(date, source, title, url) |> 
+  arrange(desc(date)) |> 
+  head() |> 
+  knitr::kable()
+```
+
+| date       | source                                      | title                                                                                                        | url                                                                                                                                                 |
+|:---|:----------|:------------------------|:--------------------------------|
+| 2024-04-10 | Daily Caller                                | ‘Absolutely Disastrous’: Voter Panel On ‘Morning Joe’ Skewers Bidenomics, Says They Long For Trump’s Economy | <https://dailycaller.com/2024/04/10/absolutely-disastrous-voter-panel-morning-joe-skewers-bidenomics-trumps-economy/>                               |
+| 2024-04-10 | National Republican Congressional Committee | A great day to talk Bidenomics                                                                               | <https://www.nrcc.org/2024/04/10/a-great-day-to-talk-bidenomics/>                                                                                   |
+| 2024-04-10 | Los Angeles Times                           | Why Biden is getting little credit for the economy, especially in California                                 | <https://www.latimes.com/business/story/2024-04-10/why-biden-is-getting-little-credit-for-the-good-economy>                                         |
+| 2024-04-10 | The Maine Wire                              | Bidenomics: Inflation Soars as DC Plans More Spending                                                        | <https://www.themainewire.com/2024/04/bidenomics-inflation-soars-as-dc-plans-more-spending/>                                                        |
+| 2024-04-09 | Washington Examiner                         | Bidenomics isn’t working                                                                                     | <https://www.washingtonexaminer.com/opinion/editorials/2958113/bidenomics-isnt-working/>                                                            |
+| 2024-04-09 | Benzinga                                    | ‘Rich Dad Poor Dad’s’ Robert Kiyosaki Calls ‘Bidenomics’ A Joke, Says ’Inflation Is Eating American Famil    | <https://www.benzinga.com/news/24/04/38153660/rich-dad-poor-dads-robert-kiyosaki-calls-bidenomics-a-joke-says-inflation-is-eating-american-familie> |
+
+### Scrape URLs
+
+``` r
+articles <- textpress::web_scrape_urls(
+  x = meta$url,
+  input = "urls",
+  cores = 8) |>
+  
+  mutate(doc_id = row_number())
+
+articles$text[1] |> textpress::nlp_pretty_text(char_length = 900)
+```
+
+    ## President Joe Biden hopes the latest jobs report
+    ## will help convince voters that the economy is
+    ## thriving under his policies, but a thorough look
+    ## at the data released last week by the Bureau of
+    ## Labor Statistics shows the economy is far weaker
+    ## than he says it is.
+    ## 
+    ## The headline numbers of 300,000 jobs created and
+    ## an unemployment rate under 4% look solid. But the
+    ## growth is in part-time jobs. There are more
+    ## full-time jobs but only in nonproductive sectors,
+    ## such as government and government-subsidized
+    ## healthcare.
+    ## 
+    ## Bidenomics seems only to be working for
+    ## part-time, mostly foreign workers. The rest of
+    ## the population is out of luck as prices rise and
+    ## borrowing costs make American dream essentials,
+    ## such as a house and a car, less affordable than
+    ## ever.
+    ## 
+    ## Twelve months ago, 134,287,000 Americans had
+    ## full-time jobs. Today, that number has fallen to
+    ## 132,940,000. For all Biden’s talk, there are a
+    ## million
+
+> Alternatively:
+
+``` r
+articles <- textpress::web_scrape_urls(
+  x = "Bidenomics",
+  input = "search",
+  cores = 6) |>
+  
+  mutate(doc_id = row_number())
 ```
 
 ## Text processing
 
+### Split paragraphs
+
+``` r
+tif_paragraphs <- articles |>
+  textpress::nlp_split_paragraphs(paragraph_delim = "\\n+")
+##  "\t " -- as empty paragraphs remain -- 
+```
+
 ### Split sentences
 
 ``` r
-df_ss <- articles |>
-  mutate(doc_id = row_number()) |>
-  textpress::nlp_split_sentences()
-
-df_ss |> slice(1:5) |> knitr::kable()
+textpress::abbreviations
 ```
 
-| doc_id | sentence_id | text_id | text                                                                                                                                                                                                                   |
-|:--|----:|:---|:------------------------------------------------------------|
-| 1      |           1 | 1.1     | On Wednesday, OpenAI announced the launch of its GPT Store—a way for ChatGPT users to share and discover custom chatbot roles called “GPTs”—and ChatGPT Team, a collaborative ChatGPT workspace and subscription plan. |
-| 1      |           2 | 1.2     | OpenAI bills the new store as a way to “help you find useful and popular custom versions of ChatGPT” for members of Plus, Team, or Enterprise subscriptions.                                                           |
-| 1      |           3 | 1.3     | “It’s been two months since we announced GPTs, and users have already created over 3 million custom versions of ChatGPT,” writes OpenAI in its promotional blog.                                                       |
-| 1      |           4 | 1.4     | “Many builders have shared their GPTs for others to use.                                                                                                                                                               |
-| 1      |           5 | 1.5     | Today, we’re starting to roll out the GPT Store to ChatGPT Plus, Team and Enterprise users so you can find useful and popular GPTs.”                                                                                   |
+    ##  [1] "\\b[A-Z]\\." "No."         "Inc."        "St."         "U.S.A."     
+    ##  [6] "Mr."         "Mrs."        "Ms."         "Dr."         "Prof."      
+    ## [11] "Sr."         "Jr."         "Sen."        "U.S."        "Rep."       
+    ## [16] "Sen."        "Gov."        "Jan."        "Feb."        "Mar."       
+    ## [21] "Apr."        "Aug."        "Sep."        "Oct."        "Nov."       
+    ## [26] "Dec."        "Reps."
+
+``` r
+tif_sentences <- tif_paragraphs |>
+  textpress::nlp_split_sentences(text_hierarchy = c('doc_id', 'paragraph_id'))
+```
+
+``` r
+tif_sentences |> head() |> knitr::kable()
+```
+
+| doc_id | paragraph_id | sentence_id | text                                                                                                                                                                                                                                                                 |
+|:--|:---|:---|:------------------------------------------------------------|
+| 1      | 1            | 1           | President Joe Biden hopes the latest jobs report will help convince voters that the economy is thriving under his policies, but a thorough look at the data released last week by the Bureau of Labor Statistics shows the economy is far weaker than he says it is. |
+| 1      | 2            | 1           | The headline numbers of 300,000 jobs created and an unemployment rate under 4% look solid.                                                                                                                                                                           |
+| 1      | 2            | 2           | But the growth is in part-time jobs.                                                                                                                                                                                                                                 |
+| 1      | 2            | 3           | There are more full-time jobs but only in nonproductive sectors, such as government and government-subsidized healthcare.                                                                                                                                            |
+| 1      | 3            | 1           | Bidenomics seems only to be working for part-time, mostly foreign workers.                                                                                                                                                                                           |
+| 1      | 3            | 2           | The rest of the population is out of luck as prices rise and borrowing costs make American dream essentials, such as a house and a car, less affordable than ever.                                                                                                   |
 
 ### Tokenization
 
 ``` r
-tokens <- df_ss |> textpress::nlp_tokenize_text()
+tokens <- tif_sentences |> textpress::nlp_tokenize_text()
 ```
 
-    ## $`1.1`
-    ##  [1] "On"            "Wednesday"     ","             "OpenAI"       
-    ##  [5] "announced"     "the"           "launch"        "of"           
-    ##  [9] "its"           "GPT"           "Store"         "—"            
-    ## [13] "a"             "way"           "for"           "ChatGPT"      
-    ## [17] "users"         "to"            "share"         "and"          
-    ## [21] "discover"      "custom"        "chatbot"       "roles"        
-    ## [25] "called"        "\""            "GPTs"          "\""           
-    ## [29] "—"             "and"           "ChatGPT"       "Team"         
-    ## [33] ","             "a"             "collaborative" "ChatGPT"      
-    ## [37] "workspace"     "and"           "subscription"  "plan"         
-    ## [41] "."
+    ## $`1.1.1`
+    ##  [1] "President"  "Joe"        "Biden"      "hopes"      "the"       
+    ##  [6] "latest"     "jobs"       "report"     "will"       "help"      
+    ## [11] "convince"   "voters"     "that"       "the"        "economy"   
+    ## [16] "is"         "thriving"   "under"      "his"        "policies"  
+    ## [21] ","          "but"        "a"          "thorough"   "look"      
+    ## [26] "at"         "the"        "data"       "released"   "last"      
+    ## [31] "week"       "by"         "the"        "Bureau"     "of"        
+    ## [36] "Labor"      "Statistics" "shows"      "the"        "economy"   
+    ## [41] "is"         "far"        "weaker"     "than"       "he"        
+    ## [46] "says"       "it"         "is"         "."
+
+### Cast tokens to a data frame
+
+``` r
+dtm <- tokens |> 
+  textpress::nlp_cast_tokens() |>
+  
+  tidyr::separate(col = 'id', 
+                  into = c('doc_id', 'paragraph_id', 'sentence_id'), 
+                  sep = '\\.')
+
+dtm |> slice(1:10) |> knitr::kable()
+```
+
+| doc_id | paragraph_id | sentence_id | token     |
+|:-------|:-------------|:------------|:----------|
+| 1      | 1            | 1           | President |
+| 1      | 1            | 1           | Joe       |
+| 1      | 1            | 1           | Biden     |
+| 1      | 1            | 1           | hopes     |
+| 1      | 1            | 1           | the       |
+| 1      | 1            | 1           | latest    |
+| 1      | 1            | 1           | jobs      |
+| 1      | 1            | 1           | report    |
+| 1      | 1            | 1           | will      |
+| 1      | 1            | 1           | help      |
 
 ## Search text
 
 ``` r
-df_ss |>
-  textpress::search_corpus(search = 'artificial intelligence',
-                           highlight = c('<b>', '</b>'),
-                           n = 0,
-                           ## cores = 5,
-                           is_inline = F) |>
+search_results <- tif_sentences |>
+  
+  textpress::sem_search_corpus(
+    search = "unemployment rate",
+    highlight = c("<b>", "</b>"),
+    context_size = 1,
+    cores = 1,
+    is_inline = F
+  )
+```
 
+``` r
+search_results |>
   select(doc_id:text) |>
-  slice(1:5) |>
+  sample_n(10) |>
+  arrange(doc_id) |>
   knitr::kable(escape = F)
 ```
 
-| doc_id | sentence_id | text                                                                                                                                                                                                                                                                             |
-|:--|:---|:----------------------------------------------------------------|
-| 3      | 4           | As someone studying <b>artificial intelligence</b> in education, I was curious: Could ChatGPT help?                                                                                                                                                                              |
-| 4      | 3           | DOE’s decision is supposed to set the foundation for future agency uses of generative <b>artificial intelligence</b>, Chad Smith, a spokesperson for the department, told FedScoop.                                                                                              |
-| 6      | 2           | ChatGPT maker OpenAI finally announced on Wednesday its app store for the public to try the customized versions of its popular chatbot, ChatGPT, as the <b>artificial intelligence</b> company works to expand the reach of its flagship technology and turn it into a cash cow. |
-| 7      | 3           | The company has integrated ChatGPT, an <b>artificial intelligence</b>-based chatbot, into its IDA voice assistant, marking a new era in automotive technology.                                                                                                                   |
-| 12     | 1           | The field of <b>artificial intelligence</b> (AI) has witnessed a remarkable surge in innovation, with ChatGPT from OpenAI leading the charge.                                                                                                                                    |
-
-## Search inline
-
-### Annotate corpus with `udpipe`
-
-``` r
-ud_annotated_corpus <- udpipe::udpipe(object = model,
-                                      x = tokens,
-                                      tagger = 'default',
-                                      parser = 'none')
-```
-
-| doc_id | start | end | term_id | token_id | token     | lemma     | upos  | xpos |
-|:-------|------:|----:|--------:|:---------|:----------|:----------|:------|:-----|
-| 1.1    |     1 |   2 |       1 | 1        | On        | on        | ADP   | IN   |
-| 1.1    |     4 |  12 |       2 | 2        | Wednesday | Wednesday | PROPN | NNP  |
-| 1.1    |    14 |  14 |       3 | 3        | ,         | ,         | PUNCT | ,    |
-| 1.1    |    16 |  21 |       4 | 4        | OpenAI    | OpenAI    | PROPN | NNP  |
-| 1.1    |    23 |  31 |       5 | 5        | announced | announce  | VERB  | VBD  |
-
-### Build inline text
-
-``` r
-inline_ss <- ud_annotated_corpus |>
-  mutate(inline = paste0(token, '/', xpos, '/', token_id)) |>
-  tidyr::separate(col = doc_id, 
-                  into = c('doc_id', 'sentence_id'), 
-                  sep = '\\.') |>
-  group_by(doc_id, sentence_id) |>
-  summarise(text = paste0(inline, collapse = " "))
-
-inline_ss$text[1] |> strwrap(width = 55)
-```
-
-    ##  [1] "On/IN/1 Wednesday/NNP/2 ,/,/3 OpenAI/NNP/4"           
-    ##  [2] "announced/VBD/5 the/DT/6 launch/NN/7 of/IN/8"         
-    ##  [3] "its/PRP$/9 GPT/NN/10 Store/NN/11 —/,/12 a/DT/13"      
-    ##  [4] "way/NN/14 for/IN/15 ChatGPT/NNP/16 users/NNS/17"      
-    ##  [5] "to/TO/18 share/VB/19 and/CC/20 discover/VB/21"        
-    ##  [6] "custom/JJ/22 chatbot/NN/23 roles/NNS/24 called/VBN/25"
-    ##  [7] "\"/``/26 GPTs/NNS/27 \"/''/28 —/,/29 and/CC/30"       
-    ##  [8] "ChatGPT/NNP/31 Team/NNP/32 ,/,/33 a/DT/34"            
-    ##  [9] "collaborative/JJ/35 ChatGPT/NN/36 workspace/NN/37"    
-    ## [10] "and/CC/38 subscription/NN/39 plan/NN/40 ././41"
-
-### Search for lexico-grammatical pattern
-
-``` r
-inline_ss |>
-  textpress::search_corpus(search = 'JJ and JJ',
-                           highlight = c('<b>', '</b>'),
-                           n = 0,
-                           is_inline = T) |>
-
-  select(doc_id:text) |>
-  filter(tokenizers::count_words(text) < 75) |>
-  slice(3:4) |>
-  ## DT::datatable(escape = F)
-  knitr::kable(escape = F) 
-```
-
-| doc_id | sentence_id | text                                                                                                                                                                                                                                           |
-|:--|:----|:---------------------------------------------------------------|
-| 17     | 11          | Each/DT/1 API/NN/2 has/VBZ/3 to/TO/4 be/VB/5 continuously/RB/6 <b>tested/JJ/7 and/CC/8 verified/JJ/9</b> to/TO/10 ensure/VB/11 your/PRP$/12 software/NN/13 functions/NNS/14 as/IN/15 it/PRP/16 should/MD/17 ././18                             |
-| 22     | 31          | Make/VB/1 sure/JJ/2 the/DT/3 affirmation/NN/4 is/VBZ/5 <b>achievable/JJ/6 and/CC/7 positive/JJ/8</b> ,/,/9 and/CC/10 no/RB/11 longer/RBR/12 than/IN/13 \[/-LRB-/14 insert/VB/15 word/NN/16 limit/NN/17 \]/-RRB-/18 words/NNS/19 ././20 ”/’’/21 |
-
-## Search df
-
-> Identify sentences that contain both `ChatGPT` and `education`.
-
-``` r
-tokens |>
-  textpress::nlp_cast_tokens() |>
-  
-  textpress::search_df(search_col = 'token',
-                       id_col = 'text_id',
-                       include = c('ChatGPT', 'education'),
-                       logic = 'and',
-                       exclude = NULL) |>
-
-  group_by(text_id) |>
-  summarize(text = paste0(token, collapse = ' ')) |>
-  slice(1:5) |>
-  knitr::kable()
-```
-
-| text_id | text                                                                                                                                             |
-|:----|:------------------------------------------------------------------|
-| 3.4     | As someone studying artificial intelligence in education , I was curious : Could ChatGPT help ?                                                  |
-| 3.41    | My exploration of the exponential decay equation with ChatGPT symbolizes the broader challenges and opportunities presented by AI in education . |
+| doc_id | paragraph_id | sentence_id | text                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+|:-|:--|:--|:---------------------------------------------------------------|
+| 12     | 5            | 1           | Take the <b>unemployment rate</b>. It is a ratio of those seeking work to the whole active labor force.                                                                                                                                                                                                                                                                                                                                                                                             |
+| 12     | 5            | 6           | Conversely, if unemployment was low or falling, most workers felt reasonably secure. The <b>unemployment rate</b>, back then, was a reasonable indicator of distress or well-being.                                                                                                                                                                                                                                                                                                                 |
+| 13     | 28           | 2           | Between February 2020 and February 2024, California’s payroll jobs have increased by 1.7%, half of the national job growth rate. The <b>unemployment rate</b> in California in February was 5.3%, compared with 3.9% for the U.S as a whole, although the state Finance Department’s chief economist, Somjita Mitra, said California’s share of long-term unemployed is comparatively much smaller.                                                                                                 |
+| 18     | 59           | 2           | Federal Reserve Economic Data (FRED), Federal Reserve Bank of St. Louis. “<b>Unemployment Rate</b>.”                                                                                                                                                                                                                                                                                                                                                                                                |
+| 35     | 4            | 1           | On Friday, Biden flew the Bidenomics banner in Allentown, Pennsylvania, the onetime steel and manufacturing hub that suffered the fallout of deindustrialization, but has seen a revival in recent years, with an <b>unemployment rate</b> the White House says is now at a 30-year low.                                                                                                                                                                                                            |
+| 49     | 11           | 3           | In January, the University of Michigan saw the largest two-month jump in its consumer sentiment index since the end of the Gulf War in 1991. News coverage, which throughout 2023 relentlessly forecast a recession, now touts the prospect of a “soft landing” — that is, a successful battle against inflation without an increase in the <b>unemployment rate</b> or a general economic slowdown.                                                                                                |
+| 70     | 18           | 2           | What’s more, people’s basic factual sense of both economic conditions and Biden’s role is woeful. The <b>unemployment rate</b> is at historically low levels, and the U.S. economy is growing faster than most other economies on the world, but polls show most people think the reverse is true. The public has very little awareness of Biden’s main accomplishments, which are (when defined in neutral terms) extremely popular.                                                               |
+| 71     | 8            | 1           | Meanwhile, the <b>unemployment rate</b> of 3.7% is at a 54-year low, and the unemployment rate has stayed below 4% for the longest stretch in the last 50 years despite the Fed raising interest rates from 0 to 5.5% in a year. The last time this nation saw such good employment news, LBJ was the president and Bonanza was the top show on TV.                                                                                                                                                 |
+| 71     | 8            | 1           | Meanwhile, the unemployment rate of 3.7% is at a 54-year low, and the <b>unemployment rate</b> has stayed below 4% for the longest stretch in the last 50 years despite the Fed raising interest rates from 0 to 5.5% in a year. The last time this nation saw such good employment news, LBJ was the president and Bonanza was the top show on TV.                                                                                                                                                 |
+| 8      | 16           | 2           | When money is injected into the economy at low cost, businesses can use these dollars to expand and most notably hire more jobs. However, if you look at the recent trends in states like California, where unemployment last month was at 5.1%, and Nevada at 5.3%, the recent jobs report showing unemployment at 3.9% is the beginning of the curve in my view toward a 5% <b>unemployment rate</b> again because you simply can’t keep printing money to make the employment picture look good. |
 
 ## Retrieval-augmented generation
 
 ### Sentence Window Retrieval
 
-> Chunks built out of (n = `chunk_size`) sentences; context added as (n
-> = `context_size`) sentences as window before and after chunk. Chunks
-> (in bold-face below) are indexed in vector store for retrieval; chunks
-> plus contexts (normal font below) serve as input to LLM.
+``` r
+## chunk_id output is presently concatenated -- 
+
+tif_chunks <- tif_sentences |>
+  textpress::nlp_build_chunks(
+    text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
+    chunk_size = 2,
+    context_size = 1
+  )
+```
 
 ``` r
-chunks <- df_ss |>
-  textpress::rag_chunk_sentences(chunk_size = 2, 
-                                 context_size = 1) 
-
 set.seed(99)
-chunks |> sample_n(3) |> select(-chunk) |> knitr::kable(escape = F)
+tif_chunks |>
+  sample_n(3) |>
+  select(-chunk) |>
+  knitr::kable(escape = F)
 ```
 
-| doc_id | chunk_id | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|:-|:--|:-------------------------------------------------------------------|
-| 22     | 22.2     | But its use isn’t reserved for workspaces and classrooms. <b>Thanks to its massive corpus of training data and sophisticated algorithms its applications are quite literally endless – creating valuable opportunities for users looking to unlock their best self in 2024, and beyond. Whether you’re in your ‘new year, new me’ era, or you simply want to build healthier habits and stick to them year-round, we’ve rounded up some of the top self-improvement prompts to feed ChatGPT this January.</b> We also offer advice on what makes a great prompt, to help you get the most out of generative AI. |
-| 22     | 22.13    | Some of my personal, professional, and academic goals include: \[include examples of goals\]. <b>Use a mixture of inspiring imagery and language, and don’t make the vision board any bigger than \[insert size limit here\]. “Use a neutral color palette and cursive fonts like this vision board: \[insert photo of vision board here\].”</b> Daily affirmations are positive mantras you repeat routinely to encourage optimism and success.                                                                                                                                                                |
-| 2      | 2.8      | I either queried for news or gave them links to news reports and asked the model to summarize them or write an article based on them. <b>I did not like the results. The articles they generate don’t follow a logical flow and I ended up restructuring the text.</b> The models sometimes repeat facts at different places or place them where they don’t make sense.                                                                                                                                                                                                                                         |
+| doc_id | paragraph_id | chunk_id | chunk_plus_context                                                                                                                                                                                                                                                                                            |
+|:--|:---|:--|:--------------------------------------------------------------|
+| 51     | 22           | 51.22.1  | Norway carefully managed the transition. A national library was set up, creating public sector jobs (it uses the mountains bordering the local fjord for naturally climate-controlled book storage). The government helped to re-educate steelworkers for new roles.                                          |
+| 69     | 4            | 69.4.3   | Yet inflation is down sharply, from a peak of 8.9% in 2022 to 3.4% now. Many prices that went up are still up, especially for staples such as food and rent. But incoming data shows that consumer worries about inflation are easing, as if they’re finally starting to believe inflation is on the way out. |
+| 14     | 3            | 14.3.1   | “Indexes for shelter, motor vehicle insurance, medical care, apparel, and personal care all rose in March,” the U.S. Bureau of Labor Statistics (BLS) noted. In contrast, prices for used cars and trucks, along with new vehicles and recreation, declined.                                                  |
 
-### OpenAI embeddings
+### HuggingFace embeddings
+
+> API call – for lightweight embedding building. DEmo, etc. Easy enough
+> to —
 
 ``` r
-vstore <- chunks |>
-  mutate(words = tokenizers::count_words(chunk)) |>
-  filter(words > 20, words < 60) |>
-  mutate(batch_id = textpress::rag_batch_cumsum(x = words,
-                                                threshold = 10000)) |>
+api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
 
-  textpress::rag_fetch_openai_embs(text_id = 'chunk_id',
-                                   text = 'chunk',
-                                   batch_id = 'batch_id')
+vstore <- tif_chunks  |>
+  rename(text = chunk) |> ## !!!!
+  textpress::api_huggingface_embeddings(#text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),
+                                        text_hierarchy = c('chunk_id'),
+                                        api_token = api_token,
+                                        api_url = api_url)
 ```
 
-    ## [1] "Batch 1 of 2"
-    ## [1] "Batch 2 of 2"
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |========                                                              |  11%  |                                                                              |================                                                      |  22%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================                                       |  44%  |                                                                              |=======================================                               |  56%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================                |  78%  |                                                                              |==============================================================        |  89%  |                                                                              |======================================================================| 100%
+
+``` r
+## Error in dimnames(x) <- dn :   length of 'dimnames' [1] not equal to array extent
+```
 
 ### Semantic search
 
 ``` r
-q <- 'What are some concerns about the impact of
-      advanced AI models like ChatGPT?'
+q <- "What are the core tenets of Bidenomics?"
 ```
 
 ``` r
-query <- textpress::rag_fetch_openai_embs(query = q)
+query <- textpress::api_huggingface_embeddings(query = q,
+                                               api_token = api_token,
+                                               api_url = api_url)
 
-textpress::search_semantics(x = query,
-                            matrix = vstore,
-                            n = 5) |>
+rags <- textpress::sem_nearest_neighbors(
+  x = query,
+  matrix = vstore,
+  n = 10
+) |>
+  left_join(tif_chunks, by = c("term2" = "chunk_id"))
 
-  left_join(chunks, by = c('term2' = 'chunk_id')) |>
+rags |>
   select(cos_sim:chunk) |>
   knitr::kable()
 ```
 
-| cos_sim | doc_id | chunk                                                                                                                                                                                                                                                                                                                 |
-|--:|:--|:-----------------------------------------------------------------|
-|   0.877 | 3      | My interaction with ChatGPT underscores the necessity for students to be equipped with the ability to challenge and question the information provided by AI. While these tools are powerful, they are not infallible.                                                                                                 |
-|   0.874 | 1      | As usual, our standard Ars warning about AI language models applies: “Bring your own data” for analysis, don’t rely on ChatGPT as a factual resource, and don’t rely on its outputs in ways you cannot personally confirm. OpenAI has provided more details about ChatGPT Team on its website.                        |
-|   0.873 | 16     | The issues surrounding its tendency to basically steal preexisting content will undoubtedly continue to mount for the AI company, unless they can prove that what ChatGPT is doing is indeed “fair use.” Mind Matters features original news and analysis at the intersection of artificial and natural intelligence. |
-|   0.869 | 3      | Faced with a challenging problem, I wanted to confirm my understanding before guiding hers. As someone studying artificial intelligence in education, I was curious: Could ChatGPT help?                                                                                                                              |
-|   0.865 | 16     | ChatGPT, the large language model developed by OpenAI, might seem like it generates novel content, but of course we know that it partakes in what’s generally called “scraping.” It takes pre-existing material on the Internet in response to the prompt a human user inserts.                                       |
+| cos_sim | doc_id | paragraph_id | chunk                                                                                                                                                                                                                                                                                                                                                                        |
+|--:|:--|:---|:---------------------------------------------------------------|
+|   0.748 | 18     | 32           | The three key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers in the middle and lower classes; and promoting competition across businesses and sectors.                                                                                                                                                 |
+|   0.745 | 18     | 7            | In response to these challenges, Bidenomics focuses on the core goals of public investment, worker empowerment, and promoting competition. Below, we take a closer look at each of these central pillars of Bidenomics.                                                                                                                                                      |
+|   0.716 | 18     | 33           | Bidenomics refers to the broad set of economic policies and actions instituted under President Joe Biden. Broadly, these include efforts to invest heavily in American infrastructure, green energy initiatives, domestic manufacturing, and related areas.                                                                                                                  |
+|   0.710 | 18     | 8            | The first focal point of Bidenomics is on investment in American business and infrastructure. Specifically, it includes investments in clean energy and related industries, a push to increase semiconductor manufacturing in the United States, and funds to update, improve, and build out additional infrastructure across the country.                                   |
+|   0.700 | 33     | 4            | Last week, the president gave a speech on “Bidenomics” in hopes that the term will lodge in voters’ minds ahead of the 2024 elections. But what is Bidenomics?                                                                                                                                                                                                               |
+|   0.690 | 18     | 2            | Bidenomics refers to the broad economic platform that President Biden campaigned on prior to the 2020 election and on which he remains focused heading into the 2024 election. This platform includes provisions to extend healthcare access, increase taxes for the wealthy, make major investments in green energy and other infrastructure, and support the middle class. |
+|   0.678 | 6      | 11           | There are three basic problems with Bidenomics: (1) it is unconstitutional, (2) it is misguided, and (3) it is self-defeating.                                                                                                                                                                                                                                               |
+|   0.677 | 35     | 38           | Biden’s team has worked since then to provide a firmer definition – including in multi-part social media posts and photos shared online of the president explaining the theory at a whiteboard – but one aspect of his comment endures: Bidenomics is defined in part by what it is not.                                                                                     |
+|   0.671 | 18     | 15           | The final pillar of Bidenomics is the promotion of competition to help small businesses and others to lower costs. These efforts are predicated on the belief that higher rates of competition across sectors will lead to lower customer costs and higher wages for workers.                                                                                                |
+|   0.661 | 18     | 6            | The White House describes the goal of Bidenomics as “building the economy from the middle out and the bottom up.” The platform is founded on the belief that elements of U.S. economic policy in recent decades fostered inequality, shocks including the Great Recession, a slow pace of growth, and an exacerbation of climate change.                                     |
+
+### Chat completion via OpenAI
+
+``` r
+prompt1 <- 'BASED ON contexts below, provide a 10 point summary of the core tenets of Bidenomics.  
+
+Provide the response in JSON array format. JSON array should include TEN key-response pairs. A simple, incomplete example below:
+
+[{"Point_number": "1", "Point": "Example summary"}, {"Point_number": "2", "Point": "Example summary"}, {"Point_number": "3", "Point": "Example summary"}]
+
+Ensure there is no trailing comma after the last element.
+
+DO NOT include the "```json " code block notation in the output.
+
+
+CONTEXTS:
+'
+
+prompt1 |> textpress::nlp_pretty_text()
+```
+
+    ## BASED ON contexts below, provide a 10 point
+    ## summary of the core tenets of Bidenomics.
+    ## 
+    ## Provide the response in JSON array format. JSON
+    ## array should include TEN key-response pairs. A
+    ## simple, incomplete example below:
+    ## 
+    ## [{"Point_number": "1", "Point": "Example
+    ## summary"}, {"Point_number": "2", "Point":
+    ## "Example summary"}, {"Point_number": "3",
+    ## "Point": "Example summary"}]
+    ## 
+    ## Ensure there is no trailing comma after the last
+    ## element.
+    ## 
+    ## DO NOT include the "```json " code block notation
+    ## in the output.
+    ## 
+    ## CONTEXTS:
+
+``` r
+rags_json <- rags |> select(term2, chunk_plus_context) |> jsonlite::toJSON()
+rags_json |> textpress::nlp_pretty_text(char_length = 1000)
+```
+
+    ## [{"term2":"18.32.1","chunk_plus_context":"The
+    ## three key pillars of Bidenomics are investments
+    ## in American infrastructure, clean energy, and
+    ## business; empowerment of workers in the middle
+    ## and lower classes; and promoting competition
+    ## across businesses and
+    ## sectors."},{"term2":"18.7.1","chunk_plus_context":"In
+    ## response to these challenges, Bidenomics focuses
+    ## on the core goals of public investment, worker
+    ## empowerment, and promoting competition. Below, we
+    ## take a closer look at each of these central
+    ## pillars of
+    ## Bidenomics."},{"term2":"18.33.1","chunk_plus_context":"Bidenomics
+    ## refers to the broad set of economic policies and
+    ## actions instituted under President Joe Biden.
+    ## Broadly, these include efforts to invest heavily
+    ## in American infrastructure, green energy
+    ## initiatives, domestic manufacturing, and related
+    ## areas. They also include a set of tax policies
+    ## aiming to reduce taxes for middle-class workers
+    ## and increase tax rates for wealthy individuals
+    ## and large corporations."},{"term2":"18.8.1","chun
+
+``` r
+messages = list(
+    list(
+        "role" = "system",
+        "content" = "You are an economist."
+        ),
+    
+    list(
+        "role" = "user",
+        "content" = paste(prompt1, rags_json, sep = '\n\n')
+        )
+    )
+```
+
+``` r
+ten_points <- textpress::api_openai_chat_completions(messages = messages)
+
+ten_points |> jsonlite::fromJSON() |> knitr::kable()
+```
+
+| Point_number | Point                                                                                                                                     |
+|:------|:----------------------------------------------------------------|
+| 1            | Bidenomics focuses on investments in American infrastructure, clean energy, and businesses to drive economic growth.                      |
+| 2            | Worker empowerment is a key pillar, aiming to support the middle and lower classes to enhance economic opportunities.                     |
+| 3            | Promotion of competition across businesses and sectors is central to Bidenomics to lower costs and increase wages.                        |
+| 4            | Public investment is a core goal, supporting areas such as infrastructure, green energy, and domestic manufacturing.                      |
+| 5            | Tax policies under Bidenomics seek to reduce taxes for the middle class and increase rates for the wealthy and large corporations.        |
+| 6            | Bidenomics is defined by efforts to build the economy from the middle out and the bottom up, addressing past economic inequalities.       |
+| 7            | The focus on competition aims to benefit small businesses while lowering costs for consumers.                                             |
+| 8            | Bidenomics revolves around increasing investments in clean energy initiatives and semiconductor manufacturing in the U.S.                 |
+| 9            | Bidenomics platform includes provisions to extend healthcare access and support the middle class.                                         |
+| 10           | Some criticisms suggest Bidenomics is unconstitutional, misguided, and self-defeating, highlighting differing viewpoints on the policies. |
 
 ## Summary
