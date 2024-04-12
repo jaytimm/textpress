@@ -6,7 +6,8 @@
 \usage{
 api_openai_chat_completions(
   model = "gpt-3.5-turbo",
-  messages = NULL,
+  system_message = "",
+  user_message = "",
   temperature = 1,
   top_p = 1,
   n = 1,
@@ -25,7 +26,9 @@ api_openai_chat_completions(
 \arguments{
 \item{model}{The model to use, defaults to 'gpt-3.5-turbo'.}
 
-\item{messages}{A list of messages to send to the API.}
+\item{system_message}{System prompt}
+
+\item{user_message}{User prompt}
 
 \item{temperature}{Controls randomness in generation, default 1.}
 

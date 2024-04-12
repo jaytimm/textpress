@@ -25,7 +25,7 @@ sem_search_corpus(
 
 \item{is_inline}{Logical, default FALSE. Indicates if the search should be inline.}
 
-\item{highlight}{A character vector of length two, default c('\if{html}{\out{<b>}}', '\if{html}{\out{</b>}}').
+\item{highlight}{A character vector of length two, default c('<b>', '</b>').
 Used to highlight the found patterns in the text.}
 
 \item{cores}{Numeric, default 1. The number of cores to use for parallel processing.}

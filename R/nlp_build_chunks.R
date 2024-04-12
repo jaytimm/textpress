@@ -73,5 +73,7 @@ nlp_build_chunks <- function(tif,
                      all.x = TRUE,
                      sort = FALSE)
 
+  result_df[, chunk_id := seq_len(.N), by = grouping_vars]
+
   return(result_df)
 }

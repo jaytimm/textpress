@@ -7,13 +7,13 @@
 nlp_split_paragraphs(tif, paragraph_delim = "\\\\n+")
 }
 \arguments{
-\item{tif}{A data frame with at least two columns: \code{doc_id} and \code{text}.}
+\item{tif}{A data frame with at least two columns: `doc_id` and `text`.}
 
 \item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
 }
 \value{
-A data.table with columns: \code{doc_id}, \code{paragraph_id}, and \code{text}.
-Each row represents a paragraph, along with its associated document and paragraph identifiers.
+A data.table with columns: `doc_id`, `paragraph_id`, and `text`.
+        Each row represents a paragraph, along with its associated document and paragraph identifiers.
 }
 \description{
 Splits text from the 'text' column of a data frame into individual paragraphs,

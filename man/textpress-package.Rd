@@ -4,12 +4,8 @@
 \name{textpress-package}
 \alias{textpress}
 \alias{textpress-package}
-\title{textpress: Lightweight and User-Friendly Natural Language Processing Toolkit}
+\title{textpress: A lightweight, unobtrusive R companion for basic NLP.}
 \description{
-Provides a suite of tools for basic natural language processing tasks. Designed to be lightweight and user-friendly, it includes functionalities for text tokenization, basic text analysis, and pattern searching within text corpora. It's particularly suitable for quick analyses and for users who prefer a simple toolkit for NLP tasks.
-}
-\author{
-\strong{Maintainer}: Jason Timm \email{first.last@example.com}
-
+A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.
 }
 \keyword{internal}

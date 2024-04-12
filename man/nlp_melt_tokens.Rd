@@ -13,12 +13,12 @@ nlp_melt_tokens(
 \arguments{
 \item{df}{A data frame containing the data to be tokenized.}
 
-\item{melt_col}{The name of the column in \code{df} that contains the tokens.}
+\item{melt_col}{The name of the column in `df` that contains the tokens.}
 
 \item{parent_cols}{A character vector indicating the column(s) by which to group the data.}
 }
 \value{
-A list of vectors, each containing the tokens of a group defined by the \code{by} parameter.
+A list of vectors, each containing the tokens of a group defined by the `by` parameter.
 }
 \description{
 This function tokenizes a data frame based on a specified token column and groups the data by one or more specified columns.

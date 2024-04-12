@@ -11,7 +11,7 @@ web_process_gnewsfeed(x)
 }
 \value{
 A dataframe with columns corresponding to the parsed RSS feed,
-including URL, title, date, and other relevant metadata.
+        including URL, title, date, and other relevant metadata.
 }
 \description{
 This function takes a search term, builds an RSS feed from Google News, parses it,

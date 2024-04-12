@@ -6,7 +6,8 @@
 #' formed JSON, ensuring more robust API interaction.
 #'
 #' @param model The model to use, defaults to 'gpt-3.5-turbo'.
-#' @param messages A list of messages to send to the API.
+#' @param system_message System prompt
+#' @param user_message User prompt
 #' @param temperature Controls randomness in generation, default 1.
 #' @param top_p Controls diversity of generation, default 1.
 #' @param n Number of completions to generate, default 1.
@@ -42,26 +43,42 @@
 #'
 #'
 api_openai_chat_completions <- function(model = 'gpt-3.5-turbo',
-                                                 messages = NULL,
-                                                 temperature = 1,
-                                                 top_p = 1,
-                                                 n = 1,
-                                                 stream = FALSE,
-                                                 stop = NULL,
-                                                 max_tokens = NULL,
-                                                 presence_penalty = 0,
-                                                 frequency_penalty = 0,
-                                                 logit_bias = NULL,
-                                                 user = NULL,
-                                                 openai_api_key = Sys.getenv("OPENAI_API_KEY"),
-                                                 openai_organization = NULL,
+                                        #messages = NULL,
 
-                                                 is_json_output = TRUE) {
+                                        system_message = '',
+                                        user_message = '',
+
+                                        temperature = 1,
+                                        top_p = 1,
+                                        n = 1,
+                                        stream = FALSE,
+                                        stop = NULL,
+                                        max_tokens = NULL,
+                                        presence_penalty = 0,
+                                        frequency_penalty = 0,
+                                        logit_bias = NULL,
+                                        user = NULL,
+                                        openai_api_key = Sys.getenv("OPENAI_API_KEY"),
+                                        openai_organization = NULL,
+
+                                        is_json_output = TRUE) {
 
   # Ensure that the OpenAI API key is provided
   if (is.null(openai_api_key) || openai_api_key == "") {
     stop("OpenAI API key is missing.", call. = FALSE)
   }
+
+  messages = list(
+    list(
+      "role" = "system",
+      "content" = system_message
+    ),
+
+    list(
+      "role" = "user",
+      "content" = user_message
+    )
+  )
 
   # Internal function to make the API call
   make_call <- function() {
