@@ -73,11 +73,11 @@ search_results <- articles |>
     is_inline = F)
 ```
 
-| doc_id | paragraph_id | chunk_id | text                                                                                                                                                                                                                                                                                                      |
-|:--|:---|:--|:--------------------------------------------------------------|
-| 10     | 7            | 1        | Even though the black <b>unemployment rate</b> is low, it traditionally is much more volatile than the white unemployment rate, said Michael Neal, a senior fellow at the Urban Institute. Because of this, Neal says, a better metric of the economy for Black folks is earnings rather than employment. |
-| 61     | 31           | 1        | By many metrics, Bidenomics has been good for workers. <b>Unemployment rate</b>s as of September 2023 are 3.8%, lower than at most times since the 1950s.                                                                                                                                                 |
-| 95     | 2            | 1        | The headline numbers of 300,000 jobs created and an <b>unemployment rate</b> under 4% look solid. But the growth is in part-time jobs.                                                                                                                                                                    |
+| doc_id | paragraph_id | chunk_id | text                                                                                                                                                                                                                                                                                                                                                                                                |
+|:--|:---|:--|:---------------------------------------------------------------|
+| 58     | 15           | 2        | The fact is, employment still hasn’t returned to its pre-pandemic trend, and the <b>unemployment rate</b> is artificially low.                                                                                                                                                                                                                                                                      |
+| 62     | 28           | 1        | Between February 2020 and February 2024, California’s payroll jobs have increased by 1.7%, half of the national job growth rate. The <b>unemployment rate</b> in California in February was 5.3%, compared with 3.9% for the U.S as a whole, although the state Finance Department’s chief economist, Somjita Mitra, said California’s share of long-term unemployed is comparatively much smaller. |
+| 90     | 5            | 3        | Conversely, if unemployment was low or falling, most workers felt reasonably secure. The <b>unemployment rate</b>, back then, was a reasonable indicator of distress or well-being.                                                                                                                                                                                                                 |
 
 ### HuggingFace embeddings
 
@@ -93,7 +93,7 @@ vstore <- articles |>
                                         api_url = api_url)
 ```
 
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |========                                                              |  11%  |                                                                              |================                                                      |  22%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================                                       |  44%  |                                                                              |=======================================                               |  56%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================                |  78%  |                                                                              |==============================================================        |  89%  |                                                                              |======================================================================| 100%
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |=======                                                               |  10%  |                                                                              |==============                                                        |  20%  |                                                                              |=====================                                                 |  30%  |                                                                              |============================                                          |  40%  |                                                                              |===================================                                   |  50%  |                                                                              |==========================================                            |  60%  |                                                                              |=================================================                     |  70%  |                                                                              |========================================================              |  80%  |                                                                              |===============================================================       |  90%  |                                                                              |======================================================================| 100%
 
 ### Semantic search
 
@@ -110,13 +110,11 @@ rags <- textpress::sem_nearest_neighbors(x = query,
   left_join(articles, by = c("term2" = "id"))
 ```
 
-| cos_sim | doc_id | paragraph_id | chunk_id | chunk                                                                                                                                                                                                                                                                                                                                      |
-|--:|:--|:---|:--|:------------------------------------------------------------|
-|   0.748 | 61     | 32           | 1        | The three key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers in the middle and lower classes; and promoting competition across businesses and sectors.                                                                                                               |
-|   0.745 | 61     | 7            | 1        | In response to these challenges, Bidenomics focuses on the core goals of public investment, worker empowerment, and promoting competition. Below, we take a closer look at each of these central pillars of Bidenomics.                                                                                                                    |
-|   0.716 | 61     | 33           | 1        | Bidenomics refers to the broad set of economic policies and actions instituted under President Joe Biden. Broadly, these include efforts to invest heavily in American infrastructure, green energy initiatives, domestic manufacturing, and related areas.                                                                                |
-|   0.710 | 61     | 8            | 1        | The first focal point of Bidenomics is on investment in American business and infrastructure. Specifically, it includes investments in clean energy and related industries, a push to increase semiconductor manufacturing in the United States, and funds to update, improve, and build out additional infrastructure across the country. |
-|   0.700 | 6      | 4            | 1        | Last week, the president gave a speech on “Bidenomics” in hopes that the term will lodge in voters’ minds ahead of the 2024 elections. But what is Bidenomics?                                                                                                                                                                             |
+| cos_sim | doc_id | paragraph_id | chunk_id | chunk                                                                                                                                                                                                                                                       |
+|--:|:--|:---|:---|:----------------------------------------------------------|
+|   0.748 | 60     | 32           | 1        | The three key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers in the middle and lower classes; and promoting competition across businesses and sectors.                                |
+|   0.745 | 60     | 7            | 1        | In response to these challenges, Bidenomics focuses on the core goals of public investment, worker empowerment, and promoting competition. Below, we take a closer look at each of these central pillars of Bidenomics.                                     |
+|   0.716 | 60     | 33           | 1        | Bidenomics refers to the broad set of economic policies and actions instituted under President Joe Biden. Broadly, these include efforts to invest heavily in American infrastructure, green energy initiatives, domestic manufacturing, and related areas. |
 
 ### Chat completion via OpenAI
 
@@ -126,7 +124,10 @@ provide a 10 point summary of the core tenets of Bidenomics.
 
 Start each point with "BIDENOMICS" in all caps.
 
-Provide the response in JSON array format. JSON array should include TEN key-response pairs. 
+Move from MACRO to MICRO.
+
+Provide the response in JSON array format. 
+JSON array should include TEN key-response pairs. 
 A simple, incomplete example below:
 
 [{"Point_number": "1", "Point": "Example summary"}, 
@@ -156,17 +157,17 @@ ten_points <- textpress::api_openai_chat_completions(
 ten_points |> jsonlite::fromJSON() |> knitr::kable()
 ```
 
-| Point_number | Point                                                                                                                                                   |
+| Point_number | Point                                                                                                                                        |
 |:------|:----------------------------------------------------------------|
-| 1            | BIDENOMICS focuses on investments in American infrastructure, clean energy, and business.                                                               |
-| 2            | BIDENOMICS emphasizes the empowerment of workers in the middle and lower classes.                                                                       |
-| 3            | BIDENOMICS promotes competition across businesses and sectors.                                                                                          |
-| 4            | BIDENOMICS includes efforts to invest in domestic manufacturing and green energy initiatives.                                                           |
-| 5            | BIDENOMICS aims to reduce taxes for middle-class workers and increase tax rates for wealthy individuals and large corporations.                         |
-| 6            | BIDENOMICS advocates for union involvement and urges increased competition in business.                                                                 |
-| 7            | BIDENOMICS seeks to lower customer costs and increase wages for workers by promoting competition.                                                       |
-| 8            | BIDENOMICS is based on the approach of building the economy from the middle out and the bottom up.                                                      |
-| 9            | BIDENOMICS prioritizes investments in worker empowerment and education, including apprenticeships and career technical programs.                        |
-| 10           | BIDENOMICS contrasts with trickle-down economics by focusing on public investment, empowering middle-class workers, and promoting business competition. |
+| 1            | BIDENOMICS focuses on public investment, worker empowerment, and promoting competition.                                                      |
+| 2            | BIDENOMICS emphasizes investments in American infrastructure, clean energy, and businesses.                                                  |
+| 3            | BIDENOMICS aims to reduce taxes for middle-class workers and increase tax rates for the wealthy and large corporations.                      |
+| 4            | BIDENOMICS includes efforts to support domestic manufacturing and increase semiconductor production in the United States.                    |
+| 5            | BIDENOMICS promotes updating, improving, and building additional infrastructure across the country.                                          |
+| 6            | BIDENOMICS plans to invest in registered apprenticeships, career technical education, universal prekindergarten, and free community college. |
+| 7            | BIDENOMICS believes in promoting competition to lower costs for small businesses and consumers while increasing wages for workers.           |
+| 8            | BIDENOMICS is about building the economy from the middle out and the bottom up to address inequality and foster growth.                      |
+| 9            | BIDENOMICS supports union involvement and urges increased competition in business.                                                           |
+| 10           | BIDENOMICS is President Joe Biden’s economic vision focused on economic gains, policies, and plans.                                          |
 
 ## Summary
