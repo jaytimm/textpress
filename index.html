@@ -6,13 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A lightweight, unobtrusive R companion for basic NLP. • textpress</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A lightweight, unobtrusive R companion for basic NLP.">
-<meta property="og:description" content="A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping.  Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.  ">
+<meta property="og:description" content="A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -60,7 +60,9 @@
 <div class="section level1">
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
-<p>A lightweight, versatile NLP companion in R. No substantial dependencies. Data-frame-centric. Transparent &amp; step wise. Easy integration into LLM-based RAG systems. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API. Ideal for users who need a basic, unobtrusive NLP tool in R.</p>
+<p>A lightweight, versatile NLP companion in R. No substantial dependencies. Data-frame-centric. Easy integration into LLM-based RAG systems.</p>
+<p>The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.</p>
+<p>Ideal for users who need a basic, unobtrusive NLP tool in R.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -70,462 +72,137 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-</div>
-<div class="section level2">
-<h2 id="web-scraping">Web scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
-</h2>
 <div class="section level3">
-<h3 id="articles--metadata-from-googlenews">Articles &amp; metadata from GoogleNews<a class="anchor" aria-label="anchor" href="#articles--metadata-from-googlenews"></a>
+<h3 id="web-scraping">Web scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="do">## Attaching package: 'dplyr'</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="do">## The following objects are masked from 'package:stats':</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="do">##     filter, lag</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="do">## The following objects are masked from 'package:base':</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="do">##     intersect, setdiff, setequal, union</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="va">articles_meta</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_scrape_urls.html">web_scrape_urls</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Bidenomics"</span>,</span>
+<span>                                            input <span class="op">=</span> <span class="st">"search"</span>,</span>
+<span>                                            cores <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> </span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="basic-nlp">Basic NLP<a class="anchor" aria-label="anchor" href="#basic-nlp"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="va">articles_meta</span> <span class="op">|&gt;</span>  </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">|&gt;</span></span>
+<span>  </span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs</a></span><span class="op">(</span>paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
+<span>                                                    <span class="st">'paragraph_id'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  </span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_build_chunks.html">nlp_build_chunks</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
+<span>                                                 <span class="st">'paragraph_id'</span>, </span>
+<span>                                                 <span class="st">'sentence_id'</span><span class="op">)</span>,</span>
+<span>                              chunk_size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                              context_size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">paragraph_id</span>, <span class="va">chunk_id</span>, sep <span class="op">=</span> <span class="st">'.'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="2%">
+<col width="39%">
+<col width="57%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">id</th>
+<th align="left">chunk</th>
+<th align="left">chunk_plus_context</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">1.1.1</td>
+<td align="left">Arlington, VA – Americans for Prosperity has launched a sustained new eight-figure campaign focused on Bidenomics just in time for President Biden’s State of the Union address this Thursday. Bidenomics.com – the website Joe Biden doesn’t want you to see – will serve as a real-time resource for the truth on Bidenomics, up to date information about the economy, and fact checks of Biden’s latest misleading rhetoric on the economy.</td>
+<td align="left">Arlington, VA – Americans for Prosperity has launched a sustained new eight-figure campaign focused on Bidenomics just in time for President Biden’s State of the Union address this Thursday. Bidenomics.com – the website Joe Biden doesn’t want you to see – will serve as a real-time resource for the truth on Bidenomics, up to date information about the economy, and fact checks of Biden’s latest misleading rhetoric on the economy.</td>
+</tr>
+<tr class="even">
+<td align="left">1.2.1</td>
+<td align="left">As the Biden Administration tours the country trying to convince people that Bidenomics is working, AFP is throwing significant weight behind its accountability efforts to define the true impact of Bidenomics and force lawmakers to own their support of it. The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union.</td>
+<td align="left">As the Biden Administration tours the country trying to convince people that Bidenomics is working, AFP is throwing significant weight behind its accountability efforts to define the true impact of Bidenomics and force lawmakers to own their support of it. The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union. The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
+</tr>
+<tr class="odd">
+<td align="left">1.2.2</td>
+<td align="left">The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
+<td align="left">The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union. The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
+</tr>
+<tr class="even">
+<td align="left">1.3.1</td>
+<td align="left">In addition to real time fact-checking through Bidenomics.com, the eight-figure effort this year will spotlight the harmful impact of Biden’s costly economic mistakes and the truth about the White House spin on the economy through a new round of ads on digital and connected TV airing across 5 key Senate states, 26 key Congressional districts, and Washington, D.C.</td>
+<td align="left">In addition to real time fact-checking through Bidenomics.com, the eight-figure effort this year will spotlight the harmful impact of Biden’s costly economic mistakes and the truth about the White House spin on the economy through a new round of ads on digital and connected TV airing across 5 key Senate states, 26 key Congressional districts, and Washington, D.C.</td>
+</tr>
+<tr class="odd">
+<td align="left">1.4.1</td>
+<td align="left">Under the Biden Administration, Americans are paying more and getting less. In the last four years, reckless spending has driven the national debt past $34 trillion – more than $258,000 of debt per household – and Americans’ purchasing power has declined as families have seen the prices of goods and services rise much faster than their income.</td>
+<td align="left">Under the Biden Administration, Americans are paying more and getting less. In the last four years, reckless spending has driven the national debt past $34 trillion – more than $258,000 of debt per household – and Americans’ purchasing power has declined as families have seen the prices of goods and services rise much faster than their income. Prices are now 17.9% higher and the average household is paying $11,400 more each year just to maintain the same quality of life as when President Biden took office.</td>
+</tr>
+<tr class="even">
+<td align="left">1.4.2</td>
+<td align="left">Prices are now 17.9% higher and the average household is paying $11,400 more each year just to maintain the same quality of life as when President Biden took office.</td>
+<td align="left">In the last four years, reckless spending has driven the national debt past $34 trillion – more than $258,000 of debt per household – and Americans’ purchasing power has declined as families have seen the prices of goods and services rise much faster than their income. Prices are now 17.9% higher and the average household is paying $11,400 more each year just to maintain the same quality of life as when President Biden took office.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="corpus-search">Corpus search<a class="anchor" aria-label="anchor" href="#corpus-search"></a>
+</h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_process_gnewsfeed.html">web_process_gnewsfeed</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">'Bidenomics'</span><span class="op">)</span></span>
-<span><span class="va">meta</span> <span class="op">|&gt;</span> <span class="fu">select</span><span class="op">(</span><span class="va">date</span>, <span class="va">source</span>, <span class="va">title</span>, <span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="5%">
-<col width="15%">
-<col width="34%">
-<col width="45%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">date</th>
-<th align="left">source</th>
-<th align="left">title</th>
-<th align="left">url</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">2024-04-10</td>
-<td align="left">Daily Caller</td>
-<td align="left">‘Absolutely Disastrous’: Voter Panel On ‘Morning Joe’ Skewers Bidenomics, Says They Long For Trump’s Economy</td>
-<td align="left"><a href="https://dailycaller.com/2024/04/10/absolutely-disastrous-voter-panel-morning-joe-skewers-bidenomics-trumps-economy/" class="external-link uri">https://dailycaller.com/2024/04/10/absolutely-disastrous-voter-panel-morning-joe-skewers-bidenomics-trumps-economy/</a></td>
-</tr>
-<tr class="even">
-<td align="left">2024-04-10</td>
-<td align="left">National Republican Congressional Committee</td>
-<td align="left">A great day to talk Bidenomics</td>
-<td align="left"><a href="https://www.nrcc.org/2024/04/10/a-great-day-to-talk-bidenomics/" class="external-link uri">https://www.nrcc.org/2024/04/10/a-great-day-to-talk-bidenomics/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">2024-04-10</td>
-<td align="left">Los Angeles Times</td>
-<td align="left">Why Biden is getting little credit for the economy, especially in California</td>
-<td align="left"><a href="https://www.latimes.com/business/story/2024-04-10/why-biden-is-getting-little-credit-for-the-good-economy" class="external-link uri">https://www.latimes.com/business/story/2024-04-10/why-biden-is-getting-little-credit-for-the-good-economy</a></td>
-</tr>
-<tr class="even">
-<td align="left">2024-04-10</td>
-<td align="left">The Maine Wire</td>
-<td align="left">Bidenomics: Inflation Soars as DC Plans More Spending</td>
-<td align="left"><a href="https://www.themainewire.com/2024/04/bidenomics-inflation-soars-as-dc-plans-more-spending/" class="external-link uri">https://www.themainewire.com/2024/04/bidenomics-inflation-soars-as-dc-plans-more-spending/</a></td>
-</tr>
-<tr class="odd">
-<td align="left">2024-04-09</td>
-<td align="left">Washington Examiner</td>
-<td align="left">Bidenomics isn’t working</td>
-<td align="left"><a href="https://www.washingtonexaminer.com/opinion/editorials/2958113/bidenomics-isnt-working/" class="external-link uri">https://www.washingtonexaminer.com/opinion/editorials/2958113/bidenomics-isnt-working/</a></td>
-</tr>
-<tr class="even">
-<td align="left">2024-04-09</td>
-<td align="left">Benzinga</td>
-<td align="left">‘Rich Dad Poor Dad’s’ Robert Kiyosaki Calls ‘Bidenomics’ A Joke, Says ’Inflation Is Eating American Famil</td>
-<td align="left"><a href="https://www.benzinga.com/news/24/04/38153660/rich-dad-poor-dads-robert-kiyosaki-calls-bidenomics-a-joke-says-inflation-is-eating-american-familie" class="external-link uri">https://www.benzinga.com/news/24/04/38153660/rich-dad-poor-dads-robert-kiyosaki-calls-bidenomics-a-joke-says-inflation-is-eating-american-familie</a></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="scrape-urls">Scrape URLs<a class="anchor" aria-label="anchor" href="#scrape-urls"></a>
-</h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_scrape_urls.html">web_scrape_urls</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">meta</span><span class="op">$</span><span class="va">url</span>,</span>
-<span>  input <span class="op">=</span> <span class="st">"urls"</span>,</span>
-<span>  cores <span class="op">=</span> <span class="fl">8</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">articles</span><span class="op">$</span><span class="va">text</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_pretty_text.html">nlp_pretty_text</a></span><span class="op">(</span>char_length <span class="op">=</span> <span class="fl">900</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">## President Joe Biden hopes the latest jobs report</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## will help convince voters that the economy is</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="do">## thriving under his policies, but a thorough look</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="do">## at the data released last week by the Bureau of</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="do">## Labor Statistics shows the economy is far weaker</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="do">## than he says it is.</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="do">## The headline numbers of 300,000 jobs created and</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="do">## an unemployment rate under 4% look solid. But the</span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="do">## growth is in part-time jobs. There are more</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="do">## full-time jobs but only in nonproductive sectors,</span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="do">## such as government and government-subsidized</span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="do">## healthcare.</span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="do">## Bidenomics seems only to be working for</span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="do">## part-time, mostly foreign workers. The rest of</span></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="do">## the population is out of luck as prices rise and</span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="do">## borrowing costs make American dream essentials,</span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="do">## such as a house and a car, less affordable than</span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="do">## ever.</span></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="do">## Twelve months ago, 134,287,000 Americans had</span></span>
-<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="do">## full-time jobs. Today, that number has fallen to</span></span>
-<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="do">## 132,940,000. For all Biden’s talk, there are a</span></span>
-<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="do">## million</span></span></code></pre></div>
-<blockquote>
-<p>Alternatively:</p>
-</blockquote>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_scrape_urls.html">web_scrape_urls</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="st">"Bidenomics"</span>,</span>
-<span>  input <span class="op">=</span> <span class="st">"search"</span>,</span>
-<span>  cores <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="text-processing">Text processing<a class="anchor" aria-label="anchor" href="#text-processing"></a>
-</h2>
-<div class="section level3">
-<h3 id="split-paragraphs">Split paragraphs<a class="anchor" aria-label="anchor" href="#split-paragraphs"></a>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tif_paragraphs</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs</a></span><span class="op">(</span>paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span></span>
-<span><span class="co">##  "\t " -- as empty paragraphs remain -- </span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="split-sentences">Split sentences<a class="anchor" aria-label="anchor" href="#split-sentences"></a>
-</h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="reference/abbreviations.html">abbreviations</a></span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="do">##  [1] "\\b[A-Z]\\." "No."         "Inc."        "St."         "U.S.A."     </span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="do">##  [6] "Mr."         "Mrs."        "Ms."         "Dr."         "Prof."      </span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="do">## [11] "Sr."         "Jr."         "Sen."        "U.S."        "Rep."       </span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="do">## [16] "Sen."        "Gov."        "Jan."        "Feb."        "Mar."       </span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="do">## [21] "Apr."        "Aug."        "Sep."        "Oct."        "Nov."       </span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="do">## [26] "Dec."        "Reps."</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tif_sentences</span> <span class="op">&lt;-</span> <span class="va">tif_paragraphs</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'paragraph_id'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tif_sentences</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="5%">
-<col width="5%">
-<col width="84%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">doc_id</th>
-<th align="left">paragraph_id</th>
-<th align="left">sentence_id</th>
-<th align="left">text</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">President Joe Biden hopes the latest jobs report will help convince voters that the economy is thriving under his policies, but a thorough look at the data released last week by the Bureau of Labor Statistics shows the economy is far weaker than he says it is.</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">2</td>
-<td align="left">1</td>
-<td align="left">The headline numbers of 300,000 jobs created and an unemployment rate under 4% look solid.</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">But the growth is in part-time jobs.</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">2</td>
-<td align="left">3</td>
-<td align="left">There are more full-time jobs but only in nonproductive sectors, such as government and government-subsidized healthcare.</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">3</td>
-<td align="left">1</td>
-<td align="left">Bidenomics seems only to be working for part-time, mostly foreign workers.</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">3</td>
-<td align="left">2</td>
-<td align="left">The rest of the population is out of luck as prices rise and borrowing costs make American dream essentials, such as a house and a car, less affordable than ever.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="tokenization">Tokenization<a class="anchor" aria-label="anchor" href="#tokenization"></a>
-</h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="va">tif_sentences</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="do">## $`1.1.1`</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="do">##  [1] "President"  "Joe"        "Biden"      "hopes"      "the"       </span></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="do">##  [6] "latest"     "jobs"       "report"     "will"       "help"      </span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="do">## [11] "convince"   "voters"     "that"       "the"        "economy"   </span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="do">## [16] "is"         "thriving"   "under"      "his"        "policies"  </span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="do">## [21] ","          "but"        "a"          "thorough"   "look"      </span></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="do">## [26] "at"         "the"        "data"       "released"   "last"      </span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="do">## [31] "week"       "by"         "the"        "Bureau"     "of"        </span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="do">## [36] "Labor"      "Statistics" "shows"      "the"        "economy"   </span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="do">## [41] "is"         "far"        "weaker"     "than"       "he"        </span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="do">## [46] "says"       "it"         "is"         "."</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="cast-tokens-to-a-data-frame">Cast tokens to a data frame<a class="anchor" aria-label="anchor" href="#cast-tokens-to-a-data-frame"></a>
-</h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dtm</span> <span class="op">&lt;-</span> <span class="va">tokens</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_cast_tokens.html">nlp_cast_tokens</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu">separate</span><span class="op">(</span>col <span class="op">=</span> <span class="st">'id'</span>, </span>
-<span>                  into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'paragraph_id'</span>, <span class="st">'sentence_id'</span><span class="op">)</span>, </span>
-<span>                  sep <span class="op">=</span> <span class="st">'\\.'</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">dtm</span> <span class="op">|&gt;</span> <span class="fu">slice</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr class="header">
-<th align="left">doc_id</th>
-<th align="left">paragraph_id</th>
-<th align="left">sentence_id</th>
-<th align="left">token</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">President</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">Joe</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">Biden</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">hopes</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">the</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">latest</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">jobs</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">report</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">will</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">help</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section level2">
-<h2 id="search-text">Search text<a class="anchor" aria-label="anchor" href="#search-text"></a>
-</h2>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="va">tif_sentences</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  </span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_search_corpus.html">sem_search_corpus</a></span><span class="op">(</span></span>
 <span>    search <span class="op">=</span> <span class="st">"unemployment rate"</span>,</span>
+<span>    </span>
+<span>    text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'paragraph_id'</span>, <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
+<span>    </span>
 <span>    highlight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"&lt;b&gt;"</span>, <span class="st">"&lt;/b&gt;"</span><span class="op">)</span>,</span>
-<span>    context_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    context_size <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>    cores <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>    is_inline <span class="op">=</span> <span class="cn">F</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">doc_id</span><span class="op">:</span><span class="va">text</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">sample_n</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">doc_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>escape <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<span>    is_inline <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="2%">
 <col width="4%">
 <col width="4%">
-<col width="88%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">doc_id</th>
-<th align="left">paragraph_id</th>
-<th align="left">sentence_id</th>
-<th align="left">text</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">12</td>
-<td align="left">5</td>
-<td align="left">1</td>
-<td align="left">Take the <b>unemployment rate</b>. It is a ratio of those seeking work to the whole active labor force.</td>
-</tr>
-<tr class="even">
-<td align="left">12</td>
-<td align="left">5</td>
-<td align="left">6</td>
-<td align="left">Conversely, if unemployment was low or falling, most workers felt reasonably secure. The <b>unemployment rate</b>, back then, was a reasonable indicator of distress or well-being.</td>
-</tr>
-<tr class="odd">
-<td align="left">13</td>
-<td align="left">28</td>
-<td align="left">2</td>
-<td align="left">Between February 2020 and February 2024, California’s payroll jobs have increased by 1.7%, half of the national job growth rate. The <b>unemployment rate</b> in California in February was 5.3%, compared with 3.9% for the U.S as a whole, although the state Finance Department’s chief economist, Somjita Mitra, said California’s share of long-term unemployed is comparatively much smaller.</td>
-</tr>
-<tr class="even">
-<td align="left">18</td>
-<td align="left">59</td>
-<td align="left">2</td>
-<td align="left">Federal Reserve Economic Data (FRED), Federal Reserve Bank of St. Louis. “<b>Unemployment Rate</b>.”</td>
-</tr>
-<tr class="odd">
-<td align="left">35</td>
-<td align="left">4</td>
-<td align="left">1</td>
-<td align="left">On Friday, Biden flew the Bidenomics banner in Allentown, Pennsylvania, the onetime steel and manufacturing hub that suffered the fallout of deindustrialization, but has seen a revival in recent years, with an <b>unemployment rate</b> the White House says is now at a 30-year low.</td>
-</tr>
-<tr class="even">
-<td align="left">49</td>
-<td align="left">11</td>
-<td align="left">3</td>
-<td align="left">In January, the University of Michigan saw the largest two-month jump in its consumer sentiment index since the end of the Gulf War in 1991. News coverage, which throughout 2023 relentlessly forecast a recession, now touts the prospect of a “soft landing” — that is, a successful battle against inflation without an increase in the <b>unemployment rate</b> or a general economic slowdown.</td>
-</tr>
-<tr class="odd">
-<td align="left">70</td>
-<td align="left">18</td>
-<td align="left">2</td>
-<td align="left">What’s more, people’s basic factual sense of both economic conditions and Biden’s role is woeful. The <b>unemployment rate</b> is at historically low levels, and the U.S. economy is growing faster than most other economies on the world, but polls show most people think the reverse is true. The public has very little awareness of Biden’s main accomplishments, which are (when defined in neutral terms) extremely popular.</td>
-</tr>
-<tr class="even">
-<td align="left">71</td>
-<td align="left">8</td>
-<td align="left">1</td>
-<td align="left">Meanwhile, the <b>unemployment rate</b> of 3.7% is at a 54-year low, and the unemployment rate has stayed below 4% for the longest stretch in the last 50 years despite the Fed raising interest rates from 0 to 5.5% in a year. The last time this nation saw such good employment news, LBJ was the president and Bonanza was the top show on TV.</td>
-</tr>
-<tr class="odd">
-<td align="left">71</td>
-<td align="left">8</td>
-<td align="left">1</td>
-<td align="left">Meanwhile, the unemployment rate of 3.7% is at a 54-year low, and the <b>unemployment rate</b> has stayed below 4% for the longest stretch in the last 50 years despite the Fed raising interest rates from 0 to 5.5% in a year. The last time this nation saw such good employment news, LBJ was the president and Bonanza was the top show on TV.</td>
-</tr>
-<tr class="even">
-<td align="left">8</td>
-<td align="left">16</td>
-<td align="left">2</td>
-<td align="left">When money is injected into the economy at low cost, businesses can use these dollars to expand and most notably hire more jobs. However, if you look at the recent trends in states like California, where unemployment last month was at 5.1%, and Nevada at 5.3%, the recent jobs report showing unemployment at 3.9% is the beginning of the curve in my view toward a 5% <b>unemployment rate</b> again because you simply can’t keep printing money to make the employment picture look good.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="retrieval-augmented-generation">Retrieval-augmented generation<a class="anchor" aria-label="anchor" href="#retrieval-augmented-generation"></a>
-</h2>
-<div class="section level3">
-<h3 id="sentence-window-retrieval">Sentence Window Retrieval<a class="anchor" aria-label="anchor" href="#sentence-window-retrieval"></a>
-</h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## chunk_id output is presently concatenated -- </span></span>
-<span></span>
-<span><span class="va">tif_chunks</span> <span class="op">&lt;-</span> <span class="va">tif_sentences</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_build_chunks.html">nlp_build_chunks</a></span><span class="op">(</span></span>
-<span>    text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'paragraph_id'</span>, <span class="st">'sentence_id'</span><span class="op">)</span>,</span>
-<span>    chunk_size <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>    context_size <span class="op">=</span> <span class="fl">1</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">99</span><span class="op">)</span></span>
-<span><span class="va">tif_chunks</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">sample_n</span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>escape <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="5%">
-<col width="4%">
-<col width="86%">
+<col width="89%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">doc_id</th>
 <th align="left">paragraph_id</th>
 <th align="left">chunk_id</th>
-<th align="left">chunk_plus_context</th>
+<th align="left">text</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">51</td>
-<td align="left">22</td>
-<td align="left">51.22.1</td>
-<td align="left">Norway carefully managed the transition. A national library was set up, creating public sector jobs (it uses the mountains bordering the local fjord for naturally climate-controlled book storage). The government helped to re-educate steelworkers for new roles.</td>
+<td align="left">19</td>
+<td align="left">4</td>
+<td align="left">1</td>
+<td align="left">Some economic experts like former Dallas Fed President Richard Fisher blamed high employment and wages for inflation. Minneapolis Fed President Neel Kashkari similarly insisted that as long as the <b>unemployment rate</b> remains at record lows, “we are not done yet, we need to bring the labor market back into balance.”</td>
 </tr>
 <tr class="even">
-<td align="left">69</td>
-<td align="left">4</td>
-<td align="left">69.4.3</td>
-<td align="left">Yet inflation is down sharply, from a peak of 8.9% in 2022 to 3.4% now. Many prices that went up are still up, especially for staples such as food and rent. But incoming data shows that consumer worries about inflation are easing, as if they’re finally starting to believe inflation is on the way out.</td>
+<td align="left">28</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">The <b>unemployment rate</b> was 3.4 percent. Gas prices had dropped by $1.60 per gallon.</td>
 </tr>
 <tr class="odd">
-<td align="left">14</td>
-<td align="left">3</td>
-<td align="left">14.3.1</td>
-<td align="left">“Indexes for shelter, motor vehicle insurance, medical care, apparel, and personal care all rose in March,” the U.S. Bureau of Labor Statistics (BLS) noted. In contrast, prices for used cars and trucks, along with new vehicles and recreation, declined.</td>
+<td align="left">49</td>
+<td align="left">4</td>
+<td align="left">1</td>
+<td align="left">On Friday, Biden flew the Bidenomics banner in Allentown, Pennsylvania, the onetime steel and manufacturing hub that suffered the fallout of deindustrialization, but has seen a revival in recent years, with an <b>unemployment rate</b> the White House says is now at a 30-year low.</td>
+</tr>
+<tr class="even">
+<td align="left">54</td>
+<td align="left">16</td>
+<td align="left">1</td>
+<td align="left">When money is injected into the economy at low cost, businesses can use these dollars to expand and most notably hire more jobs. However, if you look at the recent trends in states like California, where unemployment last month was at 5.1%, and Nevada at 5.3%, the recent jobs report showing unemployment at 3.9% is the beginning of the curve in my view toward a 5% <b>unemployment rate</b> again because you simply can’t keep printing money to make the employment picture look good.</td>
+</tr>
+<tr class="odd">
+<td align="left">62</td>
+<td align="left">28</td>
+<td align="left">1</td>
+<td align="left">Between February 2020 and February 2024, California’s payroll jobs have increased by 1.7%, half of the national job growth rate. The <b>unemployment rate</b> in California in February was 5.3%, compared with 3.9% for the U.S as a whole, although the state Finance Department’s chief economist, Somjita Mitra, said California’s share of long-term unemployed is comparatively much smaller.</td>
 </tr>
 </tbody>
 </table>
@@ -533,115 +210,82 @@
 <div class="section level3">
 <h3 id="huggingface-embeddings">HuggingFace embeddings<a class="anchor" aria-label="anchor" href="#huggingface-embeddings"></a>
 </h3>
-<blockquote>
-<p>API call – for lightweight embedding building. DEmo, etc. Easy enough to —</p>
-</blockquote>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">"https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"</span></span>
 <span></span>
-<span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">tif_chunks</span>  <span class="op">|&gt;</span></span>
-<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co">## !!!!</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span><span class="co">#text_hierarchy = c('doc_id', 'paragraph_id', 'sentence_id'),</span></span>
-<span>                                        text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'chunk_id'</span><span class="op">)</span>,</span>
+<span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
+<span>                                                           <span class="st">'paragraph_id'</span>,</span>
+<span>                                                           <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
 <span>                                        api_token <span class="op">=</span> <span class="va">api_token</span>,</span>
 <span>                                        api_url <span class="op">=</span> <span class="va">api_url</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">##   |                                                                              |                                                                      |   0%  |                                                                              |========                                                              |  11%  |                                                                              |================                                                      |  22%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================                                       |  44%  |                                                                              |=======================================                               |  56%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================                |  78%  |                                                                              |==============================================================        |  89%  |                                                                              |======================================================================| 100%</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Error in dimnames(x) &lt;- dn :   length of 'dimnames' [1] not equal to array extent</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##   |                                                                              |                                                                      |   0%  |                                                                              |=======                                                               |  10%  |                                                                              |==============                                                        |  20%  |                                                                              |=====================                                                 |  30%  |                                                                              |============================                                          |  40%  |                                                                              |===================================                                   |  50%  |                                                                              |==========================================                            |  60%  |                                                                              |=================================================                     |  70%  |                                                                              |========================================================              |  80%  |                                                                              |===============================================================       |  90%  |                                                                              |======================================================================| 100%</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="semantic-search">Semantic search<a class="anchor" aria-label="anchor" href="#semantic-search"></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="st">"What are the core tenets of Bidenomics?"</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">query</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span>query <span class="op">=</span> <span class="va">q</span>,</span>
 <span>                                               api_token <span class="op">=</span> <span class="va">api_token</span>,</span>
 <span>                                               api_url <span class="op">=</span> <span class="va">api_url</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">query</span>,</span>
-<span>  matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">10</span></span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">tif_chunks</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term2"</span> <span class="op">=</span> <span class="st">"chunk_id"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">rags</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">cos_sim</span><span class="op">:</span><span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query</span>,</span>
+<span>                                         matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
+<span>                                         n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">articles</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term2"</span> <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="4%">
 <col width="4%">
 <col width="5%">
-<col width="86%">
+<col width="4%">
+<col width="82%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cos_sim</th>
 <th align="left">doc_id</th>
 <th align="left">paragraph_id</th>
+<th align="left">chunk_id</th>
 <th align="left">chunk</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">0.748</td>
-<td align="left">18</td>
+<td align="left">60</td>
 <td align="left">32</td>
+<td align="left">1</td>
 <td align="left">The three key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers in the middle and lower classes; and promoting competition across businesses and sectors.</td>
 </tr>
 <tr class="even">
 <td align="right">0.745</td>
-<td align="left">18</td>
+<td align="left">60</td>
 <td align="left">7</td>
+<td align="left">1</td>
 <td align="left">In response to these challenges, Bidenomics focuses on the core goals of public investment, worker empowerment, and promoting competition. Below, we take a closer look at each of these central pillars of Bidenomics.</td>
 </tr>
 <tr class="odd">
 <td align="right">0.716</td>
-<td align="left">18</td>
+<td align="left">60</td>
 <td align="left">33</td>
+<td align="left">1</td>
 <td align="left">Bidenomics refers to the broad set of economic policies and actions instituted under President Joe Biden. Broadly, these include efforts to invest heavily in American infrastructure, green energy initiatives, domestic manufacturing, and related areas.</td>
 </tr>
 <tr class="even">
 <td align="right">0.710</td>
-<td align="left">18</td>
+<td align="left">60</td>
 <td align="left">8</td>
+<td align="left">1</td>
 <td align="left">The first focal point of Bidenomics is on investment in American business and infrastructure. Specifically, it includes investments in clean energy and related industries, a push to increase semiconductor manufacturing in the United States, and funds to update, improve, and build out additional infrastructure across the country.</td>
 </tr>
 <tr class="odd">
 <td align="right">0.700</td>
-<td align="left">33</td>
+<td align="left">5</td>
 <td align="left">4</td>
+<td align="left">1</td>
 <td align="left">Last week, the president gave a speech on “Bidenomics” in hopes that the term will lodge in voters’ minds ahead of the 2024 elections. But what is Bidenomics?</td>
-</tr>
-<tr class="even">
-<td align="right">0.690</td>
-<td align="left">18</td>
-<td align="left">2</td>
-<td align="left">Bidenomics refers to the broad economic platform that President Biden campaigned on prior to the 2020 election and on which he remains focused heading into the 2024 election. This platform includes provisions to extend healthcare access, increase taxes for the wealthy, make major investments in green energy and other infrastructure, and support the middle class.</td>
-</tr>
-<tr class="odd">
-<td align="right">0.678</td>
-<td align="left">6</td>
-<td align="left">11</td>
-<td align="left">There are three basic problems with Bidenomics: (1) it is unconstitutional, (2) it is misguided, and (3) it is self-defeating.</td>
-</tr>
-<tr class="even">
-<td align="right">0.677</td>
-<td align="left">35</td>
-<td align="left">38</td>
-<td align="left">Biden’s team has worked since then to provide a firmer definition – including in multi-part social media posts and photos shared online of the president explaining the theory at a whiteboard – but one aspect of his comment endures: Bidenomics is defined in part by what it is not.</td>
-</tr>
-<tr class="odd">
-<td align="right">0.671</td>
-<td align="left">18</td>
-<td align="left">15</td>
-<td align="left">The final pillar of Bidenomics is the promotion of competition to help small businesses and others to lower costs. These efforts are predicated on the belief that higher rates of competition across sectors will lead to lower customer costs and higher wages for workers.</td>
-</tr>
-<tr class="even">
-<td align="right">0.661</td>
-<td align="left">18</td>
-<td align="left">6</td>
-<td align="left">The White House describes the goal of Bidenomics as “building the economy from the middle out and the bottom up.” The platform is founded on the belief that elements of U.S. economic policy in recent decades fostered inequality, shocks including the Great Recession, a slow pace of growth, and an exacerbation of climate change.</td>
 </tr>
 </tbody>
 </table>
@@ -649,12 +293,15 @@
 <div class="section level3">
 <h3 id="chat-completion-via-openai">Chat completion via OpenAI<a class="anchor" aria-label="anchor" href="#chat-completion-via-openai"></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prompt1</span> <span class="op">&lt;-</span> <span class="st">'BASED ON contexts below, provide a 10 point summary of the core tenets of Bidenomics.  </span></span>
 <span><span class="st"></span></span>
-<span><span class="st">Provide the response in JSON array format. JSON array should include TEN key-response pairs. A simple, incomplete example below:</span></span>
+<span><span class="st">Provide the response in JSON array format. JSON array should include TEN key-response pairs. </span></span>
+<span><span class="st">A simple, incomplete example below:</span></span>
 <span><span class="st"></span></span>
-<span><span class="st">[{"Point_number": "1", "Point": "Example summary"}, {"Point_number": "2", "Point": "Example summary"}, {"Point_number": "3", "Point": "Example summary"}]</span></span>
+<span><span class="st">[{"Point_number": "1", "Point": "Example summary"}, </span></span>
+<span><span class="st">{"Point_number": "2", "Point": "Example summary"}, </span></span>
+<span><span class="st">{"Point_number": "3", "Point": "Example summary"}]</span></span>
 <span><span class="st"></span></span>
 <span><span class="st">Ensure there is no trailing comma after the last element.</span></span>
 <span><span class="st"></span></span>
@@ -662,73 +309,21 @@
 <span><span class="st"></span></span>
 <span><span class="st"></span></span>
 <span><span class="st">CONTEXTS:</span></span>
-<span><span class="st">'</span></span>
-<span></span>
-<span><span class="va">prompt1</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_pretty_text.html">nlp_pretty_text</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="do">## BASED ON contexts below, provide a 10 point</span></span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="do">## summary of the core tenets of Bidenomics.</span></span>
-<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="do">## Provide the response in JSON array format. JSON</span></span>
-<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a><span class="do">## array should include TEN key-response pairs. A</span></span>
-<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a><span class="do">## simple, incomplete example below:</span></span>
-<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a><span class="do">## [{"Point_number": "1", "Point": "Example</span></span>
-<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a><span class="do">## summary"}, {"Point_number": "2", "Point":</span></span>
-<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a><span class="do">## "Example summary"}, {"Point_number": "3",</span></span>
-<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a><span class="do">## "Point": "Example summary"}]</span></span>
-<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a><span class="do">## Ensure there is no trailing comma after the last</span></span>
-<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a><span class="do">## element.</span></span>
-<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a><span class="do">## DO NOT include the "```json " code block notation</span></span>
-<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a><span class="do">## in the output.</span></span>
-<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a><span class="do">## CONTEXTS:</span></span></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rags_json</span> <span class="op">&lt;-</span> <span class="va">rags</span> <span class="op">|&gt;</span> <span class="fu">select</span><span class="op">(</span><span class="va">term2</span>, <span class="va">chunk_plus_context</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">rags_json</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_pretty_text.html">nlp_pretty_text</a></span><span class="op">(</span>char_length <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="do">## [{"term2":"18.32.1","chunk_plus_context":"The</span></span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="do">## three key pillars of Bidenomics are investments</span></span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="do">## in American infrastructure, clean energy, and</span></span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="do">## business; empowerment of workers in the middle</span></span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="do">## and lower classes; and promoting competition</span></span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="do">## across businesses and</span></span>
-<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="do">## sectors."},{"term2":"18.7.1","chunk_plus_context":"In</span></span>
-<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a><span class="do">## response to these challenges, Bidenomics focuses</span></span>
-<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a><span class="do">## on the core goals of public investment, worker</span></span>
-<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a><span class="do">## empowerment, and promoting competition. Below, we</span></span>
-<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a><span class="do">## take a closer look at each of these central</span></span>
-<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a><span class="do">## pillars of</span></span>
-<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a><span class="do">## Bidenomics."},{"term2":"18.33.1","chunk_plus_context":"Bidenomics</span></span>
-<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a><span class="do">## refers to the broad set of economic policies and</span></span>
-<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a><span class="do">## actions instituted under President Joe Biden.</span></span>
-<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a><span class="do">## Broadly, these include efforts to invest heavily</span></span>
-<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a><span class="do">## in American infrastructure, green energy</span></span>
-<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a><span class="do">## initiatives, domestic manufacturing, and related</span></span>
-<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a><span class="do">## areas. They also include a set of tax policies</span></span>
-<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a><span class="do">## aiming to reduce taxes for middle-class workers</span></span>
-<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a><span class="do">## and increase tax rates for wealthy individuals</span></span>
-<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a><span class="do">## and large corporations."},{"term2":"18.8.1","chun</span></span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">messages</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        <span class="st">"role"</span> <span class="op">=</span> <span class="st">"system"</span>,</span>
-<span>        <span class="st">"content"</span> <span class="op">=</span> <span class="st">"You are an economist."</span></span>
-<span>        <span class="op">)</span>,</span>
-<span>    </span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>        <span class="st">"role"</span> <span class="op">=</span> <span class="st">"user"</span>,</span>
-<span>        <span class="st">"content"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span></span>
-<span>        <span class="op">)</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_openai_chat_completions.html">api_openai_chat_completions</a></span><span class="op">(</span>messages <span class="op">=</span> <span class="va">messages</span><span class="op">)</span></span>
+<span><span class="st">'</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rags_json</span> <span class="op">&lt;-</span> <span class="va">rags</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">term2</span>, <span class="va">chunk_plus_context</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">toJSON</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_openai_chat_completions.html">api_openai_chat_completions</a></span><span class="op">(</span></span>
+<span>  system_message <span class="op">=</span> <span class="st">"You are an economist."</span>,</span>
+<span>  user_message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ten_points</span> <span class="op">|&gt;</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="9%">
-<col width="90%">
+<col width="8%">
+<col width="91%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Point_number</th>
@@ -737,43 +332,43 @@
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">Bidenomics focuses on investments in American infrastructure, clean energy, and businesses to drive economic growth.</td>
+<td align="left">Bidenomics focuses on public investment, worker empowerment, and promoting competition as central pillars of economic policy.</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">Worker empowerment is a key pillar, aiming to support the middle and lower classes to enhance economic opportunities.</td>
+<td align="left">The key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers; and fostering competition.</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">Promotion of competition across businesses and sectors is central to Bidenomics to lower costs and increase wages.</td>
+<td align="left">Investments in American business and infrastructure, including clean energy and semiconductor manufacturing, are central to Bidenomics.</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">Public investment is a core goal, supporting areas such as infrastructure, green energy, and domestic manufacturing.</td>
+<td align="left">Bidenomics involves efforts to invest in American infrastructure, green energy initiatives, and domestic manufacturing while also implementing tax policies to benefit the middle class.</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">Tax policies under Bidenomics seek to reduce taxes for the middle class and increase rates for the wealthy and large corporations.</td>
+<td align="left">Bidenomics aims to promote competition to lower costs, particularly benefiting small businesses and leading to increased wages for workers.</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">Bidenomics is defined by efforts to build the economy from the middle out and the bottom up, addressing past economic inequalities.</td>
+<td align="left">The goal of Bidenomics is to build the economy from the middle out and the bottom up, addressing issues of inequality and slow economic growth.</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">The focus on competition aims to benefit small businesses while lowering costs for consumers.</td>
+<td align="left">Worker empowerment and education, including investment in apprenticeships and technical education, are emphasized in Bidenomics.</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">Bidenomics revolves around increasing investments in clean energy initiatives and semiconductor manufacturing in the U.S.</td>
+<td align="left">Bidenomics supports reducing taxes for the middle class while increasing tax rates for the wealthy and large corporations.</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">Bidenomics platform includes provisions to extend healthcare access and support the middle class.</td>
+<td align="left">Bidenomics advocates for union involvement, increased competition in business, and lower customer costs in support of higher wages for workers.</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">Some criticisms suggest Bidenomics is unconstitutional, misguided, and self-defeating, highlighting differing viewpoints on the policies.</td>
+<td align="left">The term Bidenomics refers to President Biden’s economic vision, policies, and plans, emphasizing economic gains, worker rights, and climate engagement.</td>
 </tr>
 </tbody>
 </table>
@@ -830,7 +425,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
       </footer>
