@@ -22,8 +22,10 @@ devtools::install_github("jaytimm/textpress")
 
 ## Usage
 
-> A sample RAG workflow demonstration: Web Scraping \> Chunk Building \>
-> HuggingFace Embeddings \> Semantic Search \> Chat Competion via OpenAI
+A simple RAG workflow:
+
+-   Web Scraping \> Chunk Building \> HuggingFace Embeddings \> Semantic
+    Search \> Chat Completion via OpenAI
 
 ### Web scraping
 
@@ -53,11 +55,11 @@ articles <- articles_meta |>
   mutate(id = paste(doc_id, paragraph_id, chunk_id, sep = '.'))
 ```
 
-| id    | chunk                                                                                                                                                                                                                                                                                                                                                                                       | chunk_plus_context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|:-|:-----------------------------|:---------------------------------------|
-| 1.1.1 | “If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. | “If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points.                                                  |
-| 1.1.2 | The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”                                                                                                                                                                            | Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”   |
-| 1.2.1 | Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it.                                                | Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it. The campaign will feature grassroots events across the country, digital and mail outreach, door knocking, and phone calls to hold Joe Biden and his allies in Congress accountable. |
+| id    | chunk                                                                                                                                                                                                                                                                                                                                                 | chunk_plus_context                                                                                                                                                                                                                                                                                                                                    |
+|:-|:----------------------------------|:----------------------------------|
+| 1.1.1 | The White House and its progressive economists have been celebrating – what they claim – is a remarkable “economic recovery.” However, the vast majority of Americans are not joining in the jubilee.                                                                                                                                                 | The White House and its progressive economists have been celebrating – what they claim – is a remarkable “economic recovery.” However, the vast majority of Americans are not joining in the jubilee. There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.                               |
+| 1.1.2 | There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.                                                                                                                                                                                                                                     | However, the vast majority of Americans are not joining in the jubilee. There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.                                                                                                                                                             |
+| 1.2.1 | Hard-working Americans do not feel “better off” under the Biden Administration because they are not better off. All you have to do is look at the out-of-reach price tag to own a home, your shrinking retirement account, the cost of one tank of gas, or your weekly grocery bill to know that Bidenomics has made the American Dream unattainable. | Hard-working Americans do not feel “better off” under the Biden Administration because they are not better off. All you have to do is look at the out-of-reach price tag to own a home, your shrinking retirement account, the cost of one tank of gas, or your weekly grocery bill to know that Bidenomics has made the American Dream unattainable. |
 
 ### HuggingFace embeddings
 
@@ -105,6 +107,8 @@ rags <- textpress::sem_nearest_neighbors(
 
 ### Chat completion via OpenAI
 
+#### Prompt
+
 ``` r
 prompt1 <- 'BASED ON contexts below, 
 provide a 10 point summary of the core tenets of Bidenomics.  
@@ -140,23 +144,21 @@ ten_points <- textpress::api_openai_chat_completions(
   user_message = paste(prompt1, rags_json, sep = '\n\n'))
 ```
 
+    ## Attempt 1 : Invalid JSON received. Regenerating...
+
 #### Core tenents of Bidenomics
 
-``` r
-ten_points |> jsonlite::fromJSON() |> knitr::kable()
-```
-
-| Point_number | Point                                                                                                                                                                                     |
-|:-----|:-----------------------------------------------------------------|
-| 1            | BIDENOMICS focuses on investments in American infrastructure, clean energy, and businesses to drive economic growth.                                                                      |
-| 2            | BIDENOMICS prioritizes empowerment of workers in the middle and lower classes through education and training programs.                                                                    |
-| 3            | BIDENOMICS aims to promote competition across businesses and sectors for increased efficiency and consumer benefits.                                                                      |
-| 4            | BIDENOMICS includes efforts to invest heavily in American infrastructure, green energy initiatives, and domestic manufacturing.                                                           |
-| 5            | BIDENOMICS involves tax policies that reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.                                           |
-| 6            | BIDENOMICS pursues investment in clean energy, semiconductor manufacturing, and infrastructure development.                                                                               |
-| 7            | BIDENOMICS is centered on building the economy from the middle out and the bottom up to address inequality and foster sustainable growth.                                                 |
-| 8            | BIDENOMICS seeks to empower workers through investments in registered apprenticeships, career technical education, and advocacy for universal prekindergarten and free community college. |
-| 9            | BIDENOMICS supports union involvement and advocates for increased competition in business to reduce costs for consumers and raise wages for workers.                                      |
-| 10           | BIDENOMICS is seen as a means to bolster economic gains, policies, and plans under President Joe Biden’s administration.                                                                  |
+| Point_number | Point                                                                                                                                                    |
+|:------|:----------------------------------------------------------------|
+| 1            | BIDENOMICS focuses on investments in American infrastructure, clean energy, and business to drive economic growth.                                       |
+| 2            | BIDENOMICS aims to empower workers in the middle and lower classes through initiatives such as registered apprenticeships and universal prekindergarten. |
+| 3            | BIDENOMICS promotes competition across businesses and sectors to lower costs for consumers and increase wages for workers.                               |
+| 4            | BIDENOMICS is characterized by a set of economic policies and actions instituted under President Joe Biden.                                              |
+| 5            | BIDENOMICS includes efforts to increase investments in American infrastructure, green energy, and domestic manufacturing.                                |
+| 6            | BIDENOMICS involves tax policies that aim to reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.   |
+| 7            | BIDENOMICS envisions building the economy from the middle out and the bottom up to address inequality and foster economic growth.                        |
+| 8            | BIDENOMICS prioritizes promoting competition to help small businesses and reduce costs for consumers.                                                    |
+| 9            | BIDENOMICS advocates for increased union involvement and supports measures to enhance worker education and training.                                     |
+| 10           | BIDENOMICS is a central theme in President Biden’s economic vision and administration, emphasizing economic gains and policies.                          |
 
 ## Summary

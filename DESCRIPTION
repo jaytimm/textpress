@@ -1,10 +1,10 @@
 Package: textpress
 Type: Package
-Title: A lightweight, unobtrusive R companion for basic NLP.
+Title: "A lightweight & versatile NLP companion in R."
 Version: 1.0.0
 Author: Jason Timm [aut, cre]
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping.  Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.  
+Description: Provides features for (1) basic text processing, (2) corpus search, and (3) web scraping.  Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.  
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
@@ -21,3 +21,5 @@ Imports:
     xml2,
     pbapply
 RoxygenNote: 7.3.1
+URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
+BugReports: https://github.com/jaytimm/textpress/issues
