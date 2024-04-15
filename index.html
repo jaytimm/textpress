@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A lightweight, unobtrusive R companion for basic NLP. • textpress</title>
+<title>"A lightweight &amp; versatile NLP companion in R." • textpress</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="A lightweight, unobtrusive R companion for basic NLP.">
-<meta property="og:description" content="A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.">
+<script src="pkgdown.js"></script><meta property="og:title" content="" a lightweight versatile nlp companion in r.>
+<meta property="og:description" content="Provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -43,7 +43,14 @@
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/jaytimm/textpress/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -72,9 +79,10 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<blockquote>
-<p>A sample RAG workflow demonstration: Web Scraping &gt; Chunk Building &gt; HuggingFace Embeddings &gt; Semantic Search &gt; Chat Competion via OpenAI</p>
-</blockquote>
+<p>A simple RAG workflow:</p>
+<ul>
+<li>Web Scraping &gt; Chunk Building &gt; HuggingFace Embeddings &gt; Semantic Search &gt; Chat Completion via OpenAI</li>
+</ul>
 <div class="section level3">
 <h3 id="web-scraping">Web scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
 </h3>
@@ -105,8 +113,8 @@
 <table class="table">
 <colgroup>
 <col width="2%">
-<col width="41%">
-<col width="55%">
+<col width="48%">
+<col width="48%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -116,18 +124,18 @@
 <tbody>
 <tr class="odd">
 <td align="left">1.1.1</td>
-<td align="left">“If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible.</td>
-<td align="left">“If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points.</td>
+<td align="left">The White House and its progressive economists have been celebrating – what they claim – is a remarkable “economic recovery.” However, the vast majority of Americans are not joining in the jubilee.</td>
+<td align="left">The White House and its progressive economists have been celebrating – what they claim – is a remarkable “economic recovery.” However, the vast majority of Americans are not joining in the jubilee. There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.</td>
 </tr>
 <tr class="even">
 <td align="left">1.1.2</td>
-<td align="left">The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”</td>
-<td align="left">Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”</td>
+<td align="left">There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.</td>
+<td align="left">However, the vast majority of Americans are not joining in the jubilee. There is a clear disconnect between the supposed economic upturn and the affordability crisis you face every day.</td>
 </tr>
 <tr class="odd">
 <td align="left">1.2.1</td>
-<td align="left">Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it.</td>
-<td align="left">Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it. The campaign will feature grassroots events across the country, digital and mail outreach, door knocking, and phone calls to hold Joe Biden and his allies in Congress accountable.</td>
+<td align="left">Hard-working Americans do not feel “better off” under the Biden Administration because they are not better off. All you have to do is look at the out-of-reach price tag to own a home, your shrinking retirement account, the cost of one tank of gas, or your weekly grocery bill to know that Bidenomics has made the American Dream unattainable.</td>
+<td align="left">Hard-working Americans do not feel “better off” under the Biden Administration because they are not better off. All you have to do is look at the out-of-reach price tag to own a home, your shrinking retirement account, the cost of one tank of gas, or your weekly grocery bill to know that Bidenomics has made the American Dream unattainable.</td>
 </tr>
 </tbody>
 </table>
@@ -210,6 +218,9 @@
 <div class="section level3">
 <h3 id="chat-completion-via-openai">Chat completion via OpenAI<a class="anchor" aria-label="anchor" href="#chat-completion-via-openai"></a>
 </h3>
+<div class="section level4">
+<h4 id="prompt">Prompt<a class="anchor" aria-label="anchor" href="#prompt"></a>
+</h4>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prompt1</span> <span class="op">&lt;-</span> <span class="st">'BASED ON contexts below, </span></span>
 <span><span class="st">provide a 10 point summary of the core tenets of Bidenomics.  </span></span>
@@ -239,15 +250,15 @@
 <code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_openai_chat_completions.html">api_openai_chat_completions</a></span><span class="op">(</span></span>
 <span>  system_message <span class="op">=</span> <span class="st">"You are an economist."</span>,</span>
 <span>  user_message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="do">## Attempt 1 : Invalid JSON received. Regenerating...</span></span></code></pre></div>
+</div>
 <div class="section level4">
 <h4 id="core-tenents-of-bidenomics">Core tenents of Bidenomics<a class="anchor" aria-label="anchor" href="#core-tenents-of-bidenomics"></a>
 </h4>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">|&gt;</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="8%">
-<col width="91%">
+<col width="9%">
+<col width="90%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Point_number</th>
@@ -256,43 +267,43 @@
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">BIDENOMICS focuses on investments in American infrastructure, clean energy, and businesses to drive economic growth.</td>
+<td align="left">BIDENOMICS focuses on investments in American infrastructure, clean energy, and business to drive economic growth.</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">BIDENOMICS prioritizes empowerment of workers in the middle and lower classes through education and training programs.</td>
+<td align="left">BIDENOMICS aims to empower workers in the middle and lower classes through initiatives such as registered apprenticeships and universal prekindergarten.</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">BIDENOMICS aims to promote competition across businesses and sectors for increased efficiency and consumer benefits.</td>
+<td align="left">BIDENOMICS promotes competition across businesses and sectors to lower costs for consumers and increase wages for workers.</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">BIDENOMICS includes efforts to invest heavily in American infrastructure, green energy initiatives, and domestic manufacturing.</td>
+<td align="left">BIDENOMICS is characterized by a set of economic policies and actions instituted under President Joe Biden.</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">BIDENOMICS involves tax policies that reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.</td>
+<td align="left">BIDENOMICS includes efforts to increase investments in American infrastructure, green energy, and domestic manufacturing.</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">BIDENOMICS pursues investment in clean energy, semiconductor manufacturing, and infrastructure development.</td>
+<td align="left">BIDENOMICS involves tax policies that aim to reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">BIDENOMICS is centered on building the economy from the middle out and the bottom up to address inequality and foster sustainable growth.</td>
+<td align="left">BIDENOMICS envisions building the economy from the middle out and the bottom up to address inequality and foster economic growth.</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">BIDENOMICS seeks to empower workers through investments in registered apprenticeships, career technical education, and advocacy for universal prekindergarten and free community college.</td>
+<td align="left">BIDENOMICS prioritizes promoting competition to help small businesses and reduce costs for consumers.</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">BIDENOMICS supports union involvement and advocates for increased competition in business to reduce costs for consumers and raise wages for workers.</td>
+<td align="left">BIDENOMICS advocates for increased union involvement and supports measures to enhance worker education and training.</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">BIDENOMICS is seen as a means to bolster economic gains, policies, and plans under President Joe Biden’s administration.</td>
+<td align="left">BIDENOMICS is a central theme in President Biden’s economic vision and administration, emphasizing economic gains and policies.</td>
 </tr>
 </tbody>
 </table>
@@ -308,7 +319,15 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/jaytimm/textpress/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/jaytimm/textpress/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
