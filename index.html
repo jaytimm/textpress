@@ -62,7 +62,7 @@
 </h1></div>
 <p>A lightweight, versatile NLP companion in R. No substantial dependencies. Data-frame-centric. Easy integration into LLM-based RAG systems.</p>
 <p>The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.</p>
-<p>Ideal for users who need a basic, unobtrusive NLP tool in R.</p>
+<p>Ideal for users who need a basic, unobtrusive NLP toolkit in R.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -72,6 +72,9 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
+<blockquote>
+<p>A sample RAG workflow demonstration: Web Scraping &gt; Chunk Building &gt; HuggingFace Embeddings &gt; Semantic Search &gt; Chat Competion via OpenAI</p>
+</blockquote>
 <div class="section level3">
 <h3 id="web-scraping">Web scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
 </h3>
@@ -102,8 +105,8 @@
 <table class="table">
 <colgroup>
 <col width="2%">
-<col width="39%">
-<col width="57%">
+<col width="41%">
+<col width="55%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -113,69 +116,18 @@
 <tbody>
 <tr class="odd">
 <td align="left">1.1.1</td>
-<td align="left">Arlington, VA – Americans for Prosperity has launched a sustained new eight-figure campaign focused on Bidenomics just in time for President Biden’s State of the Union address this Thursday. Bidenomics.com – the website Joe Biden doesn’t want you to see – will serve as a real-time resource for the truth on Bidenomics, up to date information about the economy, and fact checks of Biden’s latest misleading rhetoric on the economy.</td>
-<td align="left">Arlington, VA – Americans for Prosperity has launched a sustained new eight-figure campaign focused on Bidenomics just in time for President Biden’s State of the Union address this Thursday. Bidenomics.com – the website Joe Biden doesn’t want you to see – will serve as a real-time resource for the truth on Bidenomics, up to date information about the economy, and fact checks of Biden’s latest misleading rhetoric on the economy.</td>
+<td align="left">“If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible.</td>
+<td align="left">“If only silence on Bidenomics would actually protect people from Bidenomics. Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points.</td>
 </tr>
 <tr class="even">
+<td align="left">1.1.2</td>
+<td align="left">The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”</td>
+<td align="left">Whether the White House wants to take ownership of Bidenomics, hide from Bidenomics, or rebrand Bidenomics, it won’t change the fact that Americans know Bidenomics isn’t working – it’s costing Americans $11,400 more every year and the Biden Administration and their allies in Congress are responsible. The way to fix Bidenomics is with different policies, not different talking points. We are making sure the Biden Administration can’t run away from Bidenomics – no matter what they choose to call Bidenomics.”</td>
+</tr>
+<tr class="odd">
 <td align="left">1.2.1</td>
-<td align="left">As the Biden Administration tours the country trying to convince people that Bidenomics is working, AFP is throwing significant weight behind its accountability efforts to define the true impact of Bidenomics and force lawmakers to own their support of it. The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union.</td>
-<td align="left">As the Biden Administration tours the country trying to convince people that Bidenomics is working, AFP is throwing significant weight behind its accountability efforts to define the true impact of Bidenomics and force lawmakers to own their support of it. The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union. The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
-</tr>
-<tr class="odd">
-<td align="left">1.2.2</td>
-<td align="left">The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
-<td align="left">The major campaign will begin with a Beltway ad blitz that includes physical ads at metro stops around the Capitol, mobile billboards and digital targeting in advance of the State of the Union. The campaign will run through the fall and also include grassroots events across the country, digital and mail outreach, and door knocking and phone calls to hold key lawmakers accountable and provide Americans with the truth.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="corpus-search">Corpus search<a class="anchor" aria-label="anchor" href="#corpus-search"></a>
-</h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">search_results</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_search_corpus.html">sem_search_corpus</a></span><span class="op">(</span></span>
-<span>    search <span class="op">=</span> <span class="st">"unemployment rate"</span>,</span>
-<span>    </span>
-<span>    text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'paragraph_id'</span>, <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
-<span>    </span>
-<span>    highlight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"&lt;b&gt;"</span>, <span class="st">"&lt;/b&gt;"</span><span class="op">)</span>,</span>
-<span>    context_size <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>    cores <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>    is_inline <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="5%">
-<col width="4%">
-<col width="86%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">doc_id</th>
-<th align="left">paragraph_id</th>
-<th align="left">chunk_id</th>
-<th align="left">text</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">58</td>
-<td align="left">15</td>
-<td align="left">2</td>
-<td align="left">The fact is, employment still hasn’t returned to its pre-pandemic trend, and the <b>unemployment rate</b> is artificially low.</td>
-</tr>
-<tr class="even">
-<td align="left">62</td>
-<td align="left">28</td>
-<td align="left">1</td>
-<td align="left">Between February 2020 and February 2024, California’s payroll jobs have increased by 1.7%, half of the national job growth rate. The <b>unemployment rate</b> in California in February was 5.3%, compared with 3.9% for the U.S as a whole, although the state Finance Department’s chief economist, Somjita Mitra, said California’s share of long-term unemployed is comparatively much smaller.</td>
-</tr>
-<tr class="odd">
-<td align="left">90</td>
-<td align="left">5</td>
-<td align="left">3</td>
-<td align="left">Conversely, if unemployment was low or falling, most workers felt reasonably secure. The <b>unemployment rate</b>, back then, was a reasonable indicator of distress or well-being.</td>
+<td align="left">Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it.</td>
+<td align="left">Americans for Prosperity has met with thousands of Americans struggling to afford gas and groceries due to Bidenomics. In early March, AFP launched www.Bidenomics.com – the website Joe Biden doesn’t want you to see – as part of a major campaign to define the true impact of Bidenomics and force lawmakers to own their support of it. The campaign will feature grassroots events across the country, digital and mail outreach, door knocking, and phone calls to hold Joe Biden and his allies in Congress accountable.</td>
 </tr>
 </tbody>
 </table>
@@ -183,39 +135,44 @@
 <div class="section level3">
 <h3 id="huggingface-embeddings">HuggingFace embeddings<a class="anchor" aria-label="anchor" href="#huggingface-embeddings"></a>
 </h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">"https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">"https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"</span></span>
-<span></span>
-<span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
 <span>                                                           <span class="st">'paragraph_id'</span>,</span>
 <span>                                                           <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
+<span>                                        verbose <span class="op">=</span> <span class="cn">F</span>,</span>
 <span>                                        api_token <span class="op">=</span> <span class="va">api_token</span>,</span>
 <span>                                        api_url <span class="op">=</span> <span class="va">api_url</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">##   |                                                                              |                                                                      |   0%  |                                                                              |=======                                                               |  10%  |                                                                              |==============                                                        |  20%  |                                                                              |=====================                                                 |  30%  |                                                                              |============================                                          |  40%  |                                                                              |===================================                                   |  50%  |                                                                              |==========================================                            |  60%  |                                                                              |=================================================                     |  70%  |                                                                              |========================================================              |  80%  |                                                                              |===============================================================       |  90%  |                                                                              |======================================================================| 100%</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="semantic-search">Semantic search<a class="anchor" aria-label="anchor" href="#semantic-search"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="st">"What are the core tenets of Bidenomics?"</span></span>
 <span></span>
-<span><span class="va">query</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span>query <span class="op">=</span> <span class="va">q</span>,</span>
-<span>                                               api_token <span class="op">=</span> <span class="va">api_token</span>,</span>
-<span>                                               api_url <span class="op">=</span> <span class="va">api_url</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query</span>,</span>
-<span>                                         matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
-<span>                                         n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">query</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span></span>
+<span>  query <span class="op">=</span> <span class="va">q</span>,</span>
+<span>  api_token <span class="op">=</span> <span class="va">api_token</span>,</span>
+<span>  api_url <span class="op">=</span> <span class="va">api_url</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">query</span>,</span>
+<span>  matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">articles</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term2"</span> <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="relevant-chunks">Relevant chunks<a class="anchor" aria-label="anchor" href="#relevant-chunks"></a>
+</h4>
 <table class="table">
 <colgroup>
-<col width="4%">
-<col width="4%">
 <col width="5%">
+<col width="4%">
+<col width="6%">
 <col width="5%">
-<col width="80%">
+<col width="78%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cos_sim</th>
@@ -227,27 +184,28 @@
 <tbody>
 <tr class="odd">
 <td align="right">0.748</td>
-<td align="left">60</td>
+<td align="left">58</td>
 <td align="left">32</td>
 <td align="left">1</td>
 <td align="left">The three key pillars of Bidenomics are investments in American infrastructure, clean energy, and business; empowerment of workers in the middle and lower classes; and promoting competition across businesses and sectors.</td>
 </tr>
 <tr class="even">
 <td align="right">0.745</td>
-<td align="left">60</td>
+<td align="left">58</td>
 <td align="left">7</td>
 <td align="left">1</td>
 <td align="left">In response to these challenges, Bidenomics focuses on the core goals of public investment, worker empowerment, and promoting competition. Below, we take a closer look at each of these central pillars of Bidenomics.</td>
 </tr>
 <tr class="odd">
-<td align="right">0.716</td>
-<td align="left">60</td>
-<td align="left">33</td>
+<td align="right">0.718</td>
+<td align="left">46</td>
+<td align="left">31</td>
 <td align="left">1</td>
-<td align="left">Bidenomics refers to the broad set of economic policies and actions instituted under President Joe Biden. Broadly, these include efforts to invest heavily in American infrastructure, green energy initiatives, domestic manufacturing, and related areas.</td>
+<td align="left">Bidenomics, at least in the White House’s definition, is as much identified by what it is not as it is by a particular set of policies or ideas.</td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 <div class="section level3">
 <h3 id="chat-completion-via-openai">Chat completion via OpenAI<a class="anchor" aria-label="anchor" href="#chat-completion-via-openai"></a>
@@ -272,9 +230,7 @@
 <span><span class="st"></span></span>
 <span><span class="st">DO NOT include the "```json " code block notation in the output.</span></span>
 <span><span class="st"></span></span>
-<span><span class="st"></span></span>
-<span><span class="st">CONTEXTS:</span></span>
-<span><span class="st">'</span></span></code></pre></div>
+<span><span class="st">CONTEXTS:'</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rags_json</span> <span class="op">&lt;-</span> <span class="va">rags</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">term2</span>, <span class="va">chunk_plus_context</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -282,13 +238,16 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_openai_chat_completions.html">api_openai_chat_completions</a></span><span class="op">(</span></span>
 <span>  system_message <span class="op">=</span> <span class="st">"You are an economist."</span>,</span>
-<span>  user_message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">ten_points</span> <span class="op">|&gt;</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  user_message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="core-tenents-of-bidenomics">Core tenents of Bidenomics<a class="anchor" aria-label="anchor" href="#core-tenents-of-bidenomics"></a>
+</h4>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">|&gt;</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="9%">
-<col width="90%">
+<col width="8%">
+<col width="91%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Point_number</th>
@@ -297,46 +256,47 @@
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">BIDENOMICS focuses on public investment, worker empowerment, and promoting competition.</td>
+<td align="left">BIDENOMICS focuses on investments in American infrastructure, clean energy, and businesses to drive economic growth.</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">BIDENOMICS emphasizes investments in American infrastructure, clean energy, and businesses.</td>
+<td align="left">BIDENOMICS prioritizes empowerment of workers in the middle and lower classes through education and training programs.</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">BIDENOMICS aims to reduce taxes for middle-class workers and increase tax rates for the wealthy and large corporations.</td>
+<td align="left">BIDENOMICS aims to promote competition across businesses and sectors for increased efficiency and consumer benefits.</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">BIDENOMICS includes efforts to support domestic manufacturing and increase semiconductor production in the United States.</td>
+<td align="left">BIDENOMICS includes efforts to invest heavily in American infrastructure, green energy initiatives, and domestic manufacturing.</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">BIDENOMICS promotes updating, improving, and building additional infrastructure across the country.</td>
+<td align="left">BIDENOMICS involves tax policies that reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">BIDENOMICS plans to invest in registered apprenticeships, career technical education, universal prekindergarten, and free community college.</td>
+<td align="left">BIDENOMICS pursues investment in clean energy, semiconductor manufacturing, and infrastructure development.</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">BIDENOMICS believes in promoting competition to lower costs for small businesses and consumers while increasing wages for workers.</td>
+<td align="left">BIDENOMICS is centered on building the economy from the middle out and the bottom up to address inequality and foster sustainable growth.</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">BIDENOMICS is about building the economy from the middle out and the bottom up to address inequality and foster growth.</td>
+<td align="left">BIDENOMICS seeks to empower workers through investments in registered apprenticeships, career technical education, and advocacy for universal prekindergarten and free community college.</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">BIDENOMICS supports union involvement and urges increased competition in business.</td>
+<td align="left">BIDENOMICS supports union involvement and advocates for increased competition in business to reduce costs for consumers and raise wages for workers.</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">BIDENOMICS is President Joe Biden’s economic vision focused on economic gains, policies, and plans.</td>
+<td align="left">BIDENOMICS is seen as a means to bolster economic gains, policies, and plans under President Joe Biden’s administration.</td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div class="section level2">
