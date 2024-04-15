@@ -10,7 +10,7 @@
 #' @param dims The dimension of the output embeddings.
 #' @param batch_size Number of rows in each batch sent to the API.
 #' @param sleep_duration Duration in seconds to pause between processing batches.
-#'
+#' @param verbose A boolean specifying whether to include progress bar
 #' @return A matrix containing embeddings, with each row corresponding to a text input.
 #' @export
 #' @examples
@@ -25,15 +25,16 @@
 #'
 #'
 #'
+# Handling a single query
 api_huggingface_embeddings <- function(tif,
-                                 text_hierarchy,
-                                 api_token,
-                                 api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
-                                 query = NULL,
-                                 dims = 384,
-                                 batch_size = 250,
-                                 sleep_duration = 1) {
-
+                                       text_hierarchy,
+                                       api_token,
+                                       api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
+                                       query = NULL,
+                                       dims = 384,
+                                       batch_size = 250,
+                                       sleep_duration = 1,
+                                       verbose = TRUE) {
   # Handling a single query
   if (!is.null(query)) {
     embeddings <- .huggingface_embs(x = query, api_token, api_url)
@@ -47,13 +48,16 @@ api_huggingface_embeddings <- function(tif,
     batches <- split(tif, batch_indices)
     eb_list <- list()
 
-    # Loop through each batch
-    # Initialize progress bar
-    pb <- txtProgressBar(min = 0, max = length(batches), style = 3)
+    # Initialize progress bar if verbose is TRUE
+    if (verbose) {
+      pb <- txtProgressBar(min = 0, max = length(batches), style = 3)
+    }
 
     for (i in seq_along(batches)) {
+      if (verbose) {
+        setTxtProgressBar(pb, i)
+      }
 
-      setTxtProgressBar(pb, i)
       # Generate row names based on 'by' columns
       rns <- do.call(paste, c(batches[[i]][, text_hierarchy, with = FALSE], sep = '.'))
       # Fetch embeddings for the batch
@@ -67,13 +71,16 @@ api_huggingface_embeddings <- function(tif,
       Sys.sleep(sleep_duration)
     }
 
-    # Close progress bar
-    close(pb)
+    # Close progress bar if verbose is TRUE
+    if (verbose) {
+      close(pb)
+    }
 
     # Combine results from all batches into one matrix
     return(do.call(rbind, eb_list))
   }
 }
+
 
 #' Internal: Get Embeddings from Hugging Face API
 #'

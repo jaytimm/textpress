@@ -13,7 +13,8 @@ api_huggingface_embeddings(
   query = NULL,
   dims = 384,
   batch_size = 250,
-  sleep_duration = 1
+  sleep_duration = 1,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ api_huggingface_embeddings(
 \item{batch_size}{Number of rows in each batch sent to the API.}
 
 \item{sleep_duration}{Duration in seconds to pause between processing batches.}
+
+\item{verbose}{A boolean specifying whether to include progress bar}
 }
 \value{
 A matrix containing embeddings, with each row corresponding to a text input.
