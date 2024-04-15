@@ -79,10 +79,7 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>A simple RAG workflow:</p>
-<ul>
-<li>Web Scraping &gt; Chunk Building &gt; HuggingFace Embeddings &gt; Semantic Search &gt; Chat Completion via OpenAI</li>
-</ul>
+<p>A simple RAG workflow demonstration: Web Scraping &lt; Chunk Building &lt; HuggingFace Embeddings &lt; Semantic Search &lt; Chat Completion via OpenAI</p>
 <div class="section level3">
 <h3 id="web-scraping">Web scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
 </h3>
@@ -95,6 +92,7 @@
 <div class="section level3">
 <h3 id="basic-nlp">Basic NLP<a class="anchor" aria-label="anchor" href="#basic-nlp"></a>
 </h3>
+<p><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> &lt; <code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> &lt; <code><a href="reference/nlp_build_chunks.html">nlp_build_chunks()</a></code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="va">articles_meta</span> <span class="op">|&gt;</span>  </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">|&gt;</span></span>
@@ -250,15 +248,14 @@
 <code class="sourceCode R"><span><span class="va">ten_points</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_openai_chat_completions.html">api_openai_chat_completions</a></span><span class="op">(</span></span>
 <span>  system_message <span class="op">=</span> <span class="st">"You are an economist."</span>,</span>
 <span>  user_message <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">prompt1</span>, <span class="va">rags_json</span>, sep <span class="op">=</span> <span class="st">'\n\n'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="do">## Attempt 1 : Invalid JSON received. Regenerating...</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="core-tenents-of-bidenomics">Core tenents of Bidenomics<a class="anchor" aria-label="anchor" href="#core-tenents-of-bidenomics"></a>
 </h4>
 <table class="table">
 <colgroup>
-<col width="9%">
-<col width="90%">
+<col width="12%">
+<col width="87%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Point_number</th>
@@ -267,43 +264,43 @@
 <tbody>
 <tr class="odd">
 <td align="left">1</td>
-<td align="left">BIDENOMICS focuses on investments in American infrastructure, clean energy, and business to drive economic growth.</td>
+<td align="left">BIDENOMICS focuses on investments in American infrastructure, clean energy, and business.</td>
 </tr>
 <tr class="even">
 <td align="left">2</td>
-<td align="left">BIDENOMICS aims to empower workers in the middle and lower classes through initiatives such as registered apprenticeships and universal prekindergarten.</td>
+<td align="left">BIDENOMICS aims to empower workers in the middle and lower classes.</td>
 </tr>
 <tr class="odd">
 <td align="left">3</td>
-<td align="left">BIDENOMICS promotes competition across businesses and sectors to lower costs for consumers and increase wages for workers.</td>
+<td align="left">BIDENOMICS promotes competition across businesses and sectors.</td>
 </tr>
 <tr class="even">
 <td align="left">4</td>
-<td align="left">BIDENOMICS is characterized by a set of economic policies and actions instituted under President Joe Biden.</td>
+<td align="left">BIDENOMICS is defined by what it is not as much as by specific policies or ideas.</td>
 </tr>
 <tr class="odd">
 <td align="left">5</td>
-<td align="left">BIDENOMICS includes efforts to increase investments in American infrastructure, green energy, and domestic manufacturing.</td>
+<td align="left">BIDENOMICS seeks to invest heavily in American infrastructure and clean energy.</td>
 </tr>
 <tr class="even">
 <td align="left">6</td>
-<td align="left">BIDENOMICS involves tax policies that aim to reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.</td>
+<td align="left">BIDENOMICS includes tax policies to reduce taxes for the middle class and increase them for the wealthy.</td>
 </tr>
 <tr class="odd">
 <td align="left">7</td>
-<td align="left">BIDENOMICS envisions building the economy from the middle out and the bottom up to address inequality and foster economic growth.</td>
+<td align="left">BIDENOMICS aims to build the economy from the middle out and the bottom up.</td>
 </tr>
 <tr class="even">
 <td align="left">8</td>
-<td align="left">BIDENOMICS prioritizes promoting competition to help small businesses and reduce costs for consumers.</td>
+<td align="left">BIDENOMICS prioritizes worker empowerment through apprenticeships and education programs.</td>
 </tr>
 <tr class="odd">
 <td align="left">9</td>
-<td align="left">BIDENOMICS advocates for increased union involvement and supports measures to enhance worker education and training.</td>
+<td align="left">BIDENOMICS advocates for universal prekindergarten and free community college.</td>
 </tr>
 <tr class="even">
 <td align="left">10</td>
-<td align="left">BIDENOMICS is a central theme in President Biden’s economic vision and administration, emphasizing economic gains and policies.</td>
+<td align="left">BIDENOMICS promotes competition to lower costs and increase wages for workers.</td>
 </tr>
 </tbody>
 </table>
