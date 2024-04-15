@@ -22,10 +22,8 @@ devtools::install_github("jaytimm/textpress")
 
 ## Usage
 
-A simple RAG workflow:
-
--   Web Scraping \> Chunk Building \> HuggingFace Embeddings \> Semantic
-    Search \> Chat Completion via OpenAI
+A simple RAG workflow demonstration: Web Scraping \< Chunk Building \<
+HuggingFace Embeddings \< Semantic Search \< Chat Completion via OpenAI
 
 ### Web scraping
 
@@ -37,6 +35,9 @@ articles_meta <- textpress::web_scrape_urls(x = "Bidenomics",
 ```
 
 ### Basic NLP
+
+`nlp_split_paragraphs()` \< `nlp_split_sentences()` \<
+`nlp_build_chunks()`
 
 ``` r
 articles <- articles_meta |>  
@@ -144,21 +145,19 @@ ten_points <- textpress::api_openai_chat_completions(
   user_message = paste(prompt1, rags_json, sep = '\n\n'))
 ```
 
-    ## Attempt 1 : Invalid JSON received. Regenerating...
-
 #### Core tenents of Bidenomics
 
-| Point_number | Point                                                                                                                                                    |
-|:------|:----------------------------------------------------------------|
-| 1            | BIDENOMICS focuses on investments in American infrastructure, clean energy, and business to drive economic growth.                                       |
-| 2            | BIDENOMICS aims to empower workers in the middle and lower classes through initiatives such as registered apprenticeships and universal prekindergarten. |
-| 3            | BIDENOMICS promotes competition across businesses and sectors to lower costs for consumers and increase wages for workers.                               |
-| 4            | BIDENOMICS is characterized by a set of economic policies and actions instituted under President Joe Biden.                                              |
-| 5            | BIDENOMICS includes efforts to increase investments in American infrastructure, green energy, and domestic manufacturing.                                |
-| 6            | BIDENOMICS involves tax policies that aim to reduce taxes for middle-class workers and raise tax rates for wealthy individuals and large corporations.   |
-| 7            | BIDENOMICS envisions building the economy from the middle out and the bottom up to address inequality and foster economic growth.                        |
-| 8            | BIDENOMICS prioritizes promoting competition to help small businesses and reduce costs for consumers.                                                    |
-| 9            | BIDENOMICS advocates for increased union involvement and supports measures to enhance worker education and training.                                     |
-| 10           | BIDENOMICS is a central theme in President Biden’s economic vision and administration, emphasizing economic gains and policies.                          |
+| Point_number | Point                                                                                                    |
+|:--------|:--------------------------------------------------------------|
+| 1            | BIDENOMICS focuses on investments in American infrastructure, clean energy, and business.                |
+| 2            | BIDENOMICS aims to empower workers in the middle and lower classes.                                      |
+| 3            | BIDENOMICS promotes competition across businesses and sectors.                                           |
+| 4            | BIDENOMICS is defined by what it is not as much as by specific policies or ideas.                        |
+| 5            | BIDENOMICS seeks to invest heavily in American infrastructure and clean energy.                          |
+| 6            | BIDENOMICS includes tax policies to reduce taxes for the middle class and increase them for the wealthy. |
+| 7            | BIDENOMICS aims to build the economy from the middle out and the bottom up.                              |
+| 8            | BIDENOMICS prioritizes worker empowerment through apprenticeships and education programs.                |
+| 9            | BIDENOMICS advocates for universal prekindergarten and free community college.                           |
+| 10           | BIDENOMICS promotes competition to lower costs and increase wages for workers.                           |
 
 ## Summary
