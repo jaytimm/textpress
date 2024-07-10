@@ -4,8 +4,17 @@
 \name{textpress-package}
 \alias{textpress}
 \alias{textpress-package}
-\title{textpress: A lightweight, unobtrusive R companion for basic NLP.}
+\title{textpress: "A lightweight & versatile NLP companion in R."}
 \description{
-A lightweight, versatile NLP companion in R. The package provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.
+Provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/jaytimm/textpress}
+  \item \url{https://jaytimm.github.io/textpress/}
+  \item Report bugs at \url{https://github.com/jaytimm/textpress/issues}
+}
+
 }
 \keyword{internal}
