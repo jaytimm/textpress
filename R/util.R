@@ -40,22 +40,27 @@
 #' @noRd
 .get_urls <- function(x) {
   # Use lapply to process each URL in the vector
-  result <- lapply(x, function(q) {
-    # Attempt to retrieve HTML content
-    site <- tryCatch(
-      xml2::read_html(httr::GET(q, httr::timeout(60))),
-      error = function(e) NA
-    )
+  result <- lapply(x, function(encoded_url) {
+    # Extract the base64 encoded part from the URL
+    pattern <- "https://news.google.com/rss/articles/(.*)\\?oc=5"
+    encoded_part <- gsub(pattern, "\\1", encoded_url)
 
-    # If retrieval fails, return NA
-    if (is.na(site)) {
-      NA
-    } else {
-      # Extract and process text elements
-      linkto <- xml2::xml_find_all(site, "c-wiz") |>
-        xml2::xml_text()
-      gsub("Opening ", "", linkto)
-    }
+    # Add necessary padding to the base64 string
+    encoded_part <- gsub("-", "+", encoded_part)
+    encoded_part <- gsub("_", "/", encoded_part)
+    encoded_part <- paste0(encoded_part, strrep("=", (4 - nchar(encoded_part) %% 4) %% 4))
+
+    # Decode the base64 string
+    decoded_raw <- base64enc::base64decode(encoded_part)
+
+    # Remove any embedded null characters before converting to a character string
+    cleaned_raw <- decoded_raw[decoded_raw != as.raw(0)]
+    decoded_str <- rawToChar(cleaned_raw)
+
+    # Extract the original URL from the decoded string
+    original_url <- stringr::str_extract(decoded_str, "http[s]?://[\\w./?=&-]+")
+
+    return(original_url)
   })
 
   # Unlist and return the result
