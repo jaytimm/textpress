@@ -1,66 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/abbreviations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/api_huggingface_embeddings.html</loc>
-  </url>
-  <url>
-    <loc>/reference/api_openai_chat_completions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-insert_highlight.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-translate_query.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_build_chunks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_cast_tokens.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_melt_tokens.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_pretty_text.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_split_paragraphs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_split_sentences.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nlp_tokenize_text.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sem_nearest_neighbors.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sem_search_corpus.html</loc>
-  </url>
-  <url>
-    <loc>/reference/textpress-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/web_process_gnewsfeed.html</loc>
-  </url>
-  <url>
-    <loc>/reference/web_scrape_urls.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/abbreviations.html</loc></url>
+<url><loc>/reference/api_huggingface_embeddings.html</loc></url>
+<url><loc>/reference/dot-generate_random_ids.html</loc></url>
+<url><loc>/reference/dot-insert_highlight.html</loc></url>
+<url><loc>/reference/dot-is_valid_json.html</loc></url>
+<url><loc>/reference/dot-process_results.html</loc></url>
+<url><loc>/reference/dot-translate_query.html</loc></url>
+<url><loc>/reference/dot-validate_json_output.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/nlp_build_chunks.html</loc></url>
+<url><loc>/reference/nlp_cast_tokens.html</loc></url>
+<url><loc>/reference/nlp_melt_tokens.html</loc></url>
+<url><loc>/reference/nlp_pretty_text.html</loc></url>
+<url><loc>/reference/nlp_split_paragraphs.html</loc></url>
+<url><loc>/reference/nlp_split_sentences.html</loc></url>
+<url><loc>/reference/nlp_tokenize_text.html</loc></url>
+<url><loc>/reference/sem_nearest_neighbors.html</loc></url>
+<url><loc>/reference/sem_search_corpus.html</loc></url>
+<url><loc>/reference/textpress-package.html</loc></url>
+<url><loc>/reference/web_process_gnewsfeed.html</loc></url>
+<url><loc>/reference/web_scrape_urls.html</loc></url>
 </urlset>
+
