@@ -11,6 +11,7 @@
 #' @param batch_size Number of rows in each batch sent to the API.
 #' @param sleep_duration Duration in seconds to pause between processing batches.
 #' @param verbose A boolean specifying whether to include progress bar
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @return A matrix containing embeddings, with each row corresponding to a text input.
 #' @export
 #' @examples
@@ -50,12 +51,12 @@ api_huggingface_embeddings <- function(tif,
 
     # Initialize progress bar if verbose is TRUE
     if (verbose) {
-      pb <- txtProgressBar(min = 0, max = length(batches), style = 3)
+      pb <- utils::txtProgressBar(min = 0, max = length(batches), style = 3)
     }
 
     for (i in seq_along(batches)) {
       if (verbose) {
-        setTxtProgressBar(pb, i)
+        utils::setTxtProgressBar(pb, i)
       }
 
       # Generate row names based on 'by' columns

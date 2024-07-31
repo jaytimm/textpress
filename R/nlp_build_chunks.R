@@ -7,6 +7,8 @@
 #' @param chunk_size An integer specifying the size of each chunk.
 #' @param context_size An integer specifying the size of the context around each chunk.
 #' @param text_hierarchy A character vector specifying the columns used for grouping and chunking.
+#'@importFrom stats setNames
+#'@importFrom utils head tail
 #' @return A data.table with the chunked text and their respective contexts.
 #' @export
 #' @examples

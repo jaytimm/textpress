@@ -97,7 +97,7 @@ web_scrape_urls <- function(x,
 #'
 #' @param x A character vector of URLs.
 #' @return A data.table of combined article data.
-#' @importFrom data.table setDT
+#' @importFrom stats na.omit
 #' @noRd
 
 .article_extract <- function(x) {
