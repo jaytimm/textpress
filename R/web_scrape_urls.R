@@ -5,8 +5,7 @@
 #' it either performs a Google News search and processes the resulting RSS feeds, directly scrapes the
 #' provided URLs, or processes an RSS feed to extract URLs for scraping.
 #'
-#' @param x A character string for the search query or RSS feed URL, or a character vector of URLs.
-#' @param input A character string specifying the input type: 'search', 'rss', or 'urls'.
+#' @param x A character vector of URLs.
 #' @param cores The number of cores to use for parallel processing.
 #'
 #' @return A data frame containing scraped news data.
@@ -19,22 +18,9 @@
 #'
 #'
 web_scrape_urls <- function(x,
-                            input = "search",
                             cores = 3) {
-  # Process input based on the type
-  if (input == "search") {
-    mm <- .build_rss(x)
-    mm1 <- .parse_rss(mm)
-    mm1$url <- .get_urls(mm1$link)
 
-  } else if (input == "rss") {
-    mm1 <- .parse_rss(x)
-  } else if (input == "urls") {
-    mm1 <- data.frame(url = x)
-  } else {
-    stop("Invalid input type. Please choose from 'search', 'rss', or 'urls'.")
-  }
-
+  mm1 <- data.frame(url = x)
   # Split urls into batches
   batches <- split(mm1$url, ceiling(seq_along(mm1$url) / 20))
 
@@ -64,28 +50,8 @@ web_scrape_urls <- function(x,
     parallel::stopCluster(clust)
   }
 
-  # Combine the results
-  combined_results <- data.table::rbindlist(results)
+  data.table::rbindlist(results)
 
-  # If RSS metadata is available (not for simple URLs), merge it with results
-  if (input != "urls") {
-    combined_results <- merge(combined_results,
-      mm1,
-      by = "url",
-      all = TRUE
-    )
-
-    combined_results[, c(
-      "url",
-      "date",
-      "source",
-      "title",
-      "text"
-    )]
-  }
-
-  # Select and return relevant columns
-  combined_results
 }
 
 
@@ -113,7 +79,7 @@ web_scrape_urls <- function(x,
     clean_site <- subset(annotated_site, annotated_site$discard == "keep")
 
     # Aggregate the text by 'url' and 'h1_title', collapsing it into a single string
-    clean_site[, list(text = paste(text, collapse = "\n\n")), by = list(url, h1_title)]
+    clean_site[, list(text = paste(text, collapse = "\n\n")), by = list(url, h1_title, date)]
   })
 
   # Combine the list of data.tables into a single data.table and return it
@@ -121,26 +87,28 @@ web_scrape_urls <- function(x,
 }
 
 
-#' Get Site Content
+#' Get Site Content and Extract HTML Elements
 #'
-#' An internal function that fetches and parses HTML content from a URL.
+#' This function attempts to retrieve the HTML content of a URL, extract specific
+#' HTML elements (e.g., paragraphs, headings), and extract publication date information
+#' using the \code{extract_date} function.
 #'
-#' @param x A URL from which to fetch content.
-#' @return A data frame with the parsed HTML content.
-#' @importFrom xml2 read_html
+#' @param x A URL to extract content and publication date from.
+#' @return A data frame with columns for the URL, HTML element types, text content, extracted date, and date source.
 #' @importFrom httr GET timeout
-#' @noRd
-#'
+#' @importFrom xml2 read_html
+#' @importFrom rvest html_nodes html_text html_name
+#' @export
 .get_site <- function(x) {
   # Attempt to read the HTML content from the URL
-  # x <- batches[[1]][1]
   site <- tryCatch(
     xml2::read_html(httr::GET(x, httr::timeout(60))),
     error = function(e) "Error"
   )
 
-  # Initialize default values for type and text as NA
+  # Initialize default values for type, text, and date
   w1 <- w2 <- NA
+  date_info <- data.frame(date = NA_character_, source = NA_character_)
 
   # Check if site reading was successful
   if (!any(site == "Error")) {
@@ -158,11 +126,22 @@ web_scrape_urls <- function(x,
         w1 <- w2 <- NA
       }
     }
+
+    # Extract publication date
+    date_info <- extract_date(site)
   }
 
-  # Create and return the data frame
-  return(data.frame(url = x, type = w1, text = w2))
+  # Create and return the data frame with type, text, and publication date
+  return(data.frame(
+    url = x,
+    type = w1,
+    text = w2,
+    date = date_info$date,
+    date_source = date_info$source
+  ))
 }
+
+
 
 
 #' Annotate Website Data
@@ -259,3 +238,128 @@ web_scrape_urls <- function(x,
   "^subscribe to",
   "your comment"
 )
+
+
+
+
+#' Standardize Date Format
+#'
+#' This function attempts to parse a date string using multiple formats and
+#' standardizes it to "YYYY-MM-DD". It first tries ISO 8601 formats,
+#' and then common formats like ymd, dmy, and mdy.
+#'
+#' @param date_str A character string representing a date.
+#' @return A character string representing the standardized date in "YYYY-MM-DD" format, or NA if the date cannot be parsed.
+#' @importFrom lubridate ymd_hms ymd dmy mdy
+#' @export
+standardize_date <- function(date_str) {
+  # Try parsing as ISO 8601
+  parsed_date <- suppressWarnings(tryCatch(lubridate::ymd_hms(date_str, tz = "UTC"), error = function(e) NA))
+
+  # Try other common formats if the first attempt fails
+  if (all(is.na(parsed_date))) {
+    parsed_date <- suppressWarnings(tryCatch(lubridate::ymd(date_str), error = function(e) NA))
+  }
+
+  if (all(is.na(parsed_date))) {
+    parsed_date <- suppressWarnings(tryCatch(lubridate::dmy(date_str), error = function(e) NA))
+  }
+
+  if (all(is.na(parsed_date))) {
+    parsed_date <- suppressWarnings(tryCatch(lubridate::mdy(date_str), error = function(e) NA))
+  }
+
+  # Return the first non-NA parsed date or NA if all attempts fail
+  first_valid_date <- parsed_date[!is.na(parsed_date)][1]
+
+  # Format as "YYYY-MM-DD" if a valid date exists, else return NA
+  if (!is.na(first_valid_date)) {
+    return(format(first_valid_date, "%Y-%m-%d"))
+  } else {
+    return(NA)
+  }
+}
+
+
+
+
+#' Extract Date from HTML Content
+#'
+#' This function attempts to extract a publication date from the HTML content
+#' of a web page using various methods such as JSON-LD, OpenGraph meta tags,
+#' standard meta tags, and common HTML elements.
+#'
+#' @param site An HTML document (as parsed by xml2 or rvest) from which to extract the date.
+#' @return A data.frame with two columns: `date` and `source`, indicating the extracted
+#' date and the source from which it was extracted (e.g., JSON-LD, OpenGraph, etc.).
+#' If no date is found, returns NA for both fields.
+#' @importFrom rvest html_nodes html_text html_attr
+#' @importFrom jsonlite fromJSON
+#' @importFrom xml2 read_html
+#' @export
+extract_date <- function(site) {
+  # 1. Attempt to extract from JSON-LD
+  json_ld_scripts <- rvest::html_nodes(site, xpath = "//script[@type='application/ld+json']")
+  json_ld_content <- lapply(json_ld_scripts, function(script) {
+    json_text <- rvest::html_text(script)
+    tryCatch(
+      jsonlite::fromJSON(json_text, flatten = TRUE),
+      error = function(e) NULL  # Return NULL if JSON is malformed
+    )
+  })
+
+  for (json_data in json_ld_content) {
+    if (!is.null(json_data)) {
+      possible_dates <- json_data[grepl("date", names(json_data), ignore.case = TRUE)]
+      if (length(possible_dates) > 0) {
+        standardized_date <- standardize_date(possible_dates[[1]])
+        return(data.frame(date = standardized_date, source = "JSON-LD", stringsAsFactors = FALSE))
+      }
+    }
+  }
+
+  # 2. Attempt to extract from OpenGraph meta tags
+  og_tags <- rvest::html_nodes(site, xpath = "//meta[@property]")
+  og_dates <- rvest::html_attr(og_tags, "content")
+  og_props <- rvest::html_attr(og_tags, "property")
+  date_og <- og_dates[grepl("article:published_time|article:modified_time", og_props, ignore.case = TRUE)]
+  if (length(date_og) > 0) {
+    standardized_date <- standardize_date(date_og[1])
+    return(data.frame(date = standardized_date, source = "OpenGraph meta tag", stringsAsFactors = FALSE))
+  }
+
+  # 3. Attempt to extract from standard meta tags
+  meta_tags <- rvest::html_nodes(site, "meta")
+  meta_dates <- rvest::html_attr(meta_tags, "content")
+  meta_names <- rvest::html_attr(meta_tags, "name")
+  date_meta <- meta_dates[grepl("date", meta_names, ignore.case = TRUE)]
+  if (length(date_meta) > 0) {
+    standardized_date <- standardize_date(date_meta[1])
+    return(data.frame(date = standardized_date, source = "Standard meta tag", stringsAsFactors = FALSE))
+  }
+
+  # 4. Attempt to extract from URL (common patterns like /YYYY/MM/DD/)
+  url_date <- regmatches(site$url, regexpr("\\d{4}/\\d{2}/\\d{2}", site$url))
+  if (length(url_date) > 0) {
+    standardized_date <- standardize_date(gsub("/", "-", url_date))
+    return(data.frame(date = standardized_date, source = "URL", stringsAsFactors = FALSE))
+  }
+
+  # 5. Attempt to extract from specific HTML elements (e.g., <time>, <span>, <div>)
+  date_nodes <- rvest::html_nodes(site, xpath = "//time | //span | //div")
+  date_text <- rvest::html_text(date_nodes)
+  date_text_matches <- regmatches(date_text, gregexpr("\\d{4}-\\d{2}-\\d{2}", date_text))
+
+  if (length(date_text_matches) > 0 && length(date_text_matches[[1]]) > 0) {
+    standardized_date <- standardize_date(date_text_matches[[1]][1])
+    return(data.frame(date = standardized_date, source = "HTML element", stringsAsFactors = FALSE))
+  }
+
+  # Return NA if no date was found
+  return(data.frame(date = NA_character_, source = NA_character_, stringsAsFactors = FALSE))
+}
+
+
+
+
+

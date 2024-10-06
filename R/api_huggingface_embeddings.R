@@ -16,26 +16,28 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
-#'  tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
-#'  embeddings <- api_huggingface_embeddings(tif,
-#'                                           text_hierarchy = 'doc_id',
-#'                                           api_token = api_token,
-#'                                           api_url = api_url)
+#' tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
+#' embeddings <- api_huggingface_embeddings(tif,
+#'                                          text_hierarchy = 'doc_id',
+#'                                          api_token = api_token)
 #' }
-#'
 #'
 #'
 # Handling a single query
 api_huggingface_embeddings <- function(tif,
                                        text_hierarchy,
                                        api_token,
-                                       api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
+                                       api_url = NULL,
                                        query = NULL,
                                        dims = 384,
                                        batch_size = 250,
                                        sleep_duration = 1,
                                        verbose = TRUE) {
+
+  if (is.null(api_url)) {
+    api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+  }
+
   # Handling a single query
   if (!is.null(query)) {
     embeddings <- .huggingface_embs(x = query, api_token, api_url)

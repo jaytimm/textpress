@@ -8,8 +8,7 @@ api_huggingface_embeddings(
   tif,
   text_hierarchy,
   api_token,
-  api_url =
-    "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2",
+  api_url = NULL,
   query = NULL,
   dims = 384,
   batch_size = 250,
@@ -44,14 +43,11 @@ Retrieves embeddings for text data using Hugging Face's API. It can process a ba
 }
 \examples{
 \dontrun{
-api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
- tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
- embeddings <- api_huggingface_embeddings(tif,
-                                          text_hierarchy = 'doc_id',
-                                          api_token = api_token,
-                                          api_url = api_url)
+tif <- data.frame(doc_id = c('1'), text = c("Hello world."))
+embeddings <- api_huggingface_embeddings(tif,
+                                         text_hierarchy = 'doc_id',
+                                         api_token = api_token)
 }
-
 
 
 }

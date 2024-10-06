@@ -4,12 +4,10 @@
 \alias{web_scrape_urls}
 \title{Scrape News Data from Various Sources}
 \usage{
-web_scrape_urls(x, input = "search", cores = 3)
+web_scrape_urls(x, cores = 3)
 }
 \arguments{
-\item{x}{A character string for the search query or RSS feed URL, or a character vector of URLs.}
-
-\item{input}{A character string specifying the input type: 'search', 'rss', or 'urls'.}
+\item{x}{A character vector of URLs.}
 
 \item{cores}{The number of cores to use for parallel processing.}
 }

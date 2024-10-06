@@ -22,17 +22,15 @@ in a matrix based on cosine similarity.
 }
 \examples{
 \dontrun{
- api_url <- "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
  api_token <- ''
  matrix <- api_huggingface_embeddings(tif,
                                       text_hierarchy = c('doc_id', 'sentence_id'),
-                                      api_token = api_token,
-                                      api_url = '')
+                                      api_token = api_token)
  query <- api_huggingface_embeddings(query = "Where's the party at?",
-                                     api_token = api_token,
-                                     api_url = api_url)
+                                     api_token = api_token)
  neighbors <- sem_nearest_neighbors(x = query, matrix = matrix)
 }
+
 
 
 }

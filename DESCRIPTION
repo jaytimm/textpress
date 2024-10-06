@@ -19,7 +19,8 @@ Imports:
     stringr,
     xml2,
     pbapply,
-    base64enc
+    jsonlite,
+    lubridate
 RoxygenNote: 7.3.1
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
 BugReports: https://github.com/jaytimm/textpress/issues
