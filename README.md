@@ -48,13 +48,13 @@ yresults <- textpress::web_search(search_term = sterm,
 yresults |> select(2) |>  sample_n(5) |> knitr::kable()
 ```
 
-| raw_url                                                                                                                                           |
+| raw_url                                                                                                                                                                                                                                                                                          |
 |:-----------------------------------------------------------------------|
-| <https://gulfbusiness.com/ai-is-transforming-healthcare-heres-how/>                                                                               |
-| <https://natlawreview.com/article/decoding-californias-recent-flurry-ai-laws>                                                                     |
-| <https://www.sandiegouniontribune.com/2024/10/03/opinion-carefully-applied-generative-ai-can-elevate-education-for-everyone/>                     |
-| <https://www.forbes.com/councils/forbestechcouncil/2024/10/02/how-ai-is-changing-the-role-of-teachers-in-education/>                              |
-| <https://www.latimes.com/socal/daily-pilot/opinion/story/2024-10-02/apodaca-with-its-need-for-energy-ai-presents-strong-environmental-challenges> |
+| <https://www.forbes.com/councils/forbesbusinesscouncil/2024/10/01/the-role-of-ai-in-shaping-the-future-of-education/>                                                                                                                                                                            |
+| <https://cbsaustin.com/news/local/ut-symposium-explores-ethical-ai-innovation-in-year-of-ai-initiative>                                                                                                                                                                                          |
+| <https://www.zdnet.com/article/pearson-launches-new-ai-certification-with-focus-on-practical-use-in-the-workplace/>                                                                                                                                                                              |
+| <https://www.bworldonline.com/technology/2024/10/03/625403/ai-in-higher-education-bridging-students-and-educators-views/>                                                                                                                                                                        |
+| <https://www.windowscentral.com/software-apps/california-governor-vetos-ai-safety-bill-because-it-establishes-a-regulatory-framework-that-could-give-the-public-a-false-sense-of-security-and-applies-stringent-standards-to-even-the-most-basic-functions-so-long-as-a-large-system-deploys-it> |
 
 ## Web Scraping
 
@@ -112,13 +112,13 @@ kwics |>
   sample_n(5) |> knitr::kable()
 ```
 
-| id      | pattern          | text                                                                                                                                                                                                                                                               |
+| id     | pattern             | text                                                                                                                                                                                                                                                                                        |
 |:--|:-----|:---------------------------------------------------------------|
-| 3.8.2   | higher education | In fact, one McKinsey Global Institute report suggests that AI could help reduce administrative costs in <b>higher education</b> by up to 30% through automation of routine tasks.                                                                                 |
-| 31.19.2 | higher education | While confidence in <b>higher education</b> is in decline, public support for community colleges is still strong.                                                                                                                                                  |
-| 1.3.1   | higher education | The study conducted across 11 countries including the Philippines involved 5,000 <b>higher education</b> leaders and students.                                                                                                                                     |
-| 1.2.3   | higher education | It revealed that university leaders have certain reservations around allowing AI in <b>higher education</b>, perceiving it as being unethical.                                                                                                                     |
-| 4.2.1   | Higher Education | In 1998, noted technology critic and historian of automation David Noble published his influential article “Digital Diploma Mills: The Automation of <b>Higher Education</b>,” in which he warned about the negative impacts the internet would have on education. |
+| 20.3.1 | higher education    | According to the 2024 EDUCAUSE AI Landscape study, most <b>higher education</b> institutions are working on AI-related strategic planning with goals primarily focused on preparing students for the future workforce (64%) and exploring new methods of teaching and learning (63%).       |
+| 5.10.1 | higher education    | Much has been made of plagiarism concerns around the use of ChatGPT in education, and there’s no doubt that generative AI technology will impact the role of writing both in <b>higher education</b> and in society in general.                                                             |
+| 15.4.2 | secondary education | “It underscores the urgent need to address the looming AI knowledge gap in schools—for both students and teachers—to raise parental awareness and increase their involvement in AI conversations, and push for stronger AI integration in American primary and <b>secondary education</b>.” |
+| 20.2.1 | higher education    | Artificial intelligence has permeated nearly every industry, and <b>higher education</b> is no exception.                                                                                                                                                                                   |
+| 1.7.1  | Higher education    | <b>Higher education</b> is facing serious challenges.                                                                                                                                                                                                                                       |
 
 ## Semantic search
 
@@ -162,12 +162,12 @@ rags <- textpress::sem_nearest_neighbors(
 
 ### Relevant chunks
 
-| id      | cos_sim | chunk                                                                                                                        |
-|:----|----:|:-------------------------------------------------------------|
-| 13.10.2 |   0.844 | Personalized learning: AI can analyze data to understand each student’s learning style, strengths and areas for improvement. |
-| 6.8.2   |   0.836 | This is where AI-assisted learning steps in to create personalized lesson plans.                                             |
-| 20.2.2  |   0.835 | AI-powered solutions promise to revolutionize learning by providing personalized and adaptive experiences.                   |
-| 20.7.5  |   0.810 | AI should simplify, not complicate, the student experience.                                                                  |
-| 6.10.1  |   0.810 | AI is revolutionizing the role of teachers by excelling at delivering personalized learning experiences.                     |
+| id      | cos_sim | chunk_plus_context                                                                                                                                                                                                                                                                                                       |
+|:--|--:|:-----------------------------------------------------------------|
+| 13.10.2 |   0.844 | 1\. Personalized learning: AI can analyze data to understand each student’s learning style, strengths and areas for improvement. For example, an AI-driven platform could identify that a particular student struggles with reading comprehension and then provide tailored exercises that improve the student’s skills. |
+| 6.8.2   |   0.836 | There’s a better way. This is where AI-assisted learning steps in to create personalized lesson plans. In our schools, we’ve transformed the traditional teacher’s role into that of a “guide.”                                                                                                                          |
+| 20.2.2  |   0.835 | Artificial intelligence has permeated nearly every industry, and higher education is no exception. AI-powered solutions promise to revolutionize learning by providing personalized and adaptive experiences.                                                                                                            |
+| 20.7.5  |   0.810 | Consider how new tools integrate with existing platforms and map to the entire learner lifecycle. AI should simplify, not complicate, the student experience. With thoughtful implementation, these intelligent technologies can personalize learning and improve outcomes from start to finish.                         |
+| 6.10.1  |   0.810 | AI is revolutionizing the role of teachers by excelling at delivering personalized learning experiences. These advanced AI programs can swiftly and accurately pinpoint what a student knows and doesn’t know in each subject, allowing lessons to be designed around their unique aptitudes without any judgment.       |
 
 ## Summary
