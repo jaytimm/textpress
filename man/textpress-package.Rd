@@ -4,9 +4,9 @@
 \name{textpress-package}
 \alias{textpress}
 \alias{textpress-package}
-\title{textpress: "A lightweight & versatile NLP companion in R."}
+\title{textpress: A lightweight and versatile NLP toolkit for R}
 \description{
-Provides features for (1) basic text processing, (2) corpus search, and (3) web scraping. Additionally included are utility functions for (4) building text embeddings via the HuggingFace API, and (5) fetching chat completions via the OpenAI API.
+A simple NLP toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the HuggingFace API.
 }
 \seealso{
 Useful links:
