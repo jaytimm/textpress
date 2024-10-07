@@ -104,19 +104,19 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left"><a href="https://www.makeuseof.com/reasons-ai-better-tech-than-crypto/" class="external-link uri">https://www.makeuseof.com/reasons-ai-better-tech-than-crypto/</a></td>
+</tr>
+<tr class="even">
 <td align="left"><a href="https://www.forbes.com/councils/forbesbusinesscouncil/2024/10/01/the-role-of-ai-in-shaping-the-future-of-education/" class="external-link uri">https://www.forbes.com/councils/forbesbusinesscouncil/2024/10/01/the-role-of-ai-in-shaping-the-future-of-education/</a></td>
 </tr>
-<tr class="even">
-<td align="left"><a href="https://cbsaustin.com/news/local/ut-symposium-explores-ethical-ai-innovation-in-year-of-ai-initiative" class="external-link uri">https://cbsaustin.com/news/local/ut-symposium-explores-ethical-ai-innovation-in-year-of-ai-initiative</a></td>
-</tr>
 <tr class="odd">
-<td align="left"><a href="https://www.zdnet.com/article/pearson-launches-new-ai-certification-with-focus-on-practical-use-in-the-workplace/" class="external-link uri">https://www.zdnet.com/article/pearson-launches-new-ai-certification-with-focus-on-practical-use-in-the-workplace/</a></td>
+<td align="left"><a href="https://scnow.com/news/local/florence-1-creates-policy-to-regulate-ai-use-in-classrooms/article_6f2e3d28-8018-11ef-bb61-8bd25023350d.html" class="external-link uri">https://scnow.com/news/local/florence-1-creates-policy-to-regulate-ai-use-in-classrooms/article_6f2e3d28-8018-11ef-bb61-8bd25023350d.html</a></td>
 </tr>
 <tr class="even">
-<td align="left"><a href="https://www.bworldonline.com/technology/2024/10/03/625403/ai-in-higher-education-bridging-students-and-educators-views/" class="external-link uri">https://www.bworldonline.com/technology/2024/10/03/625403/ai-in-higher-education-bridging-students-and-educators-views/</a></td>
+<td align="left"><a href="https://www.forbes.com/councils/forbestechcouncil/2024/10/02/how-ai-is-changing-the-role-of-teachers-in-education/" class="external-link uri">https://www.forbes.com/councils/forbestechcouncil/2024/10/02/how-ai-is-changing-the-role-of-teachers-in-education/</a></td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://www.windowscentral.com/software-apps/california-governor-vetos-ai-safety-bill-because-it-establishes-a-regulatory-framework-that-could-give-the-public-a-false-sense-of-security-and-applies-stringent-standards-to-even-the-most-basic-functions-so-long-as-a-large-system-deploys-it" class="external-link uri">https://www.windowscentral.com/software-apps/california-governor-vetos-ai-safety-bill-because-it-establishes-a-regulatory-framework-that-could-give-the-public-a-false-sense-of-security-and-applies-stringent-standards-to-even-the-most-basic-functions-so-long-as-a-large-system-deploys-it</a></td>
+<td align="left"><a href="https://www.denverpost.com/2024/10/06/ai-surveillance-colorado-schools-cameras-security-technology/" class="external-link uri">https://www.denverpost.com/2024/10/06/ai-surveillance-colorado-schools-cameras-security-technology/</a></td>
 </tr>
 </tbody>
 </table>
@@ -194,14 +194,17 @@
 <span>                                                  <span class="st">'chunk_id'</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">kwics</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">paragraph_id</span>, <span class="va">chunk_id</span>, sep <span class="op">=</span> <span class="st">'.'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">doc_id</span>, </span>
+<span>                    <span class="va">paragraph_id</span>, </span>
+<span>                    <span class="va">chunk_id</span>, </span>
+<span>                    sep <span class="op">=</span> <span class="st">'.'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">pattern</span>, <span class="va">text</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">sample_n</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="4%">
-<col width="8%">
-<col width="87%">
+<col width="6%">
+<col width="88%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -210,19 +213,9 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">20.3.1</td>
+<td align="left">1.8.1</td>
 <td align="left">higher education</td>
-<td align="left">According to the 2024 EDUCAUSE AI Landscape study, most <b>higher education</b> institutions are working on AI-related strategic planning with goals primarily focused on preparing students for the future workforce (64%) and exploring new methods of teaching and learning (63%).</td>
-</tr>
-<tr class="even">
-<td align="left">5.10.1</td>
-<td align="left">higher education</td>
-<td align="left">Much has been made of plagiarism concerns around the use of ChatGPT in education, and there’s no doubt that generative AI technology will impact the role of writing both in <b>higher education</b> and in society in general.</td>
-</tr>
-<tr class="odd">
-<td align="left">15.4.2</td>
-<td align="left">secondary education</td>
-<td align="left">“It underscores the urgent need to address the looming AI knowledge gap in schools—for both students and teachers—to raise parental awareness and increase their involvement in AI conversations, and push for stronger AI integration in American primary and <b>secondary education</b>.”</td>
+<td align="left">AI is a game-changer in <b>higher education</b>, bridging gaps in accessibility and quality.</td>
 </tr>
 <tr class="even">
 <td align="left">20.2.1</td>
@@ -230,10 +223,19 @@
 <td align="left">Artificial intelligence has permeated nearly every industry, and <b>higher education</b> is no exception.</td>
 </tr>
 <tr class="odd">
-<td align="left">1.7.1</td>
-<td align="left">Higher education</td>
-<td align="left">
-<b>Higher education</b> is facing serious challenges.</td>
+<td align="left">3.8.2</td>
+<td align="left">higher education</td>
+<td align="left">In fact, one McKinsey Global Institute report suggests that AI could help reduce administrative costs in <b>higher education</b> by up to 30% through automation of routine tasks.</td>
+</tr>
+<tr class="even">
+<td align="left">3.1.1</td>
+<td align="left">higher education</td>
+<td align="left">You’ve heard me say this plenty of times before – but the landscape of <b>higher education</b> is rapidly evolving, and now even more so, with artificial intelligence (AI) at the forefront of this transformation.</td>
+</tr>
+<tr class="odd">
+<td align="left">20.3.1</td>
+<td align="left">higher education</td>
+<td align="left">According to the 2024 EDUCAUSE AI Landscape study, most <b>higher education</b> institutions are working on AI-related strategic planning with goals primarily focused on preparing students for the future workforce (64%) and exploring new methods of teaching and learning (63%).</td>
 </tr>
 </tbody>
 </table>
@@ -249,13 +251,14 @@
 <span></span>
 <span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
-<span>                                                           <span class="st">'paragraph_id'</span>,</span>
-<span>                                                           <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
-<span>                                        verbose <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>                                        api_url <span class="op">=</span> <span class="va">api_url</span>,</span>
-<span>                                        dims <span class="op">=</span> <span class="fl">768</span>, <span class="co">#1024, 768, 384</span></span>
-<span>                                        api_token <span class="op">=</span> <span class="va">api_token</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span></span>
+<span>    text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
+<span>                       <span class="st">'paragraph_id'</span>,</span>
+<span>                       <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>    api_url <span class="op">=</span> <span class="va">api_url</span>,</span>
+<span>    dims <span class="op">=</span> <span class="fl">768</span>, <span class="co">#1024, 768, 384</span></span>
+<span>    api_token <span class="op">=</span> <span class="va">api_token</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="embedd-query">Embedd query<a class="anchor" aria-label="anchor" href="#embedd-query"></a>
@@ -294,7 +297,7 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">13.10.2</td>
+<td align="left">14.10.2</td>
 <td align="right">0.844</td>
 <td align="left">1. Personalized learning: AI can analyze data to understand each student’s learning style, strengths and areas for improvement. For example, an AI-driven platform could identify that a particular student struggles with reading comprehension and then provide tailored exercises that improve the student’s skills.</td>
 </tr>
