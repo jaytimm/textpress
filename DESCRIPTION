@@ -2,9 +2,9 @@ Package: textpress
 Type: Package
 Title: A lightweight and versatile NLP toolkit for R
 Version: 1.0.0
-Author: Jason Timm [aut, cre]
+Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A simple NLP toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the HuggingFace API.
+Description: A simple NLP toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via 'HuggingFace' <https://huggingface.co/>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
