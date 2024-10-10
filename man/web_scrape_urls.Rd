@@ -15,10 +15,7 @@ web_scrape_urls(x, cores = 3)
 A data frame containing scraped news data.
 }
 \description{
-Function accepts three types of input:
-a Google News search query, a direct list of news URLs, or an RSS feed URL. Depending on the input type,
-it either performs a Google News search and processes the resulting RSS feeds, directly scrapes the
-provided URLs, or processes an RSS feed to extract URLs for scraping.
+Function scrapes content of provided list of URLs.
 }
 \examples{
 \dontrun{

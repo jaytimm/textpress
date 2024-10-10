@@ -4,9 +4,9 @@
 \name{textpress-package}
 \alias{textpress}
 \alias{textpress-package}
-\title{textpress: A lightweight and versatile NLP toolkit for R}
+\title{textpress: A Lightweight and Versatile NLP Toolkit}
 \description{
-A simple NLP toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the HuggingFace API.
+A simple Natural Language Processing (NLP) toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the 'HuggingFace API' \url{https://huggingface.co/docs/api-inference/index}.
 }
 \seealso{
 Useful links:
@@ -15,6 +15,10 @@ Useful links:
   \item \url{https://jaytimm.github.io/textpress/}
   \item Report bugs at \url{https://github.com/jaytimm/textpress/issues}
 }
+
+}
+\author{
+\strong{Maintainer}: Jason Timm \email{JaTimm@salud.unm.edu}
 
 }
 \keyword{internal}

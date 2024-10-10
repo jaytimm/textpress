@@ -70,7 +70,8 @@ sem_nearest_neighbors <- function(x,
 #' Compute Similarity Between Matrices
 #'
 #' This function computes the cosine similarity between two matrices,
-#' normalizing them based on the specified norm. Logic from text2vec package.
+#' normalizing them based on the specified norm. Logic from text2vec package
+#' (Selivanov, 2016) <doi:10.32614/CRAN.package.text2vec>.
 #'
 #' @param x A numeric matrix or a sparse matrix.
 #' @param y An optional numeric matrix or a sparse matrix to be compared with `x`.
