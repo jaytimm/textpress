@@ -79,8 +79,15 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>Get the released version from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'textpress'</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">## Installing package into '/home/jtimm/R/x86_64-pc-linux-gnu-library/4.4'</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="do">## (as 'lib' is unspecified)</span></span></code></pre></div>
+<p>Or the development version from GitHub with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># devtools::install_github("jaytimm/textpress")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -89,7 +96,7 @@
 <div class="section level2">
 <h2 id="web-search">Web search<a class="anchor" aria-label="anchor" href="#web-search"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sterm</span> <span class="op">&lt;-</span> <span class="st">'AI and education'</span></span>
 <span></span>
 <span><span class="va">yresults</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_search.html">web_search</a></span><span class="op">(</span>search_term <span class="op">=</span> <span class="va">sterm</span>, </span>
@@ -104,19 +111,19 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left"><a href="https://gulfbusiness.com/ai-is-transforming-healthcare-heres-how/" class="external-link uri">https://gulfbusiness.com/ai-is-transforming-healthcare-heres-how/</a></td>
+<td align="left"><a href="https://www.forbes.com/sites/danfitzpatrick/2024/10/12/could-elon-musks-ai-robots-save-a-troubled-education-system/" class="external-link uri">https://www.forbes.com/sites/danfitzpatrick/2024/10/12/could-elon-musks-ai-robots-save-a-troubled-education-system/</a></td>
 </tr>
 <tr class="even">
-<td align="left"><a href="https://campustechnology.com/Articles/2023/04/06/What-the-Past-Can-Teach-Us-About-the-Future-of-AI-and-Education.aspx" class="external-link uri">https://campustechnology.com/Articles/2023/04/06/What-the-Past-Can-Teach-Us-About-the-Future-of-AI-and-Education.aspx</a></td>
+<td align="left"><a href="https://medicalxpress.com/news/2024-10-dont-ai-chatbots-accurate-safe.html" class="external-link uri">https://medicalxpress.com/news/2024-10-dont-ai-chatbots-accurate-safe.html</a></td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://natlawreview.com/article/decoding-californias-recent-flurry-ai-laws" class="external-link uri">https://natlawreview.com/article/decoding-californias-recent-flurry-ai-laws</a></td>
+<td align="left"><a href="https://www.forbes.com/sites/bryanpenprase/2024/10/13/the-future-of-ai-and-india/" class="external-link uri">https://www.forbes.com/sites/bryanpenprase/2024/10/13/the-future-of-ai-and-india/</a></td>
 </tr>
 <tr class="even">
-<td align="left"><a href="https://www.zdnet.com/article/pearson-launches-new-ai-certification-with-focus-on-practical-use-in-the-workplace/" class="external-link uri">https://www.zdnet.com/article/pearson-launches-new-ai-certification-with-focus-on-practical-use-in-the-workplace/</a></td>
+<td align="left"><a href="https://www.forbes.com/sites/genacox/2024/10/13/3-ways-to-de-risk-ai-for-hiring-decisions-beyond-plug-and-play/" class="external-link uri">https://www.forbes.com/sites/genacox/2024/10/13/3-ways-to-de-risk-ai-for-hiring-decisions-beyond-plug-and-play/</a></td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="https://campustechnology.com/Articles/2024/02/21/Creating-Guidelines-for-the-Use-of-Gen-AI-Across-Campus.aspx" class="external-link uri">https://campustechnology.com/Articles/2024/02/21/Creating-Guidelines-for-the-Use-of-Gen-AI-Across-Campus.aspx</a></td>
+<td align="left"><a href="https://www.dallasnews.com/business/2024/10/13/motley-fool-the-ship-hasnt-sailed-on-nvidia/" class="external-link uri">https://www.dallasnews.com/business/2024/10/13/motley-fool-the-ship-hasnt-sailed-on-nvidia/</a></td>
 </tr>
 </tbody>
 </table>
@@ -124,7 +131,7 @@
 <div class="section level2">
 <h2 id="web-scraping">Web Scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">arts</span> <span class="op">&lt;-</span> <span class="va">yresults</span><span class="op">$</span><span class="va">raw_url</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_scrape_urls.html">web_scrape_urls</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -132,7 +139,7 @@
 <h2 id="text-processing--chunking">Text Processing &amp; Chunking<a class="anchor" aria-label="anchor" href="#text-processing--chunking"></a>
 </h2>
 <p><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> &lt; <code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> &lt; <code><a href="reference/nlp_build_chunks.html">nlp_build_chunks()</a></code></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="va">arts</span> <span class="op">|&gt;</span>  </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">|&gt;</span></span>
 <span>  </span>
@@ -150,8 +157,8 @@
 <table class="table">
 <colgroup>
 <col width="2%">
-<col width="28%">
-<col width="68%">
+<col width="34%">
+<col width="62%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -161,18 +168,18 @@
 <tbody>
 <tr class="odd">
 <td align="left">1.1.1</td>
-<td align="left">‘TO AI OR NOT TO AI?’</td>
-<td align="left">‘TO AI OR NOT TO AI?’ This is one of the most pressing questions that today’s educators and higher education leaders face.</td>
+<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education.</td>
+<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education. Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
 </tr>
 <tr class="even">
 <td align="left">1.1.2</td>
-<td align="left">This is one of the most pressing questions that today’s educators and higher education leaders face.</td>
-<td align="left">‘TO AI OR NOT TO AI?’ This is one of the most pressing questions that today’s educators and higher education leaders face. While there is no doubt that artificial intelligence (AI) will play an increasingly central role in people’s lives, many in the education sector remain skeptical — with some even deeming it a harbinger of educational doom.</td>
+<td align="left">Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
+<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education. Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
 </tr>
 <tr class="odd">
-<td align="left">1.1.3</td>
-<td align="left">While there is no doubt that artificial intelligence (AI) will play an increasingly central role in people’s lives, many in the education sector remain skeptical — with some even deeming it a harbinger of educational doom.</td>
-<td align="left">This is one of the most pressing questions that today’s educators and higher education leaders face. While there is no doubt that artificial intelligence (AI) will play an increasingly central role in people’s lives, many in the education sector remain skeptical — with some even deeming it a harbinger of educational doom. In a study conducted by global educational technology or edtech leader Anthology, 30% or three in every 10 university leaders in the Philippines see generative AI as unethical and should be banned from being used in educational settings.</td>
+<td align="left">1.2.1</td>
+<td align="left">NEW YORK – Artificial intelligence has captured the imagination of corporate leaders eager to implement new tech solutions in their industries.</td>
+<td align="left">NEW YORK – Artificial intelligence has captured the imagination of corporate leaders eager to implement new tech solutions in their industries. But AI could also be applied to broader and more complex problems, especially in education.</td>
 </tr>
 </tbody>
 </table>
@@ -180,7 +187,7 @@
 <div class="section level2">
 <h2 id="kwic-search">KWIC Search<a class="anchor" aria-label="anchor" href="#kwic-search"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sterm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'\\bhigher education\\b'</span>,</span>
 <span>            <span class="st">'\\bsecondary education\\b'</span><span class="op">)</span></span>
 <span>            <span class="co"># '\\S+ education\\b',</span></span>
@@ -203,8 +210,8 @@
 <table class="table">
 <colgroup>
 <col width="4%">
-<col width="8%">
-<col width="87%">
+<col width="5%">
+<col width="90%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">id</th>
@@ -213,29 +220,29 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">1.3.1</td>
+<td align="left">7.13.1</td>
 <td align="left">higher education</td>
-<td align="left">The study conducted across 11 countries including the Philippines involved 5,000 <b>higher education</b> leaders and students.</td>
+<td align="left">“We chose our theme for the conference; we are really hyped about the theme because it really aligns with the mission at our own institution as well as what we feel is the theme for <b>higher education</b> right now, and really trying to take it to the next level and launch our practice to methods that will help our students to soar and succeed,” says Andrea Liles, Rhodes State College.</td>
 </tr>
 <tr class="even">
-<td align="left">1.8.1</td>
+<td align="left">2.2.1</td>
 <td align="left">higher education</td>
-<td align="left">AI is a game-changer in <b>higher education</b>, bridging gaps in accessibility and quality.</td>
+<td align="left">The Indian government’s multifaceted approach includes building an AI ecosystem that leverages resources in <b>higher education</b>, research and industry.</td>
 </tr>
 <tr class="odd">
-<td align="left">1.2.3</td>
+<td align="left">10.7.2</td>
 <td align="left">higher education</td>
-<td align="left">It revealed that university leaders have certain reservations around allowing AI in <b>higher education</b>, perceiving it as being unethical.</td>
+<td align="left">Advancements in generative AI make it possible to develop focused, role-specific cybersecurity training for a variety of users in <b>higher education</b>, the report notes.</td>
 </tr>
 <tr class="even">
-<td align="left">9.2.1</td>
-<td align="left">Higher Education</td>
-<td align="left">In 1998, noted technology critic and historian of automation David Noble published his influential article “Digital Diploma Mills: The Automation of <b>Higher Education</b>,” in which he warned about the negative impacts the internet would have on education.</td>
+<td align="left">7.11.1</td>
+<td align="left">higher education</td>
+<td align="left">The theme for this year’s conference was Rocket Education: Ignite, Launch, Soar as <b>higher education</b> continues to evolve to meet the needs of the students.</td>
 </tr>
 <tr class="odd">
-<td align="left">15.4.2</td>
-<td align="left">secondary education</td>
-<td align="left">“It underscores the urgent need to address the looming AI knowledge gap in schools—for both students and teachers—to raise parental awareness and increase their involvement in AI conversations, and push for stronger AI integration in American primary and <b>secondary education</b>.”</td>
+<td align="left">10.1.1</td>
+<td align="left">higher education</td>
+<td align="left">AI governance, AI-enabled workforce expansion, and AI-supported cybersecurity training are three of the six key technologies and practices anticipated to have a significant impact on the future of cybersecurity and privacy in <b>higher education</b>, according to the latest Cybersecurity and Privacy edition of the Educause Horizon Report.</td>
 </tr>
 </tbody>
 </table>
@@ -246,7 +253,7 @@
 <div class="section level3">
 <h3 id="huggingface-embeddings">HuggingFace embeddings<a class="anchor" aria-label="anchor" href="#huggingface-embeddings"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">"https://api-inference.huggingface.co/models/BAAI/bge-base-en-v1.5"</span></span>
 <span></span>
 <span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
@@ -266,7 +273,7 @@
 <blockquote>
 <p>“How can AI personalize learning experiences for students?”</p>
 </blockquote>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="st">"How can AI personalize learning experiences for students?"</span></span>
 <span></span>
 <span><span class="va">query</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span></span>
@@ -274,7 +281,7 @@
 <span>  api_url <span class="op">=</span> <span class="va">api_url</span>,</span>
 <span>  dims <span class="op">=</span> <span class="fl">768</span>,</span>
 <span>  api_token <span class="op">=</span> <span class="va">api_token</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">query</span>,</span>
 <span>  matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
@@ -297,29 +304,29 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">14.10.2</td>
-<td align="right">0.844</td>
-<td align="left">1. Personalized learning: AI can analyze data to understand each student’s learning style, strengths and areas for improvement. For example, an AI-driven platform could identify that a particular student struggles with reading comprehension and then provide tailored exercises that improve the student’s skills.</td>
+<td align="left">13.24.1</td>
+<td align="right">0.790</td>
+<td align="left">In virtual classrooms, AI tutors welcome students, offering personalized, one-on-one learning experiences. If a student asks a question via text or voice during the lesson, the AI tutor can respond immediately.</td>
 </tr>
 <tr class="even">
-<td align="left">7.8.2</td>
-<td align="right">0.836</td>
-<td align="left">There’s a better way. This is where AI-assisted learning steps in to create personalized lesson plans. In our schools, we’ve transformed the traditional teacher’s role into that of a “guide.”</td>
+<td align="left">4.2.1</td>
+<td align="right">0.755</td>
+<td align="left">With AI enabled Classwork module generation, educators can get assistance creating a course outline and drafting modules and descriptions based on the subject, student grade level, and class learning objectives. The educator is always in the driver’s seat and can choose to edit, delete, or regenerate modules before adding them to Classwork.</td>
 </tr>
 <tr class="odd">
-<td align="left">22.2.2</td>
-<td align="right">0.835</td>
-<td align="left">Artificial intelligence has permeated nearly every industry, and higher education is no exception. AI-powered solutions promise to revolutionize learning by providing personalized and adaptive experiences.</td>
+<td align="left">1.6.4</td>
+<td align="right">0.741</td>
+<td align="left">Others say they simply do not know where to begin. That is where generative AI comes in: it can recommend coursework that matches learners’ levels and interests, and offer real-time feedback as they move through the material. AI-powered solutions can even pair students with mentors who can advise them on higher education and career progression.</td>
 </tr>
 <tr class="even">
-<td align="left">22.7.5</td>
-<td align="right">0.810</td>
-<td align="left">Consider how new tools integrate with existing platforms and map to the entire learner lifecycle. AI should simplify, not complicate, the student experience. With thoughtful implementation, these intelligent technologies can personalize learning and improve outcomes from start to finish.</td>
+<td align="left">1.11.4</td>
+<td align="right">0.734</td>
+<td align="left">As IBM’s Chief Impact Officer, I will be asking how my organization can ensure that students, teachers, employees, and job-seekers are benefiting from these advances. Although we have taken a step in that direction with IBM SkillsBuild, shaping the industries and jobs of the future requires a host of AI-powered features and programs that can provide learners with personalized educational experiences over the course of their lives.</td>
 </tr>
 <tr class="odd">
-<td align="left">7.10.1</td>
-<td align="right">0.810</td>
-<td align="left">AI is revolutionizing the role of teachers by excelling at delivering personalized learning experiences. These advanced AI programs can swiftly and accurately pinpoint what a student knows and doesn’t know in each subject, allowing lessons to be designed around their unique aptitudes without any judgment.</td>
+<td align="left">19.16.2</td>
+<td align="right">0.726</td>
+<td align="left">In customer support, AI can improve ticket routing to the appropriate department or agent. AI can use past interactions and customer data for tailored responses and recommendations. And AI can evaluate and interpret emotions from customer communications.</td>
 </tr>
 </tbody>
 </table>
@@ -337,6 +344,7 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=textpress" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/jaytimm/textpress/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/jaytimm/textpress/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -369,7 +377,6 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/jaytimm/textpress/actions" class="external-link"><img src="https://github.com/jaytimm/textpress/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="https://www.r-pkg.org/badges/version/textpress"></a></li>
 </ul>
 </div>
