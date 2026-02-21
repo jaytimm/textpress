@@ -5,28 +5,28 @@
 \title{Split Text into Sentences}
 \usage{
 nlp_split_sentences(
-  tif,
-  text_hierarchy = c("doc_id"),
+  corpus,
+  by = c("doc_id"),
   abbreviations = textpress::abbreviations
 )
 }
 \arguments{
-\item{tif}{A data frame containing text to be split into sentences.}
+\item{corpus}{A data frame containing text to be split into sentences.}
 
-\item{text_hierarchy}{A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.}
+\item{by}{Character vector of columns that identify each text row (e.g. \code{"doc_id"}).}
 
 \item{abbreviations}{A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.}
 }
 \value{
-A data.table with columns specified in 'by', 'sentence_id', and 'text'.
+A data.table with columns from \code{by}, plus \code{sentence_id}, \code{text}, \code{start}, \code{end}.
 }
 \description{
 This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 }
 \examples{
-tif <- data.frame(doc_id = c('1'),
-                  text = c("Hello world. This is an example. No, this is a party!"))
-sentences <- nlp_split_paragraphs(tif)
+corpus <- data.frame(doc_id = c('1'),
+                    text = c("Hello world. This is an example. No, this is a party!"))
+sentences <- nlp_split_sentences(corpus)
 
 
 }

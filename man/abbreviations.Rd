@@ -3,20 +3,20 @@
 \docType{data}
 \name{abbreviations}
 \alias{abbreviations}
-\title{Common Abbreviations for Sentence Splitting}
+\title{Common Abbreviations for Linguistic Processing}
 \format{
-A character vector with some common English abbreviations.
+A named list with the following components:
+\describe{
+  \item{\code{abbreviations}}{A character vector of common abbreviations, including titles, months, and standard abbreviations.}
+}
 }
 \source{
-Developed internally for sentence splitting functionality.
+Internally compiled linguistic resource.
 }
 \usage{
 abbreviations
 }
 \description{
-A character vector of common abbreviations used in English.
-These abbreviations are used to assist in sentence splitting,
-ensuring that sentence boundaries are not incorrectly identified
-at these abbreviations.
+A named list containing common abbreviations used in text analysis.
 }
 \keyword{datasets}

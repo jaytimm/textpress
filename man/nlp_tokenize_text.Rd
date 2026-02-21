@@ -5,28 +5,32 @@
 \title{Tokenize Text Data (mostly) Non-Destructively}
 \usage{
 nlp_tokenize_text(
-  tif,
-  text_hierarchy = c("doc_id", "paragraph_id", "sentence_id")
+  corpus,
+  by = c("doc_id", "paragraph_id", "sentence_id"),
+  include_spans = TRUE,
+  method = "word"
 )
 }
 \arguments{
-\item{tif}{A data frame containing the text to be tokenized and a document identifier in 'doc_id'.}
+\item{corpus}{A data frame with a \code{text} column and id columns given in \code{by}.}
 
-\item{text_hierarchy}{A character string specifying grouping column.}
+\item{by}{Character vector of columns that uniquely identify each row (e.g. \code{c("doc_id", "sentence_id")}).}
+
+\item{include_spans}{Logical. Include start/end character spans for each token.}
+
+\item{method}{Character. \code{"word"} or \code{"biber"}.}
 }
 \value{
-A named list of tokens, where each list item corresponds to a document.
+A named list of tokens (or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}).
 }
 \description{
-This function tokenizes text data from a data frame using the 'tokenizers' package, preserving the original text structure like capitalization and punctuation.
+Tokenizes text from a corpus data frame, preserving structure like capitalization and punctuation.
 }
 \examples{
-tif <- data.frame(doc_id = c('1', '1', '2'),
-                  sentence_id = c('1', '2', '1'),
-                  text = c("Hello world.",
-                           "This is an example.",
-                           "This is a party!"))
-tokens <- nlp_tokenize_text(tif, text_hierarchy = c('doc_id', 'sentence_id'))
-
-
+corpus <- data.frame(doc_id = c('1', '1', '2'),
+                    sentence_id = c('1', '2', '1'),
+                    text = c("Hello world.",
+                             "This is an example.",
+                             "This is a party!"))
+tokens <- nlp_tokenize_text(corpus, by = c('doc_id', 'sentence_id'))
 }

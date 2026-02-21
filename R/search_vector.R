@@ -1,28 +1,24 @@
-#' Find Nearest Neighbors Based on Cosine Similarity
+#' Nearest neighbors by cosine similarity (vector search)
 #'
-#' This function identifies the nearest neighbors of a given term or vector
-#' in a matrix based on cosine similarity.
+#' Returns the top-\code{n} nearest rows in an embedding matrix to a query
+#' (row name or numeric vector). Local search over a dense/sparse matrix you
+#' provide. textpress does not generate embeddings; use packages such as
+#' \pkg{reticulate} (sentence-transformers), \pkg{word2vec}, or \pkg{fastText}
+#' to create the matrix, then pass it here.
 #'
-#' @param x A character or numeric vector representing the term or vector.
-#' @param matrix A numeric matrix or a sparse matrix against which the similarity is calculated.
-#' @param n Number of nearest neighbors to return.
+#' @param x A character (row name in \code{matrix}) or numeric vector (query embedding).
+#' @param matrix A numeric or sparse matrix of embeddings (rows = documents/units).
+#' @param n Number of nearest neighbors to return (default 10).
 #'
-#' @return A data frame with the ranks, terms, and their cosine similarity scores.
+#' @return A data frame with \code{rank}, \code{term1}, \code{term2}, \code{cos_sim}.
 #' @export
 #' @examples
 #' \dontrun{
-#'  api_token <- ''
-#'  matrix <- api_huggingface_embeddings(tif,
-#'                                       text_hierarchy = c('doc_id', 'sentence_id'),
-#'                                       api_token = api_token)
-#'  query <- api_huggingface_embeddings(query = "Where's the party at?",
-#'                                      api_token = api_token)
-#'  neighbors <- sem_nearest_neighbors(x = query, matrix = matrix)
+#' # Assume you have an embedding matrix from another package
+#' # m <- your_embed_function(corpus)
+#' # search_neighbors("doc_1", matrix = m, n = 5)
 #' }
-#'
-#'
-#'
-sem_nearest_neighbors <- function(x,
+search_neighbors <- function(x,
                                   matrix,
                                   n = 10) {
   # Validate inputs
@@ -65,6 +61,20 @@ sem_nearest_neighbors <- function(x,
 }
 
 
+#' Vector search over an embedding matrix
+#'
+#' Alias for \code{\link{search_neighbors}}. Returns the top-\code{n} nearest
+#' rows by cosine similarity. Use this name when you want the trio
+#' \code{search_corpus} (regex), \code{search_index} (BM25), \code{search_vector} (embeddings).
+#'
+#' @param x Query: row name in \code{matrix} or numeric vector (embedding).
+#' @param matrix Embedding matrix (rows = documents/units).
+#' @param n Number of results (default 10).
+#' @return A data frame with \code{rank}, \code{term1}, \code{term2}, \code{cos_sim}.
+#' @export
+search_vector <- function(x, matrix, n = 10) {
+  search_neighbors(x = x, matrix = matrix, n = n)
+}
 
 
 #' Compute Similarity Between Matrices

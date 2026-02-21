@@ -6,36 +6,58 @@
 #' @return A data frame with columns for token name and token.
 #' @export
 #' @examples
-#' tokens <- list(c("Hello", "world", "."),
-#'                c("This", "is", "an", "example", "." ),
-#'                c("This", "is", "a", "party", "!"))
-#' names(tokens) <- c('1.1', '1.2', '2.1')
-#' dtm <- nlp_cast_tokens(tokens)
+#' tok <- list(
+#'   tokens = list(
+#'     "1.1" = c("Hello", "world", "."),
+#'     "1.2" = c("This", "is", "an", "example", "."),
+#'     "2.1" = c("This", "is", "a", "party", "!")
+#'   )
+#' )
+#' dtm <- nlp_cast_tokens(tok)
 #'
 nlp_cast_tokens <- function(tok) {
-  # Check if all elements in 'tok' are atomic vectors. Stop if not.
-
-  if (!all(sapply(tok, is.atomic))) {
-    stop("`tok` must be a list of atomic vectors")
+  # Verify that toks has the required components
+  if (!is.list(tok) || !"tokens" %in% names(tok)) {
+    stop("Input 'tok' must be a list with at least a 'tokens' element.")
   }
 
-  # If 'tok' elements do not have names, assign sequential names
-  if (is.null(names(tok))) {
-    names(tok) <- seq_along(tok)
+  tokens <- tok$tokens
+  spans  <- tok[["spans"]]  # Will be NULL if not present
+
+  # Ensure tokens have names; if not, assign sequential names.
+  if (is.null(names(tokens))) {
+    names(tokens) <- seq_along(tokens)
   }
 
-  # Create a data frame with two columns:
-  # 1. Replicated names of 'tok' elements, replicated by the length of each element
-  # 2. Unlisted elements of 'tok', concatenated into a single vector
-  df <- data.frame(rep(names(tok), sapply(tok, length)),
-    unlist(tok, use.names = FALSE),
-    check.names = FALSE,
-    row.names = NULL
-  )
+  # If spans exist, process normally
+  if (!is.null(spans)) {
+    if (is.null(names(spans))) {
+      names(spans) <- seq_along(spans)
+    }
 
-  # Set the column names of the data frame to 'by' and 'word_form'
-  colnames(df) <- c('id', 'token')
+    df_list <- mapply(function(id, token_vec, span_mat) {
+      if (length(token_vec) != nrow(span_mat)) {
+        stop("Mismatch in token and span lengths for id ", id)
+      }
+      data.table::data.table(
+        id    = id,
+        token = token_vec,
+        start = span_mat[, "start"],
+        end  = span_mat[, "end"]
+      )
+    }, names(tokens), tokens, spans, SIMPLIFY = FALSE)
+  } else {
+    # No spans - return tokens only
+    df_list <- lapply(names(tokens), function(id) {
+      data.table::data.table(
+        id    = id,
+        token = tokens[[id]]
+      )
+    })
+  }
 
-  # Convert the data frame to a data table and return it
-  return(data.table::data.table(df))
+  # Combine into a single data.table
+  dt <- data.table::rbindlist(df_list, fill = TRUE)
+  return(dt)
 }
+

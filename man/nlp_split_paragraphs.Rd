@@ -4,10 +4,10 @@
 \alias{nlp_split_paragraphs}
 \title{Split Text into Paragraphs}
 \usage{
-nlp_split_paragraphs(tif, paragraph_delim = "\\\\n+")
+nlp_split_paragraphs(corpus, paragraph_delim = "\\\\n+")
 }
 \arguments{
-\item{tif}{A data frame with at least two columns: `doc_id` and `text`.}
+\item{corpus}{A data frame with at least two columns: `doc_id` and `text`.}
 
 \item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
 }
@@ -20,10 +20,10 @@ Splits text from the 'text' column of a data frame into individual paragraphs,
 based on a specified paragraph delimiter.
 }
 \examples{
-tif <- data.frame(doc_id = c('1', '2'),
-                  text = c("Hello world.\n\nMind your business!",
-                           "This is an example.n\nThis is a party!"))
-paragraphs <- nlp_split_paragraphs(tif)
+corpus <- data.frame(doc_id = c('1', '2'),
+                     text = c("Hello world.\n\nMind your business!",
+                              "This is an example.n\nThis is a party!"))
+paragraphs <- nlp_split_paragraphs(corpus)
 
 
 }

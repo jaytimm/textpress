@@ -6,7 +6,11 @@
 \alias{textpress-package}
 \title{textpress: A Lightweight and Versatile NLP Toolkit}
 \description{
-A simple Natural Language Processing (NLP) toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the 'HuggingFace API' \url{https://huggingface.co/docs/api-inference/index}.
+A lightweight NLP toolkit for R organized as a four-stage pipeline: fetch
+(URLs from search/Wikipedia), read (content from URLs), process (split,
+tokenize, index), and search (regex, BM25, vector similarity, dictionary).
+Uses verb_noun naming for discoverability. Minimal dependencies; embeddings
+are built elsewhere and passed in for semantic search.
 }
 \seealso{
 Useful links:

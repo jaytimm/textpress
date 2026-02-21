@@ -1,15 +1,20 @@
-#' Common Abbreviations for Sentence Splitting
+#' Common Abbreviations for Linguistic Processing
 #'
-#' A character vector of common abbreviations used in English.
-#' These abbreviations are used to assist in sentence splitting,
-#' ensuring that sentence boundaries are not incorrectly identified
-#' at these abbreviations.
+#' A named list containing common abbreviations used in text analysis.
 #'
-#' @format A character vector with some common English abbreviations.
-#' @source Developed internally for sentence splitting functionality.
+#' @format A named list with the following components:
+#' \describe{
+#'   \item{\code{abbreviations}}{A character vector of common abbreviations, including titles, months, and standard abbreviations.}
+#' }
+#' @source Internally compiled linguistic resource.
 #' @export
-abbreviations <- c(
+
+abbreviations = c(
   "\\b[A-Z]\\.",
+  'i.e.',
+  'D.C.',
+  "vs.",
+  "Fig.",
   "No.",
   "Inc.",
   "St.",

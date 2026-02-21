@@ -2,85 +2,75 @@
 #'
 #' This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 #'
-#' @param tif A data frame containing text to be split into sentences.
-#' @param text_hierarchy A character vector specifying the columns to group by for sentence splitting, usually 'doc_id'.
+#' @param corpus A data frame containing text to be split into sentences.
+#' @param by Character vector of columns that identify each text row (e.g. \code{"doc_id"}).
 #' @param abbreviations A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.
 #'
-#' @return A data.table with columns specified in 'by', 'sentence_id', and 'text'.
+#' @return A data.table with columns from \code{by}, plus \code{sentence_id}, \code{text}, \code{start}, \code{end}.
 #'
 #' @export
 #' @examples
-#' tif <- data.frame(doc_id = c('1'),
-#'                   text = c("Hello world. This is an example. No, this is a party!"))
-#' sentences <- nlp_split_paragraphs(tif)
+#' corpus <- data.frame(doc_id = c('1'),
+#'                     text = c("Hello world. This is an example. No, this is a party!"))
+#' sentences <- nlp_split_sentences(corpus)
 #'
 #'
-nlp_split_sentences <- function(tif,
-                                text_hierarchy = c("doc_id"),
+nlp_split_sentences <- function(corpus,
+                                by = c("doc_id"),
                                 abbreviations = textpress::abbreviations) {
-  # Validate input data frame structure
-  if (!all(text_hierarchy %in% names(tif))) {
-    stop("The input data frame must contain specified 'by' columns.", call. = FALSE)
+  if (!all(by %in% names(corpus))) {
+    stop("The input data frame must contain the specified 'by' columns.", call. = FALSE)
   }
 
-  # Convert to data.table if not already
-  if (!data.table::is.data.table(tif)) {
-    data.table::setDT(tif)
+  if (!data.table::is.data.table(corpus)) {
+    data.table::setDT(corpus)
   }
 
-  # Replace abbreviations with placeholders
-  tif[, text := unlist(lapply(text, function(t) {
+  corpus[, text := unlist(lapply(text, function(t) {
     .replace_abbreviations(t, abbreviations, operation = "replace")
   }))]
 
-  # Split text into sentences
-  tif <- tif[, .(sentences = lapply(text, .sentence_split)), by = text_hierarchy]
-
-
-  # Flatten the list into a long data.table of sentences
-  sentences <- tif[, .(text = unlist(sentences, use.names = FALSE)), by = text_hierarchy]
-
-  # Revert placeholders back to abbreviations
-  sentences$text <- .replace_abbreviations(sentences$text, abbreviations, operation = "revert")
-
-  # Assign sentence_id within each group specified by 'by'
-  sentences[, sentence_id := seq_len(.N), by = text_hierarchy]
-
-
-  ### This is no good --
-  # Reorder columns for output
-  if ("paragraph_id" %in% text_hierarchy) {
-    output_columns <- c(text_hierarchy, "sentence_id", "text")
+  if ("paragraph_id" %in% names(corpus)) {
+    corpus[, paragraph_offset := cumsum(c(0, nchar(text[-.N]) + 1)), by = "doc_id"]
   } else {
-    output_columns <- c("doc_id", "sentence_id", "text")
+    corpus[, paragraph_offset := 0]
   }
 
+  corpus <- corpus[, .(sentences = lapply(text, .sentence_split)), by = c(by, "paragraph_offset")]
+
+  sentences <- corpus[, .(
+    text = unlist(lapply(sentences, `[[`, "text"), use.names = FALSE),
+    start = unlist(lapply(sentences, `[[`, "start"), use.names = FALSE) + paragraph_offset,
+    end = unlist(lapply(sentences, `[[`, "end"), use.names = FALSE) + paragraph_offset
+  ), by = by]
+
+  sentences[, text := .replace_abbreviations(text, abbreviations, operation = "revert")]
+
+  sentences[, sentence_id := seq_len(.N), by = "doc_id"]
+
+  output_columns <- c(by, "sentence_id", "text", "start", "end")
   data.table::setcolorder(sentences, output_columns)
-  sentences[, (names(sentences)) := lapply(.SD, as.character), .SDcols = names(sentences)]
 
   return(sentences)
 }
 
-
-
-
-#' Splits text into sentences, normalizes whitespace, trims spaces.
+#' Splits text into sentences while preserving whitespace and spans.
 #'
 #' @param x Character vector to split.
-#' @return List of character vectors with sentences.
+#' @return List containing sentences with start and end positions.
 #' @keywords internal
 #' @noRd
 .sentence_split <- function(x) {
-  # Replace various types of whitespace with a single space for consistency
-  x <- stringi::stri_replace_all_charclass(x, "[[:whitespace:]]", " ")
+  # Identify sentence boundaries
+  sentence_bounds <- stringi::stri_locate_all_boundaries(x, type = "sentence")[[1]]
 
-  # Split text into sentences based on sentence boundaries
-  out <- stringi::stri_split_boundaries(x, type = "sentence", skip_word_none = FALSE)
+  # Extract sentences using precise character positions
+  sentences <- stringi::stri_sub(x, sentence_bounds[, 1], sentence_bounds[, 2])
+  start_positions <- sentence_bounds[, 1]
+  end_positions <- sentence_bounds[, 2]
 
-  # Trim leading and trailing spaces from each sentence
-  lapply(out, stringi::stri_trim_both)
+  return(list(text = sentences, start = start_positions, end = end_positions))
 }
-
 
 
 
