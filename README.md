@@ -6,6 +6,22 @@ A lightweight R toolkit for text retrieval: **Fetch, Read, Process, and Search.*
 
 ---
 
+## Installation
+
+From CRAN:
+
+```r
+install.packages("textpress")
+```
+
+Development version:
+
+```r
+remotes::install_github("jaytimm/textpress")
+```
+
+---
+
 ## The textpress API map
 
 ### 1. Data acquisition (`fetch_*`)
@@ -42,39 +58,6 @@ Four ways to query your data. Each accepts a corpus or index and returns a ranke
 
 ---
 
-## The golden path
-
-The naming schema lets the code read like the researcher’s intent:
-
-```r
-library(textpress)
-
-# 1. Acquire & ingest
-urls    <- fetch_urls("R high performance computing")
-corpus  <- read_urls(urls)
-
-# 2. Process & index
-index   <- corpus |> 
-  nlp_tokenize_text() |> 
-  nlp_index_tokens()
-
-# 3. Search (four ways)
-results_bm25   <- search_index(index, "parallel processing")
-results_regex  <- search_corpus(corpus, "furrr|future")
-results_entity <- search_dict(corpus, dictionary = tech_dict)
-results_vector <- search_vector(query_embedding, my_matrix)
-```
-
----
-
-## Why this works
-
-- **Discovery** — Type `search_` and see all retrieval options in one list.
-- **Honesty** — `search_dict` is clearer than “extract entities”: the result is only as good as the dictionary you provide.
-- **Extensibility** — A future `search_fuzzy()` or `fetch_arxiv()` already has a home in the naming convention.
-
----
-
 ## Extension: Using textpress with LLMs & agents
 
 While textpress is a general-purpose text toolkit, its design fits LLM-based workflows (e.g. RAG) and autonomous agents.
@@ -92,29 +75,3 @@ If you are building an agent (e.g. via \pkg{reticulate} or another R framework),
 - `fetch_urls()` — agent “Search” tool.
 - `read_urls()` — agent “Browse” tool.
 - `search_corpus()` — agent “Find in page” tool.
-
-```r
-# Example: textpress as a research tool before calling an LLM
-query   <- "latest version of the R furrr package"
-docs    <- read_urls(fetch_urls(query)$url)
-corpus  <- docs |> mutate(doc_id = row_number())
-index   <- corpus |> nlp_tokenize_text() |> nlp_index_tokens()
-best    <- search_index(index, "version release")
-# Pass best (or its text) to your LLM as context.
-```
-
----
-
-## Installation
-
-From CRAN:
-
-```r
-install.packages("textpress")
-```
-
-Development version:
-
-```r
-remotes::install_github("jaytimm/textpress")
-```
