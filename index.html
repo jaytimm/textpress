@@ -73,6 +73,17 @@
 <p>A lightweight R toolkit for text retrieval: <strong>Fetch, Read, Process, and Search.</strong> Every function follows a verb_noun pattern so the API is predictable and discoverable (e.g. type <code>search_</code> to see all retrieval options). No heavy dependencies; data stays in data frames.</p>
 <hr>
 <div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>From CRAN:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
+<p>Development version:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
 <h2 id="the-textpress-api-map">The textpress API map<a class="anchor" aria-label="anchor" href="#the-textpress-api-map"></a>
 </h2>
 <div class="section level3">
@@ -130,42 +141,6 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="the-golden-path">The golden path<a class="anchor" aria-label="anchor" href="#the-golden-path"></a>
-</h2>
-<p>The naming schema lets the code read like the researcher’s intent:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 1. Acquire &amp; ingest</span></span>
-<span><span class="va">urls</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R high performance computing"</span><span class="op">)</span></span>
-<span><span class="va">corpus</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">urls</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 2. Process &amp; index</span></span>
-<span><span class="va">index</span>   <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3. Search (four ways)</span></span>
-<span><span class="va">results_bm25</span>   <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"parallel processing"</span><span class="op">)</span></span>
-<span><span class="va">results_regex</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_corpus.html">search_corpus</a></span><span class="op">(</span><span class="va">corpus</span>, <span class="st">"furrr|future"</span><span class="op">)</span></span>
-<span><span class="va">results_entity</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_dict.html">search_dict</a></span><span class="op">(</span><span class="va">corpus</span>, dictionary <span class="op">=</span> <span class="va">tech_dict</span><span class="op">)</span></span>
-<span><span class="va">results_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_vector.html">search_vector</a></span><span class="op">(</span><span class="va">query_embedding</span>, <span class="va">my_matrix</span><span class="op">)</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="why-this-works">Why this works<a class="anchor" aria-label="anchor" href="#why-this-works"></a>
-</h2>
-<ul>
-<li>
-<strong>Discovery</strong> — Type <code>search_</code> and see all retrieval options in one list.</li>
-<li>
-<strong>Honesty</strong> — <code>search_dict</code> is clearer than “extract entities”: the result is only as good as the dictionary you provide.</li>
-<li>
-<strong>Extensibility</strong> — A future <code>search_fuzzy()</code> or <code>fetch_arxiv()</code> already has a home in the naming convention.</li>
-</ul>
-<hr>
-</div>
-<div class="section level2">
 <h2 id="extension-using-textpress-with-llms--agents">Extension: Using textpress with LLMs &amp; agents<a class="anchor" aria-label="anchor" href="#extension-using-textpress-with-llms--agents"></a>
 </h2>
 <p>While textpress is a general-purpose text toolkit, its design fits LLM-based workflows (e.g. RAG) and autonomous agents.</p>
@@ -189,25 +164,6 @@ If you are building an agent (e.g. via  or another R framework), textpress func
 <li>
 <code><a href="reference/search_corpus.html">search_corpus()</a></code> — agent “Find in page” tool.</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example: textpress as a research tool before calling an LLM</span></span>
-<span><span class="va">query</span>   <span class="op">&lt;-</span> <span class="st">"latest version of the R furrr package"</span></span>
-<span><span class="va">docs</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="va">query</span><span class="op">)</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span>
-<span><span class="va">corpus</span>  <span class="op">&lt;-</span> <span class="va">docs</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">index</span>   <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">best</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"version release"</span><span class="op">)</span></span>
-<span><span class="co"># Pass best (or its text) to your LLM as context.</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>From CRAN:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
-<p>Development version:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
