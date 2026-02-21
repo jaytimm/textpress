@@ -3,7 +3,7 @@
 #' Splits text from the 'text' column of a data frame into individual paragraphs,
 #' based on a specified paragraph delimiter.
 #'
-#' @param corpus A data frame with at least two columns: `doc_id` and `text`.
+#' @param corpus A data frame or data.table containing a \code{text} column and identifier column(s) (e.g. \code{doc_id}).
 #' @param paragraph_delim A regular expression pattern used to split text into paragraphs.
 #' @return A data.table with columns: `doc_id`, `paragraph_id`, and `text`.
 #'         Each row represents a paragraph, along with its associated document and paragraph identifiers.

@@ -13,9 +13,11 @@ search_dict(
 )
 }
 \arguments{
-\item{corpus}{A data frame with \code{text} and id columns given in \code{by}.}
+\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
 
-\item{by}{Character vector of columns that identify each text unit (e.g. \code{"doc_id"}).}
+\item{by}{A character vector of column names used as unique identifiers.
+The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+the search returns matches at the paragraph level).}
 
 \item{n_min}{Integer. Minimum n-gram size (default 1).}
 
@@ -31,8 +33,8 @@ A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram} (m
 }
 \description{
 Dictionary-based search: build n-grams from tokenized text and match against
-a target list (dictionary). Completes the \code{search_*} family: \code{search_corpus}
-(regex), \code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
+a target list (dictionary). Completes the \code{search_*} family: \code{search_regex} (regex/KWIC),
+\code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
 }
 \examples{
 \dontrun{

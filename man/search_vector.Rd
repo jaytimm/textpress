@@ -2,22 +2,23 @@
 % Please edit documentation in R/search_vector.R
 \name{search_vector}
 \alias{search_vector}
-\title{Vector search over an embedding matrix}
+\title{Vector search by cosine similarity}
 \usage{
-search_vector(x, matrix, n = 10)
+search_vector(embeddings, query, n = 10)
 }
 \arguments{
-\item{x}{Query: row name in \code{matrix} or numeric vector (embedding).}
+\item{embeddings}{A numeric or sparse matrix of embeddings (rows = searchable units).}
 
-\item{matrix}{Embedding matrix (rows = documents/units).}
+\item{query}{A character (row name in \code{embeddings}), a numeric vector (single query),
+or a numeric matrix (multiple queries).}
 
-\item{n}{Number of results (default 10).}
+\item{n}{Number of results to return per query (default 10).}
 }
 \value{
-A data frame with \code{rank}, \code{term1}, \code{term2}, \code{cos_sim}.
+A data frame (or list of data frames if multiple queries are provided)
+  containing the match identifiers and similarity scores.
 }
 \description{
-Alias for \code{\link{search_neighbors}}. Returns the top-\code{n} nearest
-rows by cosine similarity. Use this name when you want the trio
-\code{search_corpus} (regex), \code{search_index} (BM25), \code{search_vector} (embeddings).
+Returns the top-\code{n} matches from an embedding matrix for one or more query vectors.
+Subject-first: \code{embeddings} (haystack) then \code{query} (needle), pipe-friendly.
 }

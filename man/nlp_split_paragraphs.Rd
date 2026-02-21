@@ -7,7 +7,7 @@
 nlp_split_paragraphs(corpus, paragraph_delim = "\\\\n+")
 }
 \arguments{
-\item{corpus}{A data frame with at least two columns: `doc_id` and `text`.}
+\item{corpus}{A data frame or data.table containing a \code{text} column and identifier column(s) (e.g. \code{doc_id}).}
 
 \item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
 }

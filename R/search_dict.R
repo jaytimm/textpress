@@ -1,11 +1,13 @@
 #' Search text using a dictionary (exact n-gram match)
 #'
 #' Dictionary-based search: build n-grams from tokenized text and match against
-#' a target list (dictionary). Completes the \code{search_*} family: \code{search_corpus}
-#' (regex), \code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
+#' a target list (dictionary). Completes the \code{search_*} family: \code{search_regex} (regex/KWIC),
+#' \code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
 #'
-#' @param corpus A data frame with \code{text} and id columns given in \code{by}.
-#' @param by Character vector of columns that identify each text unit (e.g. \code{"doc_id"}).
+#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
+#' @param by A character vector of column names used as unique identifiers.
+#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+#'   the search returns matches at the paragraph level).
 #' @param n_min Integer. Minimum n-gram size (default 1).
 #' @param n_max Integer. Maximum n-gram size (default 5).
 #' @param dictionary A data frame with columns \code{variant}, \code{TermName}, and optionally \code{doc_id}.

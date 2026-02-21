@@ -11,9 +11,11 @@ nlp_split_sentences(
 )
 }
 \arguments{
-\item{corpus}{A data frame containing text to be split into sentences.}
+\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
 
-\item{by}{Character vector of columns that identify each text row (e.g. \code{"doc_id"}).}
+\item{by}{A character vector of column names used as unique identifiers.
+The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+the search returns matches at the paragraph level).}
 
 \item{abbreviations}{A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.}
 }

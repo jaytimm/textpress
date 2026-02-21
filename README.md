@@ -1,3 +1,9 @@
+---
+title: "textpress"
+description: "A lightweight R toolkit for text retrieval: Fetch, Read, Process, and Search. Four-stage pipeline with search_regex, search_index, search_vector, search_dict."
+package: textpress
+---
+
 [![](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
 
 # textpress
@@ -49,12 +55,12 @@ Prepare raw text for analysis or indexing. Designed to be used with the pipe `|>
 
 ### 4. Retrieval (`search_*`)
 
-Four ways to query your data. Each accepts a corpus or index and returns a ranked or filtered data frame.
+Four ways to query your data. Subject-first: the first argument is always the data (corpus, index, or embeddings); the second is the query/needle. Pipe-friendly.
 
-- **`search_corpus()`** — Regex / KWIC. Finding exact patterns or strings in raw text.
-- **`search_index()`** — BM25 / tokens. Keyword-based ranked retrieval (traditional search).
-- **`search_vector()`** — Cosine similarity. Semantic search using **your own** embedding matrix (textpress does not build embeddings; use e.g. \pkg{reticulate} with sentence-transformers and pass the matrix in).
-- **`search_dict()`** — Dictionary match. Extract specific entities/terms from a provided list.
+- **`search_regex(corpus, query, ...)`** — Regex / KWIC. Search corpus via regex (patterns, boundaries, wildcards).
+- **`search_index(index, query, ...)`** — BM25 / tokens. Keyword-based ranked retrieval (traditional search).
+- **`search_vector(embeddings, query, ...)`** — Cosine similarity. Semantic search using your own embeddings (e.g. from \code{util_fetch_embeddings} or \pkg{reticulate}).
+- **`search_dict(corpus, dictionary, ...)`** — Dictionary match. Extract specific entities/terms from a provided list.
 
 ---
 
@@ -74,7 +80,7 @@ If you are building an agent (e.g. via \pkg{reticulate} or another R framework),
 
 - `fetch_urls()` — agent "Search" tool.
 - `read_urls()` — agent "Browse" tool.
-- `search_corpus()` — agent "Find in page" tool.
+- `search_regex()` — agent "Find in page" tool.
 
 ---
 

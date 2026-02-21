@@ -1,10 +1,13 @@
-#' Search a text corpus for patterns (regex), with optional KWIC-style context.
+#' Search corpus via regex (with optional KWIC-style context)
 #'
-#' Searches a text corpus for specified patterns, with support for parallel processing.
+#' Searches a text corpus for specified patterns using regular expressions.
+#' Multiple patterns are OR'd. Supports parallel processing and optional context around matches.
 #'
-#' @param corpus A data frame or data.table with \code{text} and id columns given in \code{by}.
-#' @param by Character vector of columns defining text units (e.g. \code{c("doc_id", "sentence_id")}).
-#' @param search The search pattern or query (regex; multiple patterns as vector are OR'd).
+#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
+#' @param by A character vector of column names used as unique identifiers.
+#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+#'   the search returns matches at the paragraph level).
+#' @param query The search pattern (regex; multiple patterns as vector are OR'd).
 #' @param context_size Numeric, default 0. Context size in sentences around matches.
 #' @param highlight Length-two character vector for match highlighting (default \code{c('<b>', '</b>')}).
 #' @param cores Numeric, default 1. Number of cores for parallel processing.
@@ -16,17 +19,17 @@
 #'                     text = c("Hello world.",
 #'                              "This is an example.",
 #'                              "This is a party!"))
-#' search_corpus(corpus, search = 'This is', by = c('doc_id', 'sentence_id'))
-search_corpus <- function(corpus,
-                          by = c('doc_id', 'paragraph_id', 'sentence_id'),
-                          search,
-                          context_size = 0,
-                          highlight = c("<b>", "</b>"),
-                          cores = 1) {
+#' search_regex(corpus, query = 'This is', by = c('doc_id', 'sentence_id'))
+search_regex <- function(corpus,
+                         by = c('doc_id', 'paragraph_id', 'sentence_id'),
+                         query,
+                         context_size = 0,
+                         highlight = c("<b>", "</b>"),
+                         cores = 1) {
   if (cores == 1) {
     return(.search_corpus(
       corpus = corpus,
-      search = search,
+      search = query,
       context_size = context_size,
       by = by,
       highlight = highlight
@@ -37,7 +40,7 @@ search_corpus <- function(corpus,
     on.exit(parallel::stopCluster(clust))
     parallel::clusterExport(cl = clust, varlist = c(".search_corpus"), envir = environment())
     search_fun <- function(batch) {
-      .search_corpus(batch, search, by, context_size, highlight)
+      .search_corpus(batch, query, by, context_size, highlight)
     }
 
 
@@ -132,8 +135,6 @@ search_corpus <- function(corpus,
       df5[, c(setdiff(by, 'dummy'), "text", "start", "end", "pattern"), with = FALSE]
   }
 }
-
-
 
 
 

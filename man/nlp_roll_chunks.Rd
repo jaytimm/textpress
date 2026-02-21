@@ -7,10 +7,10 @@
 nlp_roll_chunks(corpus, by, chunk_size, context_size)
 }
 \arguments{
-\item{corpus}{A data frame or data.table with \code{text} and id columns given in \code{by}.}
+\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
 
-\item{by}{Character vector of columns that identify text units (e.g. \code{c("doc_id", "sentence_id")}).
-The last column is the level rolled into chunks (e.g. sentences).}
+\item{by}{A character vector of column names used as unique identifiers.
+The last column determines the search unit and is the level rolled into chunks (e.g., if \code{by = c("doc_id", "sentence_id")}, sentences are rolled into chunks).}
 
 \item{chunk_size}{Integer. Number of units per chunk.}
 

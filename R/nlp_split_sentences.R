@@ -2,8 +2,10 @@
 #'
 #' This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
 #'
-#' @param corpus A data frame containing text to be split into sentences.
-#' @param by Character vector of columns that identify each text row (e.g. \code{"doc_id"}).
+#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
+#' @param by A character vector of column names used as unique identifiers.
+#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+#'   the search returns matches at the paragraph level).
 #' @param abbreviations A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.
 #'
 #' @return A data.table with columns from \code{by}, plus \code{sentence_id}, \code{text}, \code{start}, \code{end}.

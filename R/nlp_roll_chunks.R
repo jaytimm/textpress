@@ -4,9 +4,9 @@
 #' fixed-size chunks and optionally adds surrounding context. Like a rolling
 #' window over the leaf units.
 #'
-#' @param corpus A data frame or data.table with \code{text} and id columns given in \code{by}.
-#' @param by Character vector of columns that identify text units (e.g. \code{c("doc_id", "sentence_id")}).
-#'          The last column is the level rolled into chunks (e.g. sentences).
+#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
+#' @param by A character vector of column names used as unique identifiers.
+#'   The last column determines the search unit and is the level rolled into chunks (e.g., if \code{by = c("doc_id", "sentence_id")}, sentences are rolled into chunks).
 #' @param chunk_size Integer. Number of units per chunk.
 #' @param context_size Integer. Number of units of context around each chunk.
 #' @return A data.table with \code{chunk_id}, \code{chunk} (concatenated text), and \code{chunk_plus_context}.

@@ -2,8 +2,10 @@
 #'
 #' Tokenizes text from a corpus data frame, preserving structure like capitalization and punctuation.
 #'
-#' @param corpus A data frame with a \code{text} column and id columns given in \code{by}.
-#' @param by Character vector of columns that uniquely identify each row (e.g. \code{c("doc_id", "sentence_id")}).
+#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
+#' @param by A character vector of column names used as unique identifiers.
+#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
+#'   the search returns matches at the paragraph level).
 #' @param include_spans Logical. Include start/end character spans for each token.
 #' @param method Character. \code{"word"} or \code{"biber"}.
 #' @return A named list of tokens (or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}).
