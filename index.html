@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A Lightweight and Versatile NLP Toolkit">
-<meta property="og:description" content="A simple Natural Language Processing (NLP) toolkit focused on search-centric workflows with minimal dependencies. The package offers key features for web scraping, text processing, corpus search, and text embedding generation via the HuggingFace API &lt;https://huggingface.co/docs/api-inference/index&gt;.">
+<meta property="og:description" content="A lightweight R toolkit for text retrieval. Four-stage pipeline: Fetch (URLs from search/Wikipedia), Read (content from URLs), Process (split, tokenize, index), Search (regex, BM25, vector similarity, dictionary). Verb_noun naming; minimal dependencies. Embeddings built elsewhere and passed in for semantic search.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -41,6 +41,9 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -67,274 +70,144 @@
 <div class="section level1">
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
-<p>A lightweight, versatile NLP package for R, focused on search-centric workflows with minimal dependencies and easy data-frame integration. This package provides key functionalities for:</p>
+<p>A lightweight R toolkit for text retrieval: <strong>Fetch, Read, Process, and Search.</strong> Every function follows a verb_noun pattern so the API is predictable and discoverable (e.g. type <code>search_</code> to see all retrieval options). No heavy dependencies; data stays in data frames.</p>
+<hr>
+<div class="section level2">
+<h2 id="the-textpress-api-map">The textpress API map<a class="anchor" aria-label="anchor" href="#the-textpress-api-map"></a>
+</h2>
+<div class="section level3">
+<h3 id="id_1-data-acquisition-fetch_">1. Data acquisition (<code>fetch_*</code>)<a class="anchor" aria-label="anchor" href="#id_1-data-acquisition-fetch_"></a>
+</h3>
+<p>These functions talk to the outside world to find <strong>locations</strong> of information. They return URLs or metadata, not full text.</p>
 <ul>
-<li><p><strong>Web Search</strong>: Perform search engine queries to retrieve relevant URLs.</p></li>
-<li><p><strong>Web Scraping</strong>: Extract URL content, including some relevant metadata.</p></li>
-<li><p><strong>Text Processing &amp; Chunking</strong>: Segment text into meaningful units, eg, sentences, paragraphs, and larger chunks. Designed to support tasks related to retrieval-augmented generation (RAG).</p></li>
-<li><p><strong>Corpus Search</strong>: Perform keyword, phrase, and pattern-based searches across processed corpora, supporting both traditional in-context search techniques (e.g., KWIC, regex matching) and advanced semantic searches using embeddings.</p></li>
-<li><p><strong>Embedding Generation</strong>: Generate embeddings using the HuggingFace API for enhanced semantic search.</p></li>
+<li>
+<strong><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></strong> — Web (general). Search engines for a list of relevant links.</li>
+<li>
+<strong><code><a href="reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code></strong> — Wikipedia. Find specific page titles/URLs.</li>
+<li>
+<strong><code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code></strong> — Wikipedia. Extract the external “References” URLs from a page.</li>
 </ul>
-<p>Ideal for users who need a basic, unobtrusive NLP toolkit in R.</p>
+</div>
+<div class="section level3">
+<h3 id="id_2-ingestion-read_">2. Ingestion (<code>read_*</code>)<a class="anchor" aria-label="anchor" href="#id_2-ingestion-read_"></a>
+</h3>
+<p>Once you have locations, bring the data into R.</p>
+<ul>
+<li>
+<strong><code><a href="reference/read_urls.html">read_urls()</a></code></strong> — Input: character vector of URLs. Output: data frame of cleaned text/markdown.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="id_3-processing-nlp_">3. Processing (<code>nlp_*</code>)<a class="anchor" aria-label="anchor" href="#id_3-processing-nlp_"></a>
+</h3>
+<p>Prepare raw text for analysis or indexing. Designed to be used with the pipe <code>|&gt;</code>.</p>
+<ul>
+<li>
+<strong><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code></strong> — Break large documents into structural blocks.</li>
+<li>
+<strong><code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code></strong> — Refine blocks into individual sentences.</li>
+<li>
+<strong><code><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code></strong> — Normalize text into a clean token stream.</li>
+<li>
+<strong><code><a href="reference/nlp_index_tokens.html">nlp_index_tokens()</a></code></strong> — Build a weighted BM25 index for ranked search.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="id_4-retrieval-search_">4. Retrieval (<code>search_*</code>)<a class="anchor" aria-label="anchor" href="#id_4-retrieval-search_"></a>
+</h3>
+<p>Four ways to query your data. Each accepts a corpus or index and returns a ranked or filtered data frame.</p>
+<ul>
+<li>
+<strong><code><a href="reference/search_corpus.html">search_corpus()</a></code></strong> — Regex / KWIC. Finding exact patterns or strings in raw text.</li>
+<li>
+<strong><code><a href="reference/search_index.html">search_index()</a></code></strong> — BM25 / tokens. Keyword-based ranked retrieval (traditional search).</li>
+<li>
+<strong><code><a href="reference/search_vector.html">search_vector()</a></code></strong> — Cosine similarity. Semantic search using <strong>your own</strong> embedding matrix (textpress does not build embeddings; use e.g.  with sentence-transformers and pass the matrix in).</li>
+<li>
+<strong><code><a href="reference/search_dict.html">search_dict()</a></code></strong> — Dictionary match. Extract specific entities/terms from a provided list.</li>
+</ul>
+<hr>
+</div>
+</div>
+<div class="section level2">
+<h2 id="the-golden-path">The golden path<a class="anchor" aria-label="anchor" href="#the-golden-path"></a>
+</h2>
+<p>The naming schema lets the code read like the researcher’s intent:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Acquire &amp; ingest</span></span>
+<span><span class="va">urls</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R high performance computing"</span><span class="op">)</span></span>
+<span><span class="va">corpus</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">urls</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Process &amp; index</span></span>
+<span><span class="va">index</span>   <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Search (four ways)</span></span>
+<span><span class="va">results_bm25</span>   <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"parallel processing"</span><span class="op">)</span></span>
+<span><span class="va">results_regex</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_corpus.html">search_corpus</a></span><span class="op">(</span><span class="va">corpus</span>, <span class="st">"furrr|future"</span><span class="op">)</span></span>
+<span><span class="va">results_entity</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_dict.html">search_dict</a></span><span class="op">(</span><span class="va">corpus</span>, dictionary <span class="op">=</span> <span class="va">tech_dict</span><span class="op">)</span></span>
+<span><span class="va">results_vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_vector.html">search_vector</a></span><span class="op">(</span><span class="va">query_embedding</span>, <span class="va">my_matrix</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="why-this-works">Why this works<a class="anchor" aria-label="anchor" href="#why-this-works"></a>
+</h2>
+<ul>
+<li>
+<strong>Discovery</strong> — Type <code>search_</code> and see all retrieval options in one list.</li>
+<li>
+<strong>Honesty</strong> — <code>search_dict</code> is clearer than “extract entities”: the result is only as good as the dictionary you provide.</li>
+<li>
+<strong>Extensibility</strong> — A future <code>search_fuzzy()</code> or <code>fetch_arxiv()</code> already has a home in the naming convention.</li>
+</ul>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="extension-using-textpress-with-llms--agents">Extension: Using textpress with LLMs &amp; agents<a class="anchor" aria-label="anchor" href="#extension-using-textpress-with-llms--agents"></a>
+</h2>
+<p>While textpress is a general-purpose text toolkit, its design fits LLM-based workflows (e.g. RAG) and autonomous agents.</p>
+<p><strong>Lightweight RAG (retrieval-augmented generation)</strong><br>
+You can build a local-first RAG pipeline without a heavy vector DB:</p>
+<ul>
+<li>
+<strong>Precision retrieval</strong> — Use <code><a href="reference/search_index.html">search_index()</a></code> (BM25) to pull relevant chunks by keyword; often more accurate for technical data than semantic search alone.</li>
+<li>
+<strong>Context window management</strong> — Use <code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> and related functions so you send only relevant snippets to an LLM, cutting token cost and improving answers.</li>
+<li>
+<strong>Deterministic tagging</strong> — Use <code><a href="reference/search_dict.html">search_dict()</a></code> to extract known entities or IDs before calling an LLM, so the model does not hallucinate core facts.</li>
+</ul>
+<p><strong>Tool-use for autonomous agents</strong><br>
+If you are building an agent (e.g. via  or another R framework), textpress functions work well as <strong>tools</strong>: flat naming and predictable data-frame outputs make them easy for a model to call.</p>
+<ul>
+<li>
+<code><a href="reference/fetch_urls.html">fetch_urls()</a></code> — agent “Search” tool.</li>
+<li>
+<code><a href="reference/read_urls.html">read_urls()</a></code> — agent “Browse” tool.</li>
+<li>
+<code><a href="reference/search_corpus.html">search_corpus()</a></code> — agent “Find in page” tool.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example: textpress as a research tool before calling an LLM</span></span>
+<span><span class="va">query</span>   <span class="op">&lt;-</span> <span class="st">"latest version of the R furrr package"</span></span>
+<span><span class="va">docs</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="va">query</span><span class="op">)</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span>
+<span><span class="va">corpus</span>  <span class="op">&lt;-</span> <span class="va">docs</span> <span class="op">|&gt;</span> <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">index</span>   <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">best</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"version release"</span><span class="op">)</span></span>
+<span><span class="co"># Pass best (or its text) to your LLM as context.</span></span></code></pre></div>
+<hr>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Get the released version from CRAN:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'textpress'</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">## Installing package into '/home/jtimm/R/x86_64-pc-linux-gnu-library/4.4'</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="do">## (as 'lib' is unspecified)</span></span></code></pre></div>
-<p>Or the development version from GitHub with:</p>
+<p>From CRAN:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># devtools::install_github("jaytimm/textpress")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
-</h2>
-</div>
-<div class="section level2">
-<h2 id="web-search">Web search<a class="anchor" aria-label="anchor" href="#web-search"></a>
-</h2>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
+<p>Development version:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sterm</span> <span class="op">&lt;-</span> <span class="st">'AI and education'</span></span>
-<span></span>
-<span><span class="va">yresults</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_search.html">web_search</a></span><span class="op">(</span>search_term <span class="op">=</span> <span class="va">sterm</span>, </span>
-<span>                                  search_engine <span class="op">=</span> <span class="st">"Yahoo News"</span>, </span>
-<span>                                  num_pages <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">yresults</span> <span class="op">|&gt;</span> <span class="fu">select</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span>  <span class="fu">sample_n</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup><col width="100%"></colgroup>
-<thead><tr class="header">
-<th align="left">raw_url</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left"><a href="https://www.forbes.com/sites/danfitzpatrick/2024/10/12/could-elon-musks-ai-robots-save-a-troubled-education-system/" class="external-link uri">https://www.forbes.com/sites/danfitzpatrick/2024/10/12/could-elon-musks-ai-robots-save-a-troubled-education-system/</a></td>
-</tr>
-<tr class="even">
-<td align="left"><a href="https://medicalxpress.com/news/2024-10-dont-ai-chatbots-accurate-safe.html" class="external-link uri">https://medicalxpress.com/news/2024-10-dont-ai-chatbots-accurate-safe.html</a></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://www.forbes.com/sites/bryanpenprase/2024/10/13/the-future-of-ai-and-india/" class="external-link uri">https://www.forbes.com/sites/bryanpenprase/2024/10/13/the-future-of-ai-and-india/</a></td>
-</tr>
-<tr class="even">
-<td align="left"><a href="https://www.forbes.com/sites/genacox/2024/10/13/3-ways-to-de-risk-ai-for-hiring-decisions-beyond-plug-and-play/" class="external-link uri">https://www.forbes.com/sites/genacox/2024/10/13/3-ways-to-de-risk-ai-for-hiring-decisions-beyond-plug-and-play/</a></td>
-</tr>
-<tr class="odd">
-<td align="left"><a href="https://www.dallasnews.com/business/2024/10/13/motley-fool-the-ship-hasnt-sailed-on-nvidia/" class="external-link uri">https://www.dallasnews.com/business/2024/10/13/motley-fool-the-ship-hasnt-sailed-on-nvidia/</a></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="web-scraping">Web Scraping<a class="anchor" aria-label="anchor" href="#web-scraping"></a>
-</h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">arts</span> <span class="op">&lt;-</span> <span class="va">yresults</span><span class="op">$</span><span class="va">raw_url</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/web_scrape_urls.html">web_scrape_urls</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="text-processing--chunking">Text Processing &amp; Chunking<a class="anchor" aria-label="anchor" href="#text-processing--chunking"></a>
-</h2>
-<p><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> &lt; <code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> &lt; <code><a href="reference/nlp_build_chunks.html">nlp_build_chunks()</a></code></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="va">arts</span> <span class="op">|&gt;</span>  </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu">row_number</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs</a></span><span class="op">(</span>paragraph_delim <span class="op">=</span> <span class="st">"\\n+"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
-<span>                                                    <span class="st">'paragraph_id'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/nlp_build_chunks.html">nlp_build_chunks</a></span><span class="op">(</span>text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
-<span>                                                 <span class="st">'paragraph_id'</span>, </span>
-<span>                                                 <span class="st">'sentence_id'</span><span class="op">)</span>,</span>
-<span>                              chunk_size <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                              context_size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">paragraph_id</span>, <span class="va">chunk_id</span>, sep <span class="op">=</span> <span class="st">'.'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="2%">
-<col width="34%">
-<col width="62%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">id</th>
-<th align="left">chunk</th>
-<th align="left">chunk_plus_context</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">1.1.1</td>
-<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education.</td>
-<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education. Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
-</tr>
-<tr class="even">
-<td align="left">1.1.2</td>
-<td align="left">Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
-<td align="left">In addition to its corporate applications, artificial intelligence is helping solve broader and more complex problems, especially in education. Industry leaders and policymakers should develop a shared approach to AI-powered learning and encourage more widespread training in the technology’s fundamentals.</td>
-</tr>
-<tr class="odd">
-<td align="left">1.2.1</td>
-<td align="left">NEW YORK – Artificial intelligence has captured the imagination of corporate leaders eager to implement new tech solutions in their industries.</td>
-<td align="left">NEW YORK – Artificial intelligence has captured the imagination of corporate leaders eager to implement new tech solutions in their industries. But AI could also be applied to broader and more complex problems, especially in education.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="kwic-search">KWIC Search<a class="anchor" aria-label="anchor" href="#kwic-search"></a>
-</h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sterm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'\\bhigher education\\b'</span>,</span>
-<span>            <span class="st">'\\bsecondary education\\b'</span><span class="op">)</span></span>
-<span>            <span class="co"># '\\S+ education\\b',</span></span>
-<span>            <span class="co"># '\\b\\w{4,}\\b education\\b')</span></span>
-<span></span>
-<span><span class="va">kwics</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_search_corpus.html">sem_search_corpus</a></span><span class="op">(</span>search <span class="op">=</span> <span class="va">sterm2</span>,</span>
-<span>                               text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
-<span>                                                  <span class="st">'paragraph_id'</span>, </span>
-<span>                                                  <span class="st">'chunk_id'</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">kwics</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">doc_id</span>, </span>
-<span>                    <span class="va">paragraph_id</span>, </span>
-<span>                    <span class="va">chunk_id</span>, </span>
-<span>                    sep <span class="op">=</span> <span class="st">'.'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">pattern</span>, <span class="va">text</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">sample_n</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="5%">
-<col width="90%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">id</th>
-<th align="left">pattern</th>
-<th align="left">text</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">7.13.1</td>
-<td align="left">higher education</td>
-<td align="left">“We chose our theme for the conference; we are really hyped about the theme because it really aligns with the mission at our own institution as well as what we feel is the theme for <b>higher education</b> right now, and really trying to take it to the next level and launch our practice to methods that will help our students to soar and succeed,” says Andrea Liles, Rhodes State College.</td>
-</tr>
-<tr class="even">
-<td align="left">2.2.1</td>
-<td align="left">higher education</td>
-<td align="left">The Indian government’s multifaceted approach includes building an AI ecosystem that leverages resources in <b>higher education</b>, research and industry.</td>
-</tr>
-<tr class="odd">
-<td align="left">10.7.2</td>
-<td align="left">higher education</td>
-<td align="left">Advancements in generative AI make it possible to develop focused, role-specific cybersecurity training for a variety of users in <b>higher education</b>, the report notes.</td>
-</tr>
-<tr class="even">
-<td align="left">7.11.1</td>
-<td align="left">higher education</td>
-<td align="left">The theme for this year’s conference was Rocket Education: Ignite, Launch, Soar as <b>higher education</b> continues to evolve to meet the needs of the students.</td>
-</tr>
-<tr class="odd">
-<td align="left">10.1.1</td>
-<td align="left">higher education</td>
-<td align="left">AI governance, AI-enabled workforce expansion, and AI-supported cybersecurity training are three of the six key technologies and practices anticipated to have a significant impact on the future of cybersecurity and privacy in <b>higher education</b>, according to the latest Cybersecurity and Privacy edition of the Educause Horizon Report.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="semantic-search">Semantic search<a class="anchor" aria-label="anchor" href="#semantic-search"></a>
-</h2>
-<div class="section level3">
-<h3 id="huggingface-embeddings">HuggingFace embeddings<a class="anchor" aria-label="anchor" href="#huggingface-embeddings"></a>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">api_url</span> <span class="op">&lt;-</span> <span class="st">"https://api-inference.huggingface.co/models/BAAI/bge-base-en-v1.5"</span></span>
-<span></span>
-<span><span class="va">vstore</span> <span class="op">&lt;-</span> <span class="va">articles</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">rename</span><span class="op">(</span>text <span class="op">=</span> <span class="va">chunk</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span></span>
-<span>    text_hierarchy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, </span>
-<span>                       <span class="st">'paragraph_id'</span>,</span>
-<span>                       <span class="st">'chunk_id'</span><span class="op">)</span>,</span>
-<span>    verbose <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>    api_url <span class="op">=</span> <span class="va">api_url</span>,</span>
-<span>    dims <span class="op">=</span> <span class="fl">768</span>, <span class="co">#1024, 768, 384</span></span>
-<span>    api_token <span class="op">=</span> <span class="va">api_token</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="embedd-query">Embedd query<a class="anchor" aria-label="anchor" href="#embedd-query"></a>
-</h3>
-<blockquote>
-<p>“How can AI personalize learning experiences for students?”</p>
-</blockquote>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="st">"How can AI personalize learning experiences for students?"</span></span>
-<span></span>
-<span><span class="va">query</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/api_huggingface_embeddings.html">api_huggingface_embeddings</a></span><span class="op">(</span></span>
-<span>  query <span class="op">=</span> <span class="va">q</span>,</span>
-<span>  api_url <span class="op">=</span> <span class="va">api_url</span>,</span>
-<span>  dims <span class="op">=</span> <span class="fl">768</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="va">api_token</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rags</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/sem_nearest_neighbors.html">sem_nearest_neighbors</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">query</span>,</span>
-<span>  matrix <span class="op">=</span> <span class="va">vstore</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">articles</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term2"</span> <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="relevant-chunks">Relevant chunks<a class="anchor" aria-label="anchor" href="#relevant-chunks"></a>
-</h3>
-<table class="table">
-<colgroup>
-<col width="4%">
-<col width="4%">
-<col width="91%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">id</th>
-<th align="right">cos_sim</th>
-<th align="left">chunk_plus_context</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">13.24.1</td>
-<td align="right">0.790</td>
-<td align="left">In virtual classrooms, AI tutors welcome students, offering personalized, one-on-one learning experiences. If a student asks a question via text or voice during the lesson, the AI tutor can respond immediately.</td>
-</tr>
-<tr class="even">
-<td align="left">4.2.1</td>
-<td align="right">0.755</td>
-<td align="left">With AI enabled Classwork module generation, educators can get assistance creating a course outline and drafting modules and descriptions based on the subject, student grade level, and class learning objectives. The educator is always in the driver’s seat and can choose to edit, delete, or regenerate modules before adding them to Classwork.</td>
-</tr>
-<tr class="odd">
-<td align="left">1.6.4</td>
-<td align="right">0.741</td>
-<td align="left">Others say they simply do not know where to begin. That is where generative AI comes in: it can recommend coursework that matches learners’ levels and interests, and offer real-time feedback as they move through the material. AI-powered solutions can even pair students with mentors who can advise them on higher education and career progression.</td>
-</tr>
-<tr class="even">
-<td align="left">1.11.4</td>
-<td align="right">0.734</td>
-<td align="left">As IBM’s Chief Impact Officer, I will be asking how my organization can ensure that students, teachers, employees, and job-seekers are benefiting from these advances. Although we have taken a step in that direction with IBM SkillsBuild, shaping the industries and jobs of the future requires a host of AI-powered features and programs that can provide learners with personalized educational experiences over the course of their lives.</td>
-</tr>
-<tr class="odd">
-<td align="left">19.16.2</td>
-<td align="right">0.726</td>
-<td align="left">In customer support, AI can improve ticket routing to the appropriate department or agent. AI can use past interactions and customer data for tailored responses and recommendations. And AI can evaluate and interpret emotions from customer communications.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
-</h2>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
@@ -370,7 +243,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Jason Timm <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Jason Timm <br><small class="roles"> Author, maintainer </small>   </li>
 </ul>
 </div>
 
@@ -392,7 +265,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

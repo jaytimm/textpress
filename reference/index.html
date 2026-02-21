@@ -17,13 +17,16 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/jaytimm/textpress/" class="external-link">
@@ -50,51 +53,43 @@
       </tr></tbody><tbody><tr><td>
           <p><code><a href="abbreviations.html">abbreviations</a></code> </p>
         </td>
-        <td><p>Common Abbreviations for Sentence Splitting</p></td>
+        <td><p>Common Abbreviations for Linguistic Processing</p></td>
       </tr><tr><td>
-          <p><code><a href="api_huggingface_embeddings.html">api_huggingface_embeddings()</a></code> </p>
+          <p><code><a href="dict_generations.html">dict_generations</a></code> </p>
         </td>
-        <td><p>Call Hugging Face API for Embeddings</p></td>
+        <td><p>Demo dictionary of generation-name variants for NER</p></td>
       </tr><tr><td>
-          <p><code><a href="dot-decode_duckduckgo_urls.html">.decode_duckduckgo_urls()</a></code> </p>
+          <p><code><a href="dict_political.html">dict_political</a></code> </p>
         </td>
-        <td><p>Decode DuckDuckGo Redirect URLs</p></td>
+        <td><p>Demo dictionary of political / partisan term variants for NER</p></td>
       </tr><tr><td>
-          <p><code><a href="dot-extract_links.html">.extract_links()</a></code> </p>
+          <p><code><a href="fetch_urls.html">fetch_urls()</a></code> </p>
         </td>
-        <td><p>Extract links from a search engine result page</p></td>
+        <td><p>Fetch URLs from a search engine</p></td>
       </tr><tr><td>
-          <p><code><a href="dot-get_site.html">.get_site()</a></code> </p>
+          <p><code><a href="fetch_wiki_refs.html">fetch_wiki_refs()</a></code> </p>
         </td>
-        <td><p>Get Site Content and Extract HTML Elements</p></td>
+        <td><p>Fetch external citation URLs from Wikipedia</p></td>
       </tr><tr><td>
-          <p><code><a href="dot-process_bing.html">.process_bing()</a></code> </p>
+          <p><code><a href="fetch_wiki_urls.html">fetch_wiki_urls()</a></code> </p>
         </td>
-        <td><p>Process Bing search results</p></td>
+        <td><p>Fetch Wikipedia page URLs by search query</p></td>
       </tr><tr><td>
-          <p><code><a href="dot-process_duckduckgo.html">.process_duckduckgo()</a></code> </p>
+          <p><code><a href="get_search_urls.html">get_search_urls()</a></code> </p>
         </td>
-        <td><p>Process DuckDuckGo search results</p></td>
-      </tr><tr><td>
-          <p><code><a href="dot-process_yahoo.html">.process_yahoo()</a></code> </p>
-        </td>
-        <td><p>Process Yahoo News search results</p></td>
-      </tr><tr><td>
-          <p><code><a href="extract_date.html">extract_date()</a></code> </p>
-        </td>
-        <td><p>Extract Date from HTML Content</p></td>
-      </tr><tr><td>
-          <p><code><a href="nlp_build_chunks.html">nlp_build_chunks()</a></code> </p>
-        </td>
-        <td><p>Build Chunks for NLP Analysis</p></td>
+        <td><p>Get the search URL(s) used by fetch_urls (for debugging or browser use)</p></td>
       </tr><tr><td>
           <p><code><a href="nlp_cast_tokens.html">nlp_cast_tokens()</a></code> </p>
         </td>
         <td><p>Convert Token List to Data Frame</p></td>
       </tr><tr><td>
-          <p><code><a href="nlp_melt_tokens.html">nlp_melt_tokens()</a></code> </p>
+          <p><code><a href="nlp_index_tokens.html">nlp_index_tokens()</a></code> </p>
         </td>
-        <td><p>Tokenize Data Frame by Specified Column(s)</p></td>
+        <td><p>Build a BM25 token index from tokenized documents</p></td>
+      </tr><tr><td>
+          <p><code><a href="nlp_roll_chunks.html">nlp_roll_chunks()</a></code> </p>
+        </td>
+        <td><p>Roll units into fixed-size chunks with optional context</p></td>
       </tr><tr><td>
           <p><code><a href="nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> </p>
         </td>
@@ -108,25 +103,29 @@
         </td>
         <td><p>Tokenize Text Data (mostly) Non-Destructively</p></td>
       </tr><tr><td>
-          <p><code><a href="sem_nearest_neighbors.html">sem_nearest_neighbors()</a></code> </p>
+          <p><code><a href="read_urls.html">read_urls()</a></code> </p>
         </td>
-        <td><p>Find Nearest Neighbors Based on Cosine Similarity</p></td>
+        <td><p>Read content from URLs</p></td>
       </tr><tr><td>
-          <p><code><a href="sem_search_corpus.html">sem_search_corpus()</a></code> </p>
+          <p><code><a href="search_corpus.html">search_corpus()</a></code> </p>
         </td>
-        <td><p>NLP Search Corpus</p></td>
+        <td><p>Search a text corpus for patterns (regex), with optional KWIC-style context.</p></td>
       </tr><tr><td>
-          <p><code><a href="standardize_date.html">standardize_date()</a></code> </p>
+          <p><code><a href="search_dict.html">search_dict()</a></code> </p>
         </td>
-        <td><p>Standardize Date Format</p></td>
+        <td><p>Search text using a dictionary (exact n-gram match)</p></td>
       </tr><tr><td>
-          <p><code><a href="web_scrape_urls.html">web_scrape_urls()</a></code> </p>
+          <p><code><a href="search_index.html">search_index()</a></code> </p>
         </td>
-        <td><p>Scrape News Data from Various Sources</p></td>
+        <td><p>Search a BM25 token index by query string</p></td>
       </tr><tr><td>
-          <p><code><a href="web_search.html">web_search()</a></code> </p>
+          <p><code><a href="search_neighbors.html">search_neighbors()</a></code> </p>
         </td>
-        <td><p>Process search results from multiple search engines</p></td>
+        <td><p>Nearest neighbors by cosine similarity (vector search)</p></td>
+      </tr><tr><td>
+          <p><code><a href="search_vector.html">search_vector()</a></code> </p>
+        </td>
+        <td><p>Vector search over an embedding matrix</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -140,7 +139,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
