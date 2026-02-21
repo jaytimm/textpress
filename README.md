@@ -72,6 +72,28 @@ You can build a local-first RAG pipeline without a heavy vector DB:
 **Tool-use for autonomous agents**  
 If you are building an agent (e.g. via \pkg{reticulate} or another R framework), textpress functions work well as **tools**: flat naming and predictable data-frame outputs make them easy for a model to call.
 
-- `fetch_urls()` — agent “Search” tool.
-- `read_urls()` — agent “Browse” tool.
-- `search_corpus()` — agent “Find in page” tool.
+- `fetch_urls()` — agent "Search" tool.
+- `read_urls()` — agent "Browse" tool.
+- `search_corpus()` — agent "Find in page" tool.
+
+---
+
+## License
+
+MIT © [Jason Timm, MA, PhD](https://github.com/jaytimm)
+
+## Citation
+
+If you use this package in your research, please cite:
+
+```r
+citation("textpress")
+```
+
+## Issues
+
+Report bugs or request features at [https://github.com/jaytimm/textpress/issues](https://github.com/jaytimm/textpress/issues)
+
+## Contributing
+
+Contributions welcome! Please open an issue or submit a pull request.
