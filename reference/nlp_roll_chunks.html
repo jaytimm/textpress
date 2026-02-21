@@ -65,12 +65,12 @@ window over the leaf units.</p>
 
 
 <dl><dt id="arg-corpus">corpus<a class="anchor" aria-label="anchor" href="#arg-corpus"></a></dt>
-<dd><p>A data frame or data.table with <code>text</code> and id columns given in <code>by</code>.</p></dd>
+<dd><p>A data frame or data.table containing a <code>text</code> column and the identifiers specified in <code>by</code>.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>Character vector of columns that identify text units (e.g. <code>c("doc_id", "sentence_id")</code>).
-The last column is the level rolled into chunks (e.g. sentences).</p></dd>
+<dd><p>A character vector of column names used as unique identifiers.
+The last column determines the search unit and is the level rolled into chunks (e.g., if <code>by = c("doc_id", "sentence_id")</code>, sentences are rolled into chunks).</p></dd>
 
 
 <dt id="arg-chunk-size">chunk_size<a class="anchor" aria-label="anchor" href="#arg-chunk-size"></a></dt>

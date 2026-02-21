@@ -19,11 +19,11 @@
 <url><loc>/reference/nlp_split_sentences.html</loc></url>
 <url><loc>/reference/nlp_tokenize_text.html</loc></url>
 <url><loc>/reference/read_urls.html</loc></url>
-<url><loc>/reference/search_corpus.html</loc></url>
 <url><loc>/reference/search_dict.html</loc></url>
 <url><loc>/reference/search_index.html</loc></url>
-<url><loc>/reference/search_neighbors.html</loc></url>
+<url><loc>/reference/search_regex.html</loc></url>
 <url><loc>/reference/search_vector.html</loc></url>
 <url><loc>/reference/textpress-package.html</loc></url>
+<url><loc>/reference/util_fetch_embeddings.html</loc></url>
 </urlset>
 

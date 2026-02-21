@@ -126,16 +126,16 @@
 <div class="section level3">
 <h3 id="id_4-retrieval-search_">4. Retrieval (<code>search_*</code>)<a class="anchor" aria-label="anchor" href="#id_4-retrieval-search_"></a>
 </h3>
-<p>Four ways to query your data. Each accepts a corpus or index and returns a ranked or filtered data frame.</p>
+<p>Four ways to query your data. Subject-first: the first argument is always the data (corpus, index, or embeddings); the second is the query/needle. Pipe-friendly.</p>
 <ul>
 <li>
-<strong><code><a href="reference/search_corpus.html">search_corpus()</a></code></strong> — Regex / KWIC. Finding exact patterns or strings in raw text.</li>
+<strong><code>search_regex(corpus, query, ...)</code></strong> — Regex / KWIC. Search corpus via regex (patterns, boundaries, wildcards).</li>
 <li>
-<strong><code><a href="reference/search_index.html">search_index()</a></code></strong> — BM25 / tokens. Keyword-based ranked retrieval (traditional search).</li>
+<strong><code>search_index(index, query, ...)</code></strong> — BM25 / tokens. Keyword-based ranked retrieval (traditional search).</li>
 <li>
-<strong><code><a href="reference/search_vector.html">search_vector()</a></code></strong> — Cosine similarity. Semantic search using <strong>your own</strong> embedding matrix (textpress does not build embeddings; use e.g.  with sentence-transformers and pass the matrix in).</li>
+<strong><code>search_vector(embeddings, query, ...)</code></strong> — Cosine similarity. Semantic search using your own embeddings (e.g. from  or ).</li>
 <li>
-<strong><code><a href="reference/search_dict.html">search_dict()</a></code></strong> — Dictionary match. Extract specific entities/terms from a provided list.</li>
+<strong><code>search_dict(corpus, dictionary, ...)</code></strong> — Dictionary match. Extract specific entities/terms from a provided list.</li>
 </ul>
 <hr>
 </div>
@@ -162,7 +162,7 @@ If you are building an agent (e.g. via  or another R framework), textpress func
 <li>
 <code><a href="reference/read_urls.html">read_urls()</a></code> — agent “Browse” tool.</li>
 <li>
-<code><a href="reference/search_corpus.html">search_corpus()</a></code> — agent “Find in page” tool.</li>
+<code><a href="reference/search_regex.html">search_regex()</a></code> — agent “Find in page” tool.</li>
 </ul>
 <hr>
 </div>

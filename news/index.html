@@ -59,13 +59,13 @@
 <li>
 <strong>Process:</strong> <code>nlp_split_*</code>, <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code>, <code><a href="../reference/nlp_index_tokens.html">nlp_index_tokens()</a></code> (and <code><a href="../reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> for rolling windows).</li>
 <li>
-<strong>Search:</strong> Four retrieval options — <code><a href="../reference/search_corpus.html">search_corpus()</a></code> (regex/KWIC), <code><a href="../reference/search_index.html">search_index()</a></code> (BM25), <code><a href="../reference/search_vector.html">search_vector()</a></code> (cosine over your own embeddings), <code><a href="../reference/search_dict.html">search_dict()</a></code> (dictionary match; replaces <code>ner_extract_entities</code>).</li>
+<strong>Search:</strong> Four retrieval options — <code><a href="../reference/search_regex.html">search_regex()</a></code> (regex/KWIC), <code><a href="../reference/search_index.html">search_index()</a></code> (BM25), <code><a href="../reference/search_vector.html">search_vector()</a></code> (cosine over your own embeddings), <code><a href="../reference/search_dict.html">search_dict()</a></code> (dictionary match; replaces <code>ner_extract_entities</code>).</li>
 <li>Common parameters standardized: <code>corpus</code> (replaces <code>tif</code>), <code>by</code> (replaces <code>text_hierarchy</code>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="removed-1-1-0">Removed<a class="anchor" aria-label="anchor" href="#removed-1-1-0"></a></h3>
-<ul><li>In-package embedding generation (e.g. Hugging Face API). Use your own embedding pipeline and pass the matrix into <code><a href="../reference/search_vector.html">search_vector()</a></code> / <code><a href="../reference/search_neighbors.html">search_neighbors()</a></code>.</li>
-<li>Legacy names: <code>web_search</code>, <code>wiki_search</code>, <code>wiki_find_references</code>, <code>web_scrape_urls</code>, <code>ner_extract_entities</code>, <code>sem_nearest_neighbors</code> / <code>sem_search_corpus</code> (replaced by <code>search_vector</code> and <code>search_corpus</code>).</li>
+<ul><li>In-package embedding generation (e.g. Hugging Face API). Use your own embedding pipeline and pass your embedding matrix as the  argument to .</li>
+<li>Legacy names: <code>web_search</code>, <code>wiki_search</code>, <code>wiki_find_references</code>, <code>web_scrape_urls</code>, <code>ner_extract_entities</code>, <code>sem_nearest_neighbors</code> / <code>sem_search_corpus</code> (replaced by <code>search_vector</code> and <code>search_regex</code>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-1-1-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-0"></a></h3>

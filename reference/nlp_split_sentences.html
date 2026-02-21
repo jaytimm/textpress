@@ -65,11 +65,13 @@
 
 
 <dl><dt id="arg-corpus">corpus<a class="anchor" aria-label="anchor" href="#arg-corpus"></a></dt>
-<dd><p>A data frame containing text to be split into sentences.</p></dd>
+<dd><p>A data frame or data.table containing a <code>text</code> column and the identifiers specified in <code>by</code>.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
-<dd><p>Character vector of columns that identify each text row (e.g. <code>"doc_id"</code>).</p></dd>
+<dd><p>A character vector of column names used as unique identifiers.
+The last column determines the search unit (e.g., if <code>by = c("doc_id", "para_id")</code>,
+the search returns matches at the paragraph level).</p></dd>
 
 
 <dt id="arg-abbreviations">abbreviations<a class="anchor" aria-label="anchor" href="#arg-abbreviations"></a></dt>
