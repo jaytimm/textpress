@@ -41,7 +41,12 @@ nlp_roll_chunks <- function(corpus,
   )), by = c("chunk_id", grouping_vars)]
 
   neighbors_dt <- unique(neighbors_dt)
-  neighbors_dt[, neighbor_id := as.character(neighbor_id)]
+  # Ensure join type matches corpus's chunk_level (often integer from nlp_split_sentences)
+  chunk_level_type <- typeof(corpus[[chunk_level]])
+  if (chunk_level_type == "character") {
+    neighbors_dt[, neighbor_id := as.character(neighbor_id)]
+  }
+  # else keep neighbor_id as integer for join
 
   chunk_dt <- corpus[, .(chunk = paste(text, collapse = " ")), by = c(grouping_vars, "chunk_id")]
 

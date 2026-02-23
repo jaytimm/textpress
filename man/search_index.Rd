@@ -2,36 +2,22 @@
 % Please edit documentation in R/search_index.R
 \name{search_index}
 \alias{search_index}
-\title{Search a BM25 token index by query string}
+\title{Search the BM25 Index}
 \usage{
 search_index(index, query, n = 10, stem = FALSE)
 }
 \arguments{
-\item{index}{A \code{data.table} with columns \code{id}, \code{token},
-\code{bm25} (e.g. from \code{\link{nlp_index_tokens}}).}
+\item{index}{A data.table created by nlp_index_tokens.}
 
-\item{query}{Character. Search query; words are split on whitespace.}
+\item{query}{A character string.}
 
-\item{n}{Integer. Maximum number of results to return (default 10).}
+\item{n}{Number of results to return.}
 
-\item{stem}{Logical. If \code{TRUE}, stem query terms to match stemmed index.
-Requires the suggested package \pkg{SnowballC}.}
+\item{stem}{Logical; must match the setting used during indexing.}
 }
 \value{
-A \code{data.table} with columns \code{id}, \code{score}, \code{matched}
-  (list of matched tokens), ordered by \code{score} descending.
+A data.table of results ranked by score.
 }
 \description{
-Returns the top \code{n} documents ranked by summed BM25 score for query
-terms. Query is tokenized (whitespace), lowercased, stopwords removed, and
-optionally stemmed to match the index. Local search over a prebuilt index
-(from \code{\link{nlp_index_tokens}}).
-}
-\examples{
-tokens <- list(
-  doc1 = c("the", "quick", "brown", "fox", "jumps"),
-  doc2 = c("a", "quick", "dog", "runs", "fast")
-)
-idx <- nlp_index_tokens(tokens)
-search_index(idx, "quick fox", n = 2)
+Search the BM25 Index
 }

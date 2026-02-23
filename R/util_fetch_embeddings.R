@@ -1,25 +1,17 @@
 #' Fetch embeddings (Hugging Face utility)
 #'
-#' A lightweight wrapper to convert a textpress corpus into an embedding matrix
-#' suitable for the \code{embeddings} argument of \code{\link{search_vector}}.
-#' Uses your Hugging Face API token and endpoint; no retries or batching.
-#' API stability and rate limits are the user's responsibility.
-#'
-#' @param corpus A data frame or data.table with a \code{text} column and the identifiers specified in \code{by}.
+#' @param corpus A data frame or data.table with a \code{text} column.
 #' @param by Character vector of column names that identify each text unit.
-#'   These are collapsed into row names of the returned matrix (e.g. \code{"doc_1_para_2"}).
-#' @param api_token Your Hugging Face API token (see \url{https://huggingface.co/settings/tokens}).
-#' @param api_url The inference endpoint URL (e.g. \code{"https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"}).
-#' @return A numeric matrix with one row per corpus row; \code{rownames} are the collapsed \code{by} identifiers.
+#' @param api_token Your Hugging Face API token.
+#' @param api_url The inference endpoint URL.
+#' @return A numeric matrix with row names derived from \code{by}.
 #' @export
-#' @examples
-#' \dontrun{
-#' corpus <- data.frame(doc_id = c("1", "2"), text = c("First document.", "Second document."))
-#' url <- "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-#' m <- util_fetch_embeddings(corpus, by = "doc_id", api_token = "hf_xxx", api_url = url)
-#' search_vector(m, "1", n = 2)
-#' }
-util_fetch_embeddings <- function(corpus, by, api_token, api_url) {
+util_fetch_embeddings <- function(corpus,
+                                  by,
+                                  api_token,
+                                  api_url = "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5") {
+
+  # 1. Validation
   if (!"text" %in% names(corpus)) {
     stop("corpus must contain a 'text' column.", call. = FALSE)
   }
@@ -27,27 +19,49 @@ util_fetch_embeddings <- function(corpus, by, api_token, api_url) {
     stop("All 'by' columns must be present in corpus.", call. = FALSE)
   }
 
-  ids <- apply(corpus[, by, drop = FALSE], 1L, paste, collapse = "_")
+  # 2. Robust column selection (handling data.table and data.frame)
+  if (data.table::is.data.table(corpus)) {
+    id_data <- corpus[, ..by]
+  } else {
+    id_data <- corpus[, by, drop = FALSE]
+  }
 
+  # Create unique identifiers for row names
+  ids <- apply(id_data, 1L, paste, collapse = "_")
+
+  # 3. Use httr::POST to send the request
   resp <- httr::POST(
     url = api_url,
     httr::add_headers(Authorization = paste("Bearer", api_token)),
-    body = list(inputs = as.list(corpus$text)),
+    body = list(
+      inputs = as.list(corpus$text),
+      options = list(wait_for_model = TRUE)
+    ),
     encode = "json"
   )
-  httr::stop_for_status(resp)
 
-  res <- httr::content(resp, as = "parsed")
-  if (!is.list(res) || length(res) == 0L) {
-    stop("Unexpected API response: expected a list of embeddings.", call. = FALSE)
+  # 4. Error Handling
+  if (httr::status_code(resp) != 200) {
+    err_msg <- httr::content(resp, "text", encoding = "UTF-8")
+    stop(sprintf("API Error (%s): %s", httr::status_code(resp), err_msg), call. = FALSE)
   }
 
-  first <- res[[1L]]
-  if (is.list(first) && "embedding" %in% names(first)) {
-    mat <- do.call(rbind, lapply(res, function(x) x$embedding))
-  } else {
-    mat <- matrix(unlist(res), nrow = length(res), byrow = TRUE)
+  # 5. Robust Manual Parsing
+  # We fetch as raw text and use jsonlite directly to avoid "No automatic parser" errors
+  resp_raw <- httr::content(resp, as = "text", encoding = "UTF-8")
+
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("Package 'jsonlite' is required to parse API response.", call. = FALSE)
   }
-  rownames(mat) <- ids
-  mat
+
+  res <- jsonlite::fromJSON(resp_raw)
+
+  # 6. Convert to numeric matrix
+  m <- as.matrix(res)
+  if (!is.numeric(m)) {
+    stop("API did not return a numeric matrix. Check the model output format.", call. = FALSE)
+  }
+
+  rownames(m) <- ids
+  return(m)
 }

@@ -5,8 +5,7 @@
 \alias{dict_generations}
 \title{Demo dictionary of generation-name variants for NER}
 \format{
-A data frame with columns \code{variant} (surface form to match),
-  \code{TermName} (standardized label), and \code{doc_id} (NA for global).
+A data frame with columns \code{variant} (surface form to match), \code{TermName} (standardized label), \code{is_cusp} (logical), \code{start} and \code{end} (birth year range; Pew definitions where applicable, see \url{https://github.com/jaytimm/AmericanGenerations/blob/main/data/pew-generations.csv}).
 }
 \usage{
 dict_generations
@@ -14,12 +13,10 @@ dict_generations
 \description{
 A small dictionary of generational cohort terms (Greatest, Silent, Boomers,
 Gen X, Millennials, Gen Z, Alpha, etc.) and spelling/variant forms, for use
-with \code{\link{search_dict}}. All entries are global (no \code{doc_id}).
-Built in-package (no \code{data()}).
+with \code{\link{search_dict}}. Built in-package (no \code{data()}).
 }
 \examples{
 head(dict_generations)
-# use as default in NER
-# search_dict(corpus, by = "doc_id", dictionary = dict_generations)
+# use as term list: search_dict(corpus, by = "doc_id", terms = dict_generations$variant)
 }
 \keyword{datasets}

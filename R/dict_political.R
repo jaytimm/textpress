@@ -2,15 +2,13 @@
 #'
 #' A small dictionary of political party and ideology terms (Democrat, Republican,
 #' MAGA, Liberal, Conservative, Christian Nationalist, White Supremacist, etc.)
-#' and spelling/variant forms, for use with \code{\link{search_dict}}.
-#' All entries are global (no \code{doc_id}). Built in-package (no \code{data()}).
+#' and spelling/variant forms, for use with \code{\link{search_dict}}. Built in-package (no \code{data()}).
 #'
-#' @format A data frame with columns \code{variant} (surface form to match),
-#'   \code{TermName} (standardized label), and \code{doc_id} (NA for global).
+#' @format A data frame with columns \code{variant} (surface form to match) and \code{TermName} (standardized label).
 #' @export
 #' @examples
 #' head(dict_political)
-#' # search_dict(corpus, by = "doc_id", dictionary = dict_political)
+#' # search_dict(corpus, by = "doc_id", terms = dict_political$variant)
 dict_political <- local({
   d <- data.frame(
     variant = c(
@@ -58,6 +56,5 @@ dict_political <- local({
     ),
     stringsAsFactors = FALSE
   )
-  d$doc_id <- NA_character_
   d
 })

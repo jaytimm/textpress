@@ -48,7 +48,7 @@ nlp_split_sentences <- function(corpus,
 
   sentences[, text := .replace_abbreviations(text, abbreviations, operation = "revert")]
 
-  sentences[, sentence_id := seq_len(.N), by = "doc_id"]
+  sentences[, sentence_id := as.character(seq_len(.N)), by = "doc_id"]
 
   output_columns <- c(by, "sentence_id", "text", "start", "end")
   data.table::setcolorder(sentences, output_columns)

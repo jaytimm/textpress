@@ -2,43 +2,32 @@
 % Please edit documentation in R/search_dict.R
 \name{search_dict}
 \alias{search_dict}
-\title{Search text using a dictionary (exact n-gram match)}
+\title{Exact n-gram matcher (vector of terms)}
 \usage{
-search_dict(
-  corpus,
-  by = c("doc_id"),
-  n_min = 1,
-  n_max = 5,
-  dictionary = dict_generations
-)
+search_dict(corpus, by = c("doc_id"), terms, n_min = 1, n_max = 5)
 }
 \arguments{
-\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
+\item{corpus}{The text data (data frame or data.table with \code{text} and \code{by} columns).}
 
-\item{by}{A character vector of column names used as unique identifiers.
-The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-the search returns matches at the paragraph level).}
+\item{by}{Identifier columns (e.g. \code{c("doc_id", "sentence_id")}).}
+
+\item{terms}{A character vector of terms/variants to find (e.g. \code{c("United States", "R Project")}).}
 
 \item{n_min}{Integer. Minimum n-gram size (default 1).}
 
 \item{n_max}{Integer. Maximum n-gram size (default 5).}
-
-\item{dictionary}{A data frame with columns \code{variant}, \code{TermName}, and optionally \code{doc_id}.
-Global entries use \code{NA} in \code{doc_id}; document-specific entries set \code{doc_id}.
-Defaults to \code{\link{dict_generations}}.}
 }
 \value{
-A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram} (matched text),
-  \code{TermName} (category/label from dictionary), \code{match_type} (\code{"global"} or \code{"local"}).
+A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term} (the matched term from \code{terms}).
 }
 \description{
-Dictionary-based search: build n-grams from tokenized text and match against
-a target list (dictionary). Completes the \code{search_*} family: \code{search_regex} (regex/KWIC),
-\code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
+Find a long list of multi-word expressions (MWEs) or terms without regex
+overhead or partial-match risks. Tokenize corpus, build n-grams, then exact
+join against \code{terms}. Word boundaries are respected by design. For
+categories (e.g. term = "R Project", category = "Software"), left_join your
+metadata onto the result using \code{ngram} or \code{term} as key.
 }
 \examples{
-\dontrun{
 corpus <- data.frame(doc_id = "1", text = "Gen Z and Millennials use social media.")
-search_dict(corpus, by = "doc_id", dictionary = dict_generations)
-}
+search_dict(corpus, by = "doc_id", terms = c("Gen Z", "Millennials", "social media"))
 }

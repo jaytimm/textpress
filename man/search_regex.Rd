@@ -2,44 +2,19 @@
 % Please edit documentation in R/search_regex.R
 \name{search_regex}
 \alias{search_regex}
-\title{Search corpus via regex (with optional KWIC-style context)}
+\title{Search corpus via regex}
 \usage{
-search_regex(
-  corpus,
-  by = c("doc_id", "paragraph_id", "sentence_id"),
-  query,
-  context_size = 0,
-  highlight = c("<b>", "</b>"),
-  cores = 1
-)
+search_regex(corpus, query, by, highlight = c("<b>", "</b>"))
 }
 \arguments{
-\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
+\item{corpus}{A data frame or data.table with a \code{text} column.}
 
-\item{by}{A character vector of column names used as unique identifiers.
-The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-the search returns matches at the paragraph level).}
+\item{query}{The search pattern (regex).}
 
-\item{query}{The search pattern (regex; multiple patterns as vector are OR'd).}
+\item{by}{Character vector of identifier columns.}
 
-\item{context_size}{Numeric, default 0. Context size in sentences around matches.}
-
-\item{highlight}{Length-two character vector for match highlighting (default \code{c('<b>', '</b>')}).}
-
-\item{cores}{Numeric, default 1. Number of cores for parallel processing.}
-}
-\value{
-A data.table with \code{by} columns, \code{text}, \code{start}, \code{end}, \code{pattern}.
+\item{highlight}{Length-two character vector (default \code{c('<b>', '</b>')}).}
 }
 \description{
-Searches a text corpus for specified patterns using regular expressions.
-Multiple patterns are OR'd. Supports parallel processing and optional context around matches.
-}
-\examples{
-corpus <- data.frame(doc_id = c('1', '1', '2'),
-                    sentence_id = c('1', '2', '1'),
-                    text = c("Hello world.",
-                             "This is an example.",
-                             "This is a party!"))
-search_regex(corpus, query = 'This is', by = c('doc_id', 'sentence_id'))
+Search corpus via regex
 }

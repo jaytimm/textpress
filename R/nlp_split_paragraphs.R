@@ -29,9 +29,9 @@ nlp_split_paragraphs <- function(corpus, paragraph_delim = "\\n+") {
   # Filter out empty paragraphs
   df_long <- df_long[!(text == "" | text == " ")]
 
-  # Assign paragraph_id within each document
-  df_long[, paragraph_id := seq_len(.N), by = .(doc_id)]
-  df_long[, (names(df_long)) := lapply(.SD, as.character), .SDcols = names(df_long)]
+  # Assign paragraph_id within each document (IDs as character)
+  df_long[, paragraph_id := as.character(seq_len(.N)), by = .(doc_id)]
+  df_long[, doc_id := as.character(doc_id)]
   # Reorder columns for output
   data.table::setcolorder(df_long, c("doc_id", "paragraph_id", "text"))
 

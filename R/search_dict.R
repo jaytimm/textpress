@@ -1,38 +1,28 @@
-#' Search text using a dictionary (exact n-gram match)
+#' Exact n-gram matcher (vector of terms)
 #'
-#' Dictionary-based search: build n-grams from tokenized text and match against
-#' a target list (dictionary). Completes the \code{search_*} family: \code{search_regex} (regex/KWIC),
-#' \code{search_index} (BM25), \code{search_vector} (embeddings), \code{search_dict} (dictionary/exact match).
+#' Find a long list of multi-word expressions (MWEs) or terms without regex
+#' overhead or partial-match risks. Tokenize corpus, build n-grams, then exact
+#' join against \code{terms}. Word boundaries are respected by design. For
+#' categories (e.g. term = "R Project", category = "Software"), left_join your
+#' metadata onto the result using \code{ngram} or \code{term} as key.
 #'
-#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
-#' @param by A character vector of column names used as unique identifiers.
-#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-#'   the search returns matches at the paragraph level).
+#' @param corpus The text data (data frame or data.table with \code{text} and \code{by} columns).
+#' @param by Identifier columns (e.g. \code{c("doc_id", "sentence_id")}).
+#' @param terms A character vector of terms/variants to find (e.g. \code{c("United States", "R Project")}).
 #' @param n_min Integer. Minimum n-gram size (default 1).
 #' @param n_max Integer. Maximum n-gram size (default 5).
-#' @param dictionary A data frame with columns \code{variant}, \code{TermName}, and optionally \code{doc_id}.
-#'   Global entries use \code{NA} in \code{doc_id}; document-specific entries set \code{doc_id}.
-#'   Defaults to \code{\link{dict_generations}}.
-#'
-#' @return A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram} (matched text),
-#'   \code{TermName} (category/label from dictionary), \code{match_type} (\code{"global"} or \code{"local"}).
+#' @return A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term} (the matched term from \code{terms}).
 #' @export
 #' @examples
-#' \dontrun{
 #' corpus <- data.frame(doc_id = "1", text = "Gen Z and Millennials use social media.")
-#' search_dict(corpus, by = "doc_id", dictionary = dict_generations)
-#' }
+#' search_dict(corpus, by = "doc_id", terms = c("Gen Z", "Millennials", "social media"))
 search_dict <- function(corpus,
                        by = c("doc_id"),
+                       terms,
                        n_min = 1,
-                       n_max = 5,
-                       dictionary = dict_generations) {
+                       n_max = 5) {
 
-  dictionary <- data.table::as.data.table(dictionary)
-  if (!"doc_id" %in% names(dictionary)) dictionary[, doc_id := NA_character_]
-  dictionary[, variant_lc := tolower(variant)]
-  global_dict <- dictionary[is.na(doc_id), .(variant_lc, TermName)]
-  local_dict  <- dictionary[!is.na(doc_id), .(doc_id, variant_lc, TermName)]
+  dict_dt <- data.table::data.table(variant_lc = tolower(terms))
 
   toks_df_ss <- corpus |>
     textpress::nlp_tokenize_text(by = by, include_spans = TRUE) |>
@@ -59,20 +49,7 @@ search_dict <- function(corpus,
   all_ngrams <- data.table::rbindlist(ngram_list)
   all_ngrams[, ngram_lc := tolower(ngram)]
 
-  global_hits <- all_ngrams[ngram_lc %in% global_dict$variant_lc]
-  global_hits <- global_hits[global_dict,
-                             on = .(ngram_lc = variant_lc),
-                             nomatch = 0L]
-  global_hits[, match_type := "global"]
-
-  local_hits <- all_ngrams[ngram_lc %in% local_dict$variant_lc]
-  local_hits <- local_hits[local_dict,
-                           on = .(id = doc_id, ngram_lc = variant_lc),
-                           nomatch = 0L]
-  local_hits[, match_type := "local"]
-
-  matches <- data.table::rbindlist(list(global_hits, local_hits), use.names = TRUE, fill = TRUE)
-
+  matches <- all_ngrams[dict_dt, on = .(ngram_lc = variant_lc), nomatch = 0L]
   matches[, start := as.numeric(start)]
   matches[, end := as.numeric(end)]
 
@@ -80,5 +57,7 @@ search_dict <- function(corpus,
   matches[, group := cumsum(start > data.table::shift(cummax(end), fill = -Inf)), by = id]
   matches <- matches[, .SD[1], by = .(id, group)][, group := NULL]
 
-  matches[, .(id, start, end, n, ngram, TermName, match_type)]
+  matches[, term := ngram_lc]
+  matches[, ngram_lc := NULL]
+  matches[, .(id, start, end, n, ngram, term)]
 }

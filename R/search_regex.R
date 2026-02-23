@@ -1,171 +1,72 @@
-#' Search corpus via regex (with optional KWIC-style context)
+#' Search corpus via regex
 #'
-#' Searches a text corpus for specified patterns using regular expressions.
-#' Multiple patterns are OR'd. Supports parallel processing and optional context around matches.
-#'
-#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
-#' @param by A character vector of column names used as unique identifiers.
-#'   The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-#'   the search returns matches at the paragraph level).
-#' @param query The search pattern (regex; multiple patterns as vector are OR'd).
-#' @param context_size Numeric, default 0. Context size in sentences around matches.
-#' @param highlight Length-two character vector for match highlighting (default \code{c('<b>', '</b>')}).
-#' @param cores Numeric, default 1. Number of cores for parallel processing.
-#' @return A data.table with \code{by} columns, \code{text}, \code{start}, \code{end}, \code{pattern}.
+#' @param corpus A data frame or data.table with a \code{text} column.
+#' @param query The search pattern (regex).
+#' @param by Character vector of identifier columns.
+#' @param highlight Length-two character vector (default \code{c('<b>', '</b>')}).
 #' @export
-#' @examples
-#' corpus <- data.frame(doc_id = c('1', '1', '2'),
-#'                     sentence_id = c('1', '2', '1'),
-#'                     text = c("Hello world.",
-#'                              "This is an example.",
-#'                              "This is a party!"))
-#' search_regex(corpus, query = 'This is', by = c('doc_id', 'sentence_id'))
 search_regex <- function(corpus,
-                         by = c('doc_id', 'paragraph_id', 'sentence_id'),
                          query,
-                         context_size = 0,
-                         highlight = c("<b>", "</b>"),
-                         cores = 1) {
-  if (cores == 1) {
-    return(.search_corpus(
-      corpus = corpus,
-      search = query,
-      context_size = context_size,
-      by = by,
-      highlight = highlight
-    ))
-  } else {
-    batches <- split(corpus, ceiling(seq(1, nrow(corpus)) / 300))
-    clust <- parallel::makeCluster(cores)
-    on.exit(parallel::stopCluster(clust))
-    parallel::clusterExport(cl = clust, varlist = c(".search_corpus"), envir = environment())
-    search_fun <- function(batch) {
-      .search_corpus(batch, query, by, context_size, highlight)
-    }
+                         by,
+                         highlight = c("<b>", "</b>")) {
 
+  # 1. Setup Data & Clean Existing Coordinates
+  # We copy to avoid modifying the user's object by reference.
+  results_dt <- data.table::as.data.table(data.table::copy(corpus))
 
-    # Execute the task function in parallel
-    results <- pbapply::pblapply(
-      X = batches,
-      FUN = search_fun,
-      cl = clust
-    )
+  # Remove old start/end columns to avoid name collisions with new search hits
+  drop_cols <- intersect(names(results_dt), c("start", "end"))
+  if(length(drop_cols) > 0) results_dt[, (drop_cols) := NULL]
 
-    # Combine the results
-    combined_results <- data.table::rbindlist(results)
-    combined_results
-  }
+  # 2. Locate Hits Locally
+  # Calculates coordinates relative to the text in each row
+  locs <- stringi::stri_locate_all_regex(results_dt$text,
+                                         query,
+                                         omit_no_match = TRUE)
+
+  # 3. Handle Multi-Hit Expansion
+  # Count hits per row to expand the table correctly
+  hit_counts <- vapply(locs, function(x) if(is.matrix(x)) nrow(x) else 0L, integer(1))
+
+  if (sum(hit_counts) == 0) return(NULL)
+
+  # Expand the corpus rows to match the number of hits
+  results <- results_dt[rep(seq_len(.N), hit_counts)]
+
+  # Bind the NEW local coordinates for the search hits
+  coords <- data.table::as.data.table(do.call(rbind, locs))
+  data.table::setnames(coords, c("start", "end"))
+  results <- data.table::as.data.table(cbind(results, coords))
+
+  # 4. Extract Pattern and Highlight
+  # Extract the specific slice of text that triggered the match
+  results[, pattern := substr(text, start, end)]
+
+  # Apply visual highlighting
+  results[, text := mapply(.insert_highlight,
+                            text,
+                            start,
+                            end,
+                            MoreArgs = list(highlight = highlight))]
+
+  # 5. Generate Simple Identifiers (No Padding)
+  # Pastes identifiers exactly as provided by the user
+  results[, id := do.call(paste, c(.SD, sep = ".")), .SDcols = by]
+
+  # 6. Final Formatting
+  # Return only the essential columns in a standardized order
+  final_cols <- c("id", by, "text", "start", "end", "pattern")
+  return(results[, ..final_cols])
 }
 
-
-
-
 #' @noRd
-.search_corpus <- function(corpus,
-                           search,
-                           by,
-                           context_size,
-                           highlight) {
-  LL <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[1])
-  RR <- gsub("([][{}()+*^$.|\\\\?])", "\\\\\\1", highlight[2])
-
-  data.table::setDT(corpus)
-
-  if (length(by) == 1) {
-    by <- c('dummy', by)
-    corpus[, dummy := '1']
-  }
-
-  search_level <- tail(by, 1)
-  grouping_vars <- head(by, -1)
-
-  term1 <- paste0("(?i)", search)
-  term2 <- paste0(term1, collapse = "|")
-
-  corpus[, text_id := do.call(paste, c(.SD, list(sep = "."))), .SDcols = by]
-
-  found <- stringi::stri_locate_all(corpus$text, regex = term2)
-  names(found) <- corpus$text_id
-  found1 <- lapply(found, data.frame)
-  df1 <- data.table::rbindlist(found1, idcol = "text_id", use.names = FALSE)
-  df1 <- subset(df1, !is.na(start))
-
-  if (nrow(df1) == 0) {
-    return(data.table::data.table(
-      doc_id = character(),
-      sentence_id = character(),
-      text = character(),
-      start = integer(),
-      end = integer(),
-      pattern = character()
-    ))
-  } else {
-
-      df1[, (by) := data.table::tstrsplit(text_id, "\\.")]
-
-      generate_neighbors <- function(x, n) {
-        seq(max(1, x - n), x + n)
-      }
-
-      df1$neighbors <- lapply(as.numeric(df1[[search_level]]),
-                              generate_neighbors,
-                              n = context_size)
-
-      df3 <- df1[, setNames(list(unlist(neighbors)), search_level),
-                 by = c("text_id", grouping_vars, "start", "end")]
-
-      df3[, is_target := ifelse(text_id == do.call(paste, c(.SD, sep = ".")), 1, 0), .SDcols = by]
-      df3[, (by) := lapply(.SD, as.character), .SDcols = by]
-
-      join_columns <- setNames(by, by)
-      df4 <- corpus[df3, on = join_columns, nomatch = 0]
-
-      df4[, pattern := ifelse(is_target == 1, stringi::stri_sub(text, start, end), "")]
-      df4[, text := ifelse(is_target == 1, .insert_highlight(text, start, end, highlight = highlight), text)]
-
-      df5 <- df4[, list(text = paste(text, collapse = " ")),
-                 by = list(i.text_id, start, end)
-      ]
-
-      df5[, (by) := data.table::tstrsplit(i.text_id, "\\.")]
-
-      patsy <- paste0(".*", LL, "(.*)", RR, ".*")
-      df5[, pattern := gsub(patsy, "\\1", text)]
-
-      df5[, c(setdiff(by, 'dummy'), "text", "start", "end", "pattern"), with = FALSE]
-  }
-}
-
-
-
-
-
-#' Insert Highlight in Text
-#'
-#' Inserts highlight markers around a specified substring in a text string.
-#' Used to visually emphasize search query matches in the text.
-#'
-#' @param text The text string where highlighting is to be applied.
-#' @param start The starting position of the substring to highlight.
-#' @param end The ending position of the substring to highlight.
-#' @param highlight A character vector of length two specifying the
-#'                  opening and closing highlight markers.
-#' @return A character string with the specified substring highlighted.
-#' @noRd
-#'
-.insert_highlight <- function(text,
-                              start,
-                              end,
-                              highlight) {
-  # Extract the substring of the text before the highlight start position
-  before_term <- substr(text, 1, start - 1)
-
-  # Extract the substring to be highlighted
-  term <- substr(text, start, end)
-
-  # Extract the substring of the text after the highlight end position
-  after_term <- substr(text, end + 1, nchar(text))
-
-  # Reconstruct the text with highlight markers inserted around the term
-  paste0(before_term, highlight[1], term, highlight[2], after_term)
+.insert_highlight <- function(text, start, end, highlight) {
+  if (is.na(start) || is.na(end)) return(text)
+  paste0(
+    substr(text, 1, start - 1),
+    highlight[1],
+    substr(text, start, end),
+    highlight[2],
+    substr(text, end + 1, nchar(text))
+  )
 }

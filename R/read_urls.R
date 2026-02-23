@@ -1,50 +1,49 @@
 #' Read content from URLs
 #'
-#' Fetches each URL and converts the page into structured text (markdown or
-#' one row per node). Like \code{read_csv} or \code{read_html}: bring an
-#' external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
+#' Fetches each URL and returns a structured data frame (one row per node:
+#' headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}: bring
+#' an external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
 #' in the pipeline: fetch = get locations, read = get text.
 #'
-#' @param x A character vector of URLs.
-#' @param cores Number of cores for parallel requests (default 3).
-#' @param output \code{"markdown"} (one row per article, collapsed markdown) or \code{"df"} (one row per node: h2/h3/p).
-#' @param detect_boilerplate Logical. Detect boilerplate (e.g. sign-up, related links).
-#' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate} (when \code{output = "df"}).
+#' Wikipedia is handled with high-fidelity selectors: \code{div.mw-parser-output}
+#' and \code{h2}/\code{h3}/\code{h4} hierarchy. Use \code{parent_heading} to see
+#' which section each node belongs to. The \dQuote{External links} section and
+#' rows with empty \code{text} are omitted.
 #'
-#' @return A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{text}, and optionally \code{is_boilerplate}.
+#' @param x A character vector of URLs.
+#' @param cores Number of cores for parallel requests (default 1).
+#' @param detect_boilerplate Logical. Detect boilerplate (e.g. sign-up, related links).
+#' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.
+#'
+#' @return A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
 #' @export
 #' @examples
 #' \dontrun{
 #' urls <- fetch_urls("R programming", n_pages = 1)$url
-#' corpus <- read_urls(urls[1:3], cores = 1)
-#' # One row per node
-#' nodes <- read_urls(urls[1], cores = 1, output = "df")
+#' nodes <- read_urls(urls[1:3], cores = 1)
 #' }
 read_urls <- function(x,
-                     cores = 3,
-                     output = c("markdown", "df"),
+                     cores = 1,
                      detect_boilerplate = TRUE,
                      remove_boilerplate = TRUE) {
-  output <- match.arg(output)
-
   mm1 <- data.frame(url = x)
   batches <- split(mm1$url, ceiling(seq_along(mm1$url) / 20))
 
   if (cores == 1) {
     results <- lapply(
       X = batches,
-      FUN = function(batch) .article_extract(batch, output = output, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate)
+      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate)
     )
   } else {
     clust <- parallel::makeCluster(cores)
     parallel::clusterExport(
       cl = clust,
-      varlist = c(".article_extract", ".detect_boilerplate", ".get_site", ".extract_date", ".standardize_date", ".junk_phrases", ".cta_words", ".df_to_markdown"),
+      varlist = c(".article_extract", ".detect_boilerplate", ".get_site", ".extract_date", ".standardize_date", ".junk_phrases", ".cta_words"),
       envir = environment()
     )
     results <- pbapply::pblapply(
       X = batches,
-      FUN = function(batch) .article_extract(batch, output = output, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate),
+      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate),
       cl = clust
     )
     parallel::stopCluster(clust)
@@ -54,75 +53,55 @@ read_urls <- function(x,
 }
 
 
-#' Convert Structured Data Frame to Markdown
-#'
-#' Internal helper. Converts a structured data frame (\code{output = "df"}) to
-#' markdown-formatted text. Headers use ## / ###, paragraphs remain plain,
-#' elements separated by blank lines.
-#'
-#' @param df A data.table with columns: url, h1_title, date, text, type (h2, h3, p)
-#' @return A data.table with one row per url, with text column containing markdown
-#' @noRd
-.df_to_markdown <- function(df) {
-  df[, list(text = paste(
-    ifelse(type == "h2", paste0("## ", text),
-           ifelse(type == "h3", paste0("### ", text), text)),
-    collapse = "\n\n"
-  )), by = list(url, h1_title, date)]
-}
-
-
 #' Article Extraction Utility
 #'
 #' Extracts articles from URLs. Used internally by \code{\link{read_urls}}.
 #'
 #' @param x Character vector of URLs.
-#' @param output \dQuote{df} or \dQuote{markdown}.
 #' @param detect_boilerplate,remove_boilerplate Logical. See \code{\link{read_urls}}.
-#' @return A data.table with article content.
+#' @return A data.table with article content (one row per node; \code{parent_heading} for section).
 #' @importFrom stats na.omit
 #' @noRd
 .article_extract <- function(x,
-                             output = "markdown",
                              detect_boilerplate = TRUE,
                              remove_boilerplate = TRUE) {
   articles <- lapply(x, function(q) {
     raw_site <- .get_site(q)
+    is_wiki <- grepl("wikipedia\\.org", q, ignore.case = TRUE)
     annotated_site <- .detect_boilerplate(site = raw_site,
-                                          detect_boilerplate = detect_boilerplate)
+                                          detect_boilerplate = detect_boilerplate && !is_wiki)
 
     if (remove_boilerplate || !detect_boilerplate) {
       clean_site <- annotated_site[discard == "keep"]
+      if (detect_boilerplate && !is_wiki) clean_site[, is_boilerplate := FALSE]
     } else {
       clean_site <- annotated_site[not_pnode == 0L]
       clean_site[, is_boilerplate := (discard != "keep")]
     }
 
+    if (is_wiki) {
+      clean_site <- clean_site[!(parent_heading == "External links" | (type %in% c("h2", "h3", "h4") & text == "External links"))]
+    }
+    clean_site <- clean_site[nzchar(stringr::str_trim(text))]
     clean_site[, node_id := seq_len(.N), by = .(url)]
 
-    keep_boilerplate_col <- (output == "df" && detect_boilerplate && !remove_boilerplate)
-    base_cols <- c("url", "h1_title", "date", "type", "node_id", "text")
+    keep_boilerplate_col <- detect_boilerplate && !is_wiki
+    if (keep_boilerplate_col && is_wiki) clean_site[, is_boilerplate := NA]
+    base_cols <- if (is_wiki) c("url", "h1_title", "node_id", "parent_heading", "text") else c("url", "h1_title", "date", "type", "node_id", "parent_heading", "text")
+    cols <- if (keep_boilerplate_col) c(base_cols, "is_boilerplate") else base_cols
 
-    cols <- if (keep_boilerplate_col) c("url", "h1_title", "date", "type", "node_id", "is_boilerplate", "text") else base_cols
-
-    if (output == "df") {
-      return(clean_site[, ..cols])
-    }
-
-    out <- .df_to_markdown(clean_site)
-    out[, type := "markdown"]
-    out[, node_id := 1L]
-    out[, .SD, .SDcols = base_cols]
+    clean_site[, ..cols]
   })
   data.table::rbindlist(articles)
 }
 
 
 #' Get Site Content and Extract HTML Elements
+#' Wikipedia: uses div.mw-parser-output, h2/h3/h4/p/ul, and cleans [edit].
 #' @noRd
 #' @importFrom httr GET timeout
 #' @importFrom xml2 read_html
-#' @importFrom rvest html_nodes html_text html_name
+#' @importFrom rvest html_nodes html_node html_text html_name
 .get_site <- function(x) {
   site <- tryCatch(
     xml2::read_html(httr::GET(x, httr::timeout(60))),
@@ -133,15 +112,36 @@ read_urls <- function(x,
   date_info <- data.frame(date = NA_character_, source = NA_character_)
 
   if (!any(site == "Error")) {
-    ntype1 <- "p,h1,h2,h3"
-    w0 <- rvest::html_nodes(site, ntype1)
+    is_wiki <- grepl("wikipedia\\.org", x, ignore.case = TRUE)
 
-    if (length(w0) != 0) {
-      w1 <- rvest::html_name(w0)
-      w2 <- rvest::html_text(w0)
+    if (is_wiki) {
+      main_content <- rvest::html_node(site, "div.mw-parser-output")
+      if (length(main_content) != 0L && !is.na(main_content)) {
+        nodes <- rvest::html_nodes(main_content, "h2, h3, h4, p, ul")
+        if (length(nodes) != 0L) {
+          w1 <- rvest::html_name(nodes)
+          w2 <- rvest::html_text(nodes, trim = TRUE)
+          w2 <- gsub("\\[edit\\]$", "", w2)
+          if (any(!validUTF8(w2))) { w1 <- w2 <- NA } else {
+            title <- rvest::html_text(rvest::html_node(site, "h1, #firstHeading"), trim = TRUE)
+            if (length(title) == 0L || !nzchar(title)) title <- NA_character_
+            w1 <- c("h1", w1)
+            w2 <- c(title, w2)
+          }
+        }
+      }
+      if (identical(w1, NA)) {
+        is_wiki <- FALSE
+      }
+    }
 
-      if (any(!validUTF8(w2))) {
-        w1 <- w2 <- NA
+    if (!is_wiki) {
+      ntype1 <- "p,h1,h2,h3"
+      w0 <- rvest::html_nodes(site, ntype1)
+      if (length(w0) != 0) {
+        w1 <- rvest::html_name(w0)
+        w2 <- rvest::html_text(w0, trim = TRUE)
+        if (any(!validUTF8(w2))) w1 <- w2 <- NA
       }
     }
 
@@ -160,7 +160,7 @@ read_urls <- function(x,
 
 #' Detect Boilerplate in Scraped Site Data
 #' @noRd
-#' @importFrom data.table setDT fifelse nafill last
+#' @importFrom data.table setDT fifelse last
 #' @importFrom stringr str_trim
 .detect_boilerplate <- function(site, detect_boilerplate = TRUE) {
 
@@ -170,7 +170,20 @@ read_urls <- function(x,
   site[, h1_title := ifelse(type == "h1", text, NA)]
   site[, h1_title := data.table::last(na.omit(h1_title)), by = .(url)]
 
-  site[, not_pnode := data.table::fifelse(type %in% c("p", "h2", "h3"), 0L, 1L)]
+  site[, heading_text := data.table::fifelse(type %in% c("h1", "h2", "h3", "h4"), text, NA_character_)]
+  site[, parent_heading := {
+    ht <- .SD$heading_text
+    last <- NA_character_
+    out <- rep(NA_character_, length(ht))
+    for (i in seq_along(ht)) {
+      if (!is.na(ht[i])) last <- ht[i]
+      out[i] <- if (!is.na(ht[i])) NA_character_ else last
+    }
+    out
+  }, by = .(url), .SDcols = "heading_text"]
+  site[, heading_text := NULL]
+
+  site[, not_pnode := data.table::fifelse(type %in% c("p", "h1", "h2", "h3", "h4", "ul"), 0L, 1L)]
 
   if (!detect_boilerplate) {
     site[, discard := data.table::fifelse(not_pnode == 1L, "junk", "keep")]

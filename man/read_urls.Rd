@@ -4,39 +4,35 @@
 \alias{read_urls}
 \title{Read content from URLs}
 \usage{
-read_urls(
-  x,
-  cores = 3,
-  output = c("markdown", "df"),
-  detect_boilerplate = TRUE,
-  remove_boilerplate = TRUE
-)
+read_urls(x, cores = 1, detect_boilerplate = TRUE, remove_boilerplate = TRUE)
 }
 \arguments{
 \item{x}{A character vector of URLs.}
 
-\item{cores}{Number of cores for parallel requests (default 3).}
-
-\item{output}{\code{"markdown"} (one row per article, collapsed markdown) or \code{"df"} (one row per node: h2/h3/p).}
+\item{cores}{Number of cores for parallel requests (default 1).}
 
 \item{detect_boilerplate}{Logical. Detect boilerplate (e.g. sign-up, related links).}
 
-\item{remove_boilerplate}{Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate} (when \code{output = "df"}).}
+\item{remove_boilerplate}{Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.}
 }
 \value{
-A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{text}, and optionally \code{is_boilerplate}.
+A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
 }
 \description{
-Fetches each URL and converts the page into structured text (markdown or
-one row per node). Like \code{read_csv} or \code{read_html}: bring an
-external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
+Fetches each URL and returns a structured data frame (one row per node:
+headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}: bring
+an external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
 in the pipeline: fetch = get locations, read = get text.
+}
+\details{
+Wikipedia is handled with high-fidelity selectors: \code{div.mw-parser-output}
+and \code{h2}/\code{h3}/\code{h4} hierarchy. Use \code{parent_heading} to see
+which section each node belongs to. The \dQuote{External links} section and
+rows with empty \code{text} are omitted.
 }
 \examples{
 \dontrun{
 urls <- fetch_urls("R programming", n_pages = 1)$url
-corpus <- read_urls(urls[1:3], cores = 1)
-# One row per node
-nodes <- read_urls(urls[1], cores = 1, output = "df")
+nodes <- read_urls(urls[1:3], cores = 1)
 }
 }

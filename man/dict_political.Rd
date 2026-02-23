@@ -5,8 +5,7 @@
 \alias{dict_political}
 \title{Demo dictionary of political / partisan term variants for NER}
 \format{
-A data frame with columns \code{variant} (surface form to match),
-  \code{TermName} (standardized label), and \code{doc_id} (NA for global).
+A data frame with columns \code{variant} (surface form to match) and \code{TermName} (standardized label).
 }
 \usage{
 dict_political
@@ -14,11 +13,10 @@ dict_political
 \description{
 A small dictionary of political party and ideology terms (Democrat, Republican,
 MAGA, Liberal, Conservative, Christian Nationalist, White Supremacist, etc.)
-and spelling/variant forms, for use with \code{\link{search_dict}}.
-All entries are global (no \code{doc_id}). Built in-package (no \code{data()}).
+and spelling/variant forms, for use with \code{\link{search_dict}}. Built in-package (no \code{data()}).
 }
 \examples{
 head(dict_political)
-# search_dict(corpus, by = "doc_id", dictionary = dict_political)
+# search_dict(corpus, by = "doc_id", terms = dict_political$variant)
 }
 \keyword{datasets}

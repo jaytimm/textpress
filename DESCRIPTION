@@ -2,9 +2,17 @@ Package: textpress
 Type: Package
 Title: A Lightweight and Versatile NLP Toolkit
 Version: 1.1.0
-Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
+Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu", comment = c(year = 2026)))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A lightweight R toolkit for text retrieval. Four-stage pipeline: Fetch (URLs from search/Wikipedia), Read (content from URLs), Process (split, tokenize, index), Search (regex, BM25, vector similarity, dictionary). Verb_noun naming; minimal dependencies. Embeddings built elsewhere and passed in for semantic search.
+Description: A lightweight toolkit for text retrieval and NLP with a consistent and
+    predictable API organized around four actions: fetching, reading,
+    processing, and searching. Functions cover the full pipeline from web
+    data acquisition to text processing and indexing. Multiple search
+    strategies are supported including regex, BM25 keyword ranking, cosine
+    similarity, and dictionary matching. Pipe-friendly with no heavy
+    dependencies and all outputs are plain data frames. Also useful as a
+    building block for retrieval-augmented generation pipelines and
+    autonomous agent workflows.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false

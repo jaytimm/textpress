@@ -7,10 +7,12 @@ utils::globalVariables(c(
   "is_boilerplate", "node_id", "..cols",
   "has_you", "has_quote", "has_qmark", "has_exclam", "has_cta",
   "drop_you_cta", "drop_node_bang",
+  "heading_text", "parent_heading",
   "token", "tf", "df", "bm25", "score",
   "paragraph_offset",
-  "variant_lc", "variant", "TermName", "ngram", "ngram_lc",
-  "match_type", "group", "n"
+  "variant_lc", "variant", "TermName", "ngram", "ngram_lc", "term",
+  "match_type", "group", "n",
+  "stopwords_en", "idf", "dl", "..final_cols", "..by"
 ))
 
 

@@ -22,7 +22,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Jason Timm \email{JaTimm@salud.unm.edu}
+\strong{Maintainer}: Jason Timm \email{JaTimm@salud.unm.edu} (2026)
 
 }
 \keyword{internal}
