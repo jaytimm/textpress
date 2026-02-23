@@ -7,9 +7,9 @@
 
 For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.
 
-### Why textpress?
+### Why `textpress`?
 
-textpress takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.
+`textpress` takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.
 
 - **Corpus linguists** — Traditional tools like KWIC and BM25 are first-class citizens. No proprietary object classes; your data stays in the data frames you already know.
 - **Data journalists** — Speed from lead to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, Tidyverse-ready formats in seconds.
@@ -34,7 +34,7 @@ remotes::install_github("jaytimm/textpress")
 
 ---
 
-## The textpress API map
+## The `textpress` API map
 
 **Conventions:** Corpus is a data frame with a `text` column plus identifier column(s) in `by` (default `doc_id`; use e.g. `c("url", "node_id")` after `read_urls()`). Outputs are plain data frames or data.tables; pipe-friendly.
 
@@ -79,11 +79,11 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 
 ## Extension: LLMs & Agents
 
-textpress handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean "toolset" that can be handed directly to an LLM or an automated agent.
+`textpress` handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean "toolset" that can be handed directly to an LLM or an automated agent.
 
 ### 1. Context Engineering (RAG)
 
-Instead of dumping raw text into a prompt, use textpress to refine the intake.
+Instead of dumping raw text into a prompt, use `textpress` to refine the intake.
 
 - **Chunking** — Use `nlp_roll_chunks()` to create overlapping context windows that fit within model token limits.
 - **Hybrid Search** — Combine `search_index()` (BM25) with semantic embeddings for a "best of both worlds" retrieval strategy.
@@ -93,7 +93,7 @@ Instead of dumping raw text into a prompt, use textpress to refine the intake.
 
 The consistent API and data-frame outputs make these functions easy to map to an agent's tool-calling capabilities. An agent can "reach" for these tools to interact with the web:
 
-| Capability | textpress Tool | Real-world Use Case |
+| Capability | `textpress` Tool | Real-world Use Case |
 |------------|----------------|---------------------|
 | Search | `fetch_urls()` | "Find the top 5 articles on R performance." |
 | Browse | `read_urls()` | "Scrape the content of these specific pages." |

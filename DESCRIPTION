@@ -4,15 +4,16 @@ Title: A Lightweight and Versatile NLP Toolkit
 Version: 1.1.0
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A lightweight toolkit for text retrieval and NLP with a consistent and
-    predictable API organized around four actions: fetching, reading,
-    processing, and searching. Functions cover the full pipeline from web
-    data acquisition to text processing and indexing. Multiple search
-    strategies are supported including regex, BM25 keyword ranking, cosine
-    similarity, and dictionary matching. Pipe-friendly with no heavy
-    dependencies and all outputs are plain data frames. Also useful as a
-    building block for retrieval-augmented generation pipelines and
-    autonomous agent workflows.
+Description: A rugged, practical toolkit for web scraping, stepwise NLP
+    pipelines, and lightweight LLM context engineering. The API follows a
+    consistent, predictable flow organized around four core actions:
+    fetching, reading, processing, and searching. Functions cover the full
+    pipeline from raw web data acquisition to structural text processing and
+    BM25 indexing. Multiple retrieval strategies are supported, including
+    regex, dictionary matching, and ranked keyword search. Designed to be
+    transparent and unobtrusive: pipe-friendly, no heavy dependencies, and
+    all outputs are plain data frames or data.tables rather than complex
+    object classes.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
