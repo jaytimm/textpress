@@ -72,7 +72,22 @@
 </h1></div>
 <p><strong>Ol’ timey NLP meets modern R</strong> — web search, Wikipedia, scraping, chunking, KWIC, BM25, and semantic search. A lightweight toolkit with a consistent API: <strong>Fetch, Read, Process, and Search.</strong> Simple, unobtrusive, data-frame-friendly; no new classes, no bloat.</p>
 <p>For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.</p>
+<div class="section level3">
+<h3 id="why-textpress">Why textpress?<a class="anchor" aria-label="anchor" href="#why-textpress"></a>
+</h3>
+<p>In an era of heavy AI frameworks and complex vector databases, textpress takes a rugged, local-first approach. Get from a search query to a structured data frame without the overhead.</p>
+<ul>
+<li>
+<strong>Corpus linguists</strong> — KWIC and BM25 are first-class. Your data stays in data frames; no proprietary objects.</li>
+<li>
+<strong>Data journalists</strong> — Speed from lead to data. Fetch URLs from search or Wikipedia, ingest into Tidyverse-ready formats.</li>
+<li>
+<strong>LLM &amp; RAG developers</strong> — A no-nonsense middle layer: <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> for context windows, <code><a href="reference/search_index.html">search_index()</a></code> for keyword retrieval before prompts.</li>
+<li>
+<strong>Everyone</strong> — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a <code>|&gt;</code> pipeline.</li>
+</ul>
 <hr>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -165,48 +180,77 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Quick start</strong> — runnable in a few seconds, no network:</p>
+</div>
+<div class="section level3">
+<h3 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+</h3>
+<p>Build a searchable index from the web in six lines (requires network):</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Minimal corpus (or use read_urls() after fetch_urls() / fetch_wiki_urls())</span></span>
-<span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  doc_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span><span class="op">)</span>,</span>
-<span>  text   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R runs on parallel and distributed systems."</span>, <span class="st">"Use future and OpenMP for speed."</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Process: sentences or tokens</span></span>
-<span><span class="va">sentences</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
-<span><span class="va">tokens</span>    <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"doc_id"</span>, include_spans <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">index</span>     <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Search: regex, exact terms, or BM25</span></span>
-<span><span class="fu"><a href="reference/search_regex.html">search_regex</a></span><span class="op">(</span><span class="va">corpus</span>, <span class="st">"parallel|future"</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/search_dict.html">search_dict</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"doc_id"</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OpenMP"</span>, <span class="st">"distributed"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"parallel"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>With web data</strong> — fetch URLs, then read and search (requires network):</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">links</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R high performance computing"</span>, n_pages <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># 1. Fetch &amp; Read</span></span>
+<span><span class="va">links</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R high performance computing"</span>, n_pages <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">links</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span>
-<span><span class="va">corpus</span><span class="op">$</span><span class="va">doc_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">corpus</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/search_regex.html">search_regex</a></span><span class="op">(</span><span class="va">corpus</span>, <span class="st">"parallel|future"</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span></code></pre></div>
+<span></span>
+<span><span class="co"># 2. Process</span></span>
+<span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"url"</span><span class="op">)</span></span>
+<span><span class="va">index</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Search (BM25 ranked)</span></span>
+<span><span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"parallel distributed"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Wikipedia:</strong> <code>fetch_wiki_urls("topic")</code> → <code>read_urls(urls, exclude_wiki_refs = TRUE)</code>. For citation URLs from an article’s References section: <code>fetch_wiki_refs(wiki_url, n = 10)</code> → <code>read_urls(refs$ref_url)</code>.</p>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="extension-llms--agents">Extension: LLMs &amp; agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
+<h2 id="extension-llms--agents">Extension: LLMs &amp; Agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
 </h2>
-<p>Design fits RAG and agentic workflows.</p>
+<p>textpress handles the heavy lifting of data acquisition and preparation for LLM pipelines.</p>
 <div class="section level3">
-<h3 id="rag">RAG<a class="anchor" aria-label="anchor" href="#rag"></a>
+<h3 id="rag--retrieval">RAG &amp; Retrieval<a class="anchor" aria-label="anchor" href="#rag--retrieval"></a>
 </h3>
-<p>Local-first RAG without a heavy vector DB: <code><a href="reference/search_index.html">search_index()</a></code> (BM25) for keyword chunks; <code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code> / <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> for context windows; <code><a href="reference/search_dict.html">search_dict()</a></code> for deterministic entities before the LLM (reduces hallucination).</p>
+<ul>
+<li>
+<strong>Context Windows</strong> — <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> creates the precise text snippets needed for prompts or embeddings.</li>
+<li>
+<strong>Hybrid Search</strong> — Use <code><a href="reference/search_index.html">search_index()</a></code> (BM25) for fast keyword retrieval, or pipe results into a vector database for semantic search.</li>
+<li>
+<strong>Fact Checking</strong> — <code><a href="reference/search_dict.html">search_dict()</a></code> provides a deterministic way to verify entities before they reach the model, reducing hallucinations.</li>
+</ul>
 </div>
 <div class="section level3">
-<h3 id="agent-tools">Agent tools<a class="anchor" aria-label="anchor" href="#agent-tools"></a>
+<h3 id="agentic-tooling">Agentic Tooling<a class="anchor" aria-label="anchor" href="#agentic-tooling"></a>
 </h3>
-<p>Flat names and data-frame in/out make functions easy for a model to call: <code><a href="reference/fetch_urls.html">fetch_urls()</a></code> (Search), <code><a href="reference/read_urls.html">read_urls()</a></code> (Browse), <code><a href="reference/search_regex.html">search_regex()</a></code> (Find in page), <code><a href="reference/search_dict.html">search_dict()</a></code> (Entity extraction).</p>
+<p>The consistent API and data-frame outputs make these functions easy to map to an agent’s toolset:</p>
+<table class="table">
+<thead><tr class="header">
+<th>Tool</th>
+<th>Function</th>
+<th>Result</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Search</td>
+<td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
+<td>Targeted URL list</td>
+</tr>
+<tr class="even">
+<td>Browse</td>
+<td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
+<td>Structured text nodes</td>
+</tr>
+<tr class="odd">
+<td>Find</td>
+<td><code><a href="reference/search_regex.html">search_regex()</a></code></td>
+<td>Precise matches/coordinates</td>
+</tr>
+<tr class="even">
+<td>Extract</td>
+<td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
+<td>Categorized entities</td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>
@@ -219,7 +263,7 @@
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <p>If you use this package in your research, please cite:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
