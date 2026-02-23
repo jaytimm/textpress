@@ -11,8 +11,8 @@ For corpus linguists, text analysts, data journalists, and R users building LLM 
 
 `textpress` takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.
 
-- **Corpus linguists** — Traditional tools like KWIC and BM25 are first-class citizens. No proprietary object classes; your data stays in the data frames you already know.
-- **Data journalists** — Speed from lead to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, Tidyverse-ready formats in seconds.
+- **Corpus linguists** — Traditional tools like KWIC and BM25 are first-class citizens. No custom object classes; your data stays in the plain tables you already know.
+- **Data journalists** — Speed from lede to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, standard data frames in seconds.
 - **LLM & RAG developers** — A transparent middle layer for context engineering—providing the tools to chunk, rank, and inject text into prompts without managing a heavy stack.
 - **Students & educators** — A bridge from theory to practice. By using an inspectable, stepwise flow, it makes the NLP pipeline visible—from raw web content to structured indices.
 
