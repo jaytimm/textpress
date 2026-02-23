@@ -60,8 +60,6 @@ Four ways to query your data. Subject-first: first argument is the data (corpus,
 | **search_index(index, query, ...)** | Character (keywords) | BM25 ranked retrieval. |
 | **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors. |
 
-**search_dict** is the exact n-gram matcher: pass a vector of terms (e.g. \code{c("United States", "R Project")}); get a table of where they appeared. Optimized for high-speed extraction of thousands of specific terms (MWEs) across large corpora. Add categories later with a left_join on \code{ngram} or \code{term}.
-
 **Quick start** (all four stages):
 
 ```r
