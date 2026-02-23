@@ -24,9 +24,9 @@ search_dict <- function(corpus,
 
   dict_dt <- data.table::data.table(variant_lc = tolower(terms))
 
-  toks_df_ss <- corpus |>
-    textpress::nlp_tokenize_text(by = by, include_spans = TRUE) |>
-    textpress::nlp_cast_tokens()
+  toks_df_ss <- textpress::nlp_cast_tokens(
+    textpress::nlp_tokenize_text(corpus, by = by, include_spans = TRUE)
+  )
 
   if (n_max > 1) {
     for (i in 2:n_max) {

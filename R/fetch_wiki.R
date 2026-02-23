@@ -17,8 +17,10 @@
   out <- lapply(refs, function(ref) {
     ref_id <- xml2::xml_attr(ref, "id")
 
-    urls <- rvest::html_nodes(ref, xpath = ".//a[starts-with(@href, 'http')]") |>
-      rvest::html_attr("href")
+    urls <- rvest::html_attr(
+      rvest::html_nodes(ref, xpath = ".//a[starts-with(@href, 'http')]"),
+      "href"
+    )
     urls <- unique(urls[urls != ""])
 
     if (!length(urls)) return(NULL)

@@ -31,13 +31,13 @@ nlp_roll_chunks <- function(corpus,
   grouping_vars <- head(by, -1)
 
   corpus[, chunk_id := do.call(paste, c(.SD, sep = ".")), .SDcols = grouping_vars]
-  corpus[, chunk_id := paste0(chunk_id, ".", ceiling(get(chunk_level) |> as.integer() / chunk_size)),
+  corpus[, chunk_id := paste0(chunk_id, ".", ceiling(as.integer(get(chunk_level)) / chunk_size)),
      by = grouping_vars]
 
   neighbors_dt <- corpus[, .(neighbor_id = c(
-    get(chunk_level) |> as.integer() - context_size,
-    get(chunk_level) |> as.integer(),
-    get(chunk_level) |> as.integer() + context_size
+    as.integer(get(chunk_level)) - context_size,
+    as.integer(get(chunk_level)),
+    as.integer(get(chunk_level)) + context_size
   )), by = c("chunk_id", grouping_vars)]
 
   neighbors_dt <- unique(neighbors_dt)
