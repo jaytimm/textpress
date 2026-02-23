@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A Lightweight and Versatile NLP Toolkit">
-<meta property="og:description" content="A lightweight toolkit for text retrieval and NLP with a consistent and predictable API organized around four actions: fetching, reading, processing, and searching. Functions cover the full pipeline from web data acquisition to text processing and indexing. Multiple search strategies are supported including regex, BM25 keyword ranking, cosine similarity, and dictionary matching. Pipe-friendly with no heavy dependencies and all outputs are plain data frames. Also useful as a building block for retrieval-augmented generation pipelines and autonomous agent workflows.">
+<meta property="og:description" content="A rugged, practical toolkit for web scraping, stepwise NLP pipelines, and lightweight LLM context engineering. The API follows a consistent, predictable flow organized around four core actions: fetching, reading, processing, and searching. Functions cover the full pipeline from raw web data acquisition to structural text processing and BM25 indexing. Multiple retrieval strategies are supported, including regex, dictionary matching, and ranked keyword search. Designed to be transparent and unobtrusive: pipe-friendly, no heavy dependencies, and all outputs are plain data frames or data.tables rather than complex object classes.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -73,9 +73,9 @@
 <p><strong>Ol’ timey NLP meets modern R</strong> — web search, Wikipedia, scraping, chunking, KWIC, BM25, and semantic search. A lightweight toolkit with a consistent API: <strong>Fetch, Read, Process, and Search.</strong> Simple, unobtrusive, data-frame-friendly; no new classes, no bloat.</p>
 <p>For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.</p>
 <div class="section level3">
-<h3 id="why-textpress">Why textpress?<a class="anchor" aria-label="anchor" href="#why-textpress"></a>
+<h3 id="why-textpress">Why <code>textpress</code>?<a class="anchor" aria-label="anchor" href="#why-textpress"></a>
 </h3>
-<p>textpress takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.</p>
+<p><code>textpress</code> takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.</p>
 <ul>
 <li>
 <strong>Corpus linguists</strong> — Traditional tools like KWIC and BM25 are first-class citizens. No proprietary object classes; your data stays in the data frames you already know.</li>
@@ -100,7 +100,7 @@
 <hr>
 </div>
 <div class="section level2">
-<h2 id="the-textpress-api-map">The textpress API map<a class="anchor" aria-label="anchor" href="#the-textpress-api-map"></a>
+<h2 id="the-textpress-api-map">The <code>textpress</code> API map<a class="anchor" aria-label="anchor" href="#the-textpress-api-map"></a>
 </h2>
 <p><strong>Conventions:</strong> Corpus is a data frame with a <code>text</code> column plus identifier column(s) in <code>by</code> (default <code>doc_id</code>; use e.g. <code>c("url", "node_id")</code> after <code><a href="reference/read_urls.html">read_urls()</a></code>). Outputs are plain data frames or data.tables; pipe-friendly.</p>
 <div class="section level3">
@@ -187,11 +187,11 @@
 <div class="section level2">
 <h2 id="extension-llms--agents">Extension: LLMs &amp; Agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
 </h2>
-<p>textpress handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean “toolset” that can be handed directly to an LLM or an automated agent.</p>
+<p><code>textpress</code> handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean “toolset” that can be handed directly to an LLM or an automated agent.</p>
 <div class="section level3">
 <h3 id="id_1-context-engineering-rag">1. Context Engineering (RAG)<a class="anchor" aria-label="anchor" href="#id_1-context-engineering-rag"></a>
 </h3>
-<p>Instead of dumping raw text into a prompt, use textpress to refine the intake.</p>
+<p>Instead of dumping raw text into a prompt, use <code>textpress</code> to refine the intake.</p>
 <ul>
 <li>
 <strong>Chunking</strong> — Use <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> to create overlapping context windows that fit within model token limits.</li>
@@ -213,7 +213,8 @@
 </colgroup>
 <thead><tr class="header">
 <th>Capability</th>
-<th>textpress Tool</th>
+<th>
+<code>textpress</code> Tool</th>
 <th>Real-world Use Case</th>
 </tr></thead>
 <tbody>
