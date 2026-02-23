@@ -7,6 +7,15 @@
 
 For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.
 
+### Why textpress?
+
+In an era of heavy AI frameworks and complex vector databases, textpress takes a rugged, local-first approach. Get from a search query to a structured data frame without the overhead.
+
+- **Corpus linguists** — KWIC and BM25 are first-class. Your data stays in data frames; no proprietary objects.
+- **Data journalists** — Speed from lead to data. Fetch URLs from search or Wikipedia, ingest into Tidyverse-ready formats.
+- **LLM & RAG developers** — A no-nonsense middle layer: `nlp_roll_chunks()` for context windows, `search_index()` for keyword retrieval before prompts.
+- **Everyone** — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a `|>` pipeline.
+
 ---
 
 ## Installation
@@ -64,52 +73,49 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 | **search_index(index, query, ...)** | Character (keywords) | BM25 ranked retrieval. |
 | **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors (use `util_fetch_embeddings()` for embeddings). |
 
-**Quick start** — runnable in a few seconds, no network:
+### Quick start
+
+Build a searchable index from the web in six lines (requires network):
 
 ```r
 library(textpress)
 
-# Minimal corpus (or use read_urls() after fetch_urls() / fetch_wiki_urls())
-corpus <- data.frame(
-  doc_id = c("1", "2"),
-  text   = c("R runs on parallel and distributed systems.", "Use future and OpenMP for speed.")
-)
-
-# Process: sentences or tokens
-sentences <- nlp_split_sentences(corpus, by = "doc_id")
-tokens    <- nlp_tokenize_text(corpus, by = "doc_id", include_spans = FALSE)
-index     <- nlp_index_tokens(tokens)
-
-# Search: regex, exact terms, or BM25
-search_regex(corpus, "parallel|future", by = "doc_id")
-search_dict(corpus, by = "doc_id", terms = c("OpenMP", "distributed"))
-search_index(index, "parallel")
-```
-
-**With web data** — fetch URLs, then read and search (requires network):
-
-```r
+# 1. Fetch & Read
 links  <- fetch_urls("R high performance computing", n_pages = 1)
 corpus <- read_urls(links$url)
-corpus$doc_id <- seq_len(nrow(corpus))
-search_regex(corpus, "parallel|future", by = "doc_id")
+
+# 2. Process
+tokens <- nlp_tokenize_text(corpus, by = "url")
+index  <- nlp_index_tokens(tokens)
+
+# 3. Search (BM25 ranked)
+search_index(index, "parallel distributed")
 ```
 
 **Wikipedia:** `fetch_wiki_urls("topic")` → `read_urls(urls, exclude_wiki_refs = TRUE)`. For citation URLs from an article’s References section: `fetch_wiki_refs(wiki_url, n = 10)` → `read_urls(refs$ref_url)`.
 
 ---
 
-## Extension: LLMs & agents
+## Extension: LLMs & Agents
 
-Design fits RAG and agentic workflows.
+textpress handles the heavy lifting of data acquisition and preparation for LLM pipelines.
 
-### RAG
+### RAG & Retrieval
 
-Local-first RAG without a heavy vector DB: `search_index()` (BM25) for keyword chunks; `nlp_split_paragraphs()` / `nlp_roll_chunks()` for context windows; `search_dict()` for deterministic entities before the LLM (reduces hallucination).
+- **Context Windows** — `nlp_roll_chunks()` creates the precise text snippets needed for prompts or embeddings.
+- **Hybrid Search** — Use `search_index()` (BM25) for fast keyword retrieval, or pipe results into a vector database for semantic search.
+- **Fact Checking** — `search_dict()` provides a deterministic way to verify entities before they reach the model, reducing hallucinations.
 
-### Agent tools
+### Agentic Tooling
 
-Flat names and data-frame in/out make functions easy for a model to call: `fetch_urls()` (Search), `read_urls()` (Browse), `search_regex()` (Find in page), `search_dict()` (Entity extraction).
+The consistent API and data-frame outputs make these functions easy to map to an agent's toolset:
+
+| Tool | Function | Result |
+|------|----------|--------|
+| Search | `fetch_urls()` | Targeted URL list |
+| Browse | `read_urls()` | Structured text nodes |
+| Find | `search_regex()` | Precise matches/coordinates |
+| Extract | `search_dict()` | Categorized entities |
 
 ---
 
