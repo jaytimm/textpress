@@ -15,6 +15,7 @@ In an era of heavy AI frameworks and complex vector databases, textpress takes a
 - **Data journalists** — Speed from lead to data. Fetch URLs from search or Wikipedia, ingest into Tidyverse-ready formats.
 - **LLM & RAG developers** — A no-nonsense middle layer: `nlp_roll_chunks()` for context windows, `search_index()` for keyword retrieval before prompts.
 - **Everyone** — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a `|>` pipeline.
+- **Stepwise transparency** — textpress is designed for pedagogy, giving a clear, stepwise view of how raw web content becomes structured text. Standard data frames (no black-box objects) let students inspect every stage—from structural scraping and sentence splitting to token normalization and BM25 indexing.
 
 ---
 
@@ -72,25 +73,6 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 | **search_dict(corpus, terms, ...)** | Character (vector of terms) | Exact phrases/MWEs; no partial-match risk. N-gram range is set from word counts in `terms`. Built-in dicts: `dict_generations`, `dict_political`. |
 | **search_index(index, query, ...)** | Character (keywords) | BM25 ranked retrieval. |
 | **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors (use `util_fetch_embeddings()` for embeddings). |
-
-### Quick start
-
-Build a searchable index from the web in six lines (requires network):
-
-```r
-library(textpress)
-
-# 1. Fetch & Read
-links  <- fetch_urls("R high performance computing", n_pages = 1)
-corpus <- read_urls(links$url)
-
-# 2. Process
-tokens <- nlp_tokenize_text(corpus, by = "url")
-index  <- nlp_index_tokens(tokens)
-
-# 3. Search (BM25 ranked)
-search_index(index, "parallel distributed")
-```
 
 **Wikipedia:** `fetch_wiki_urls("topic")` → `read_urls(urls, exclude_wiki_refs = TRUE)`. For citation URLs from an article’s References section: `fetch_wiki_refs(wiki_url, n = 10)` → `read_urls(refs$ref_url)`.
 
