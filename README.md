@@ -2,7 +2,7 @@
 
 # textpress
 
-A lightweight R toolkit for text retrieval: **Fetch, Read, Process, and Search.** Every function follows a verb_noun pattern so the API is predictable and discoverable (e.g. type `search_` to see all retrieval options). No heavy dependencies; data stays in data frames.
+A lightweight toolkit for text retrieval and NLP with a consistent API: **Fetch, Read, Process, and Search.** Functions cover the full pipeline from web data to text processing and indexing. Multiple search strategies -- regex, BM25, cosine similarity, dictionary matching. Verb_noun naming; pipe-friendly; no heavy dependencies; outputs are plain data frames.
 
 ---
 
