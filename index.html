@@ -85,6 +85,8 @@
 <strong>LLM &amp; RAG developers</strong> — A no-nonsense middle layer: <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> for context windows, <code><a href="reference/search_index.html">search_index()</a></code> for keyword retrieval before prompts.</li>
 <li>
 <strong>Everyone</strong> — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a <code>|&gt;</code> pipeline.</li>
+<li>
+<strong>Stepwise transparency</strong> — textpress is designed for pedagogy, giving a clear, stepwise view of how raw web content becomes structured text. Standard data frames (no black-box objects) let students inspect every stage—from structural scraping and sentence splitting to token normalization and BM25 indexing.</li>
 </ul>
 <hr>
 </div>
@@ -180,24 +182,6 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section level3">
-<h3 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h3>
-<p>Build a searchable index from the web in six lines (requires network):</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 1. Fetch &amp; Read</span></span>
-<span><span class="va">links</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R high performance computing"</span>, n_pages <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">links</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 2. Process</span></span>
-<span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"url"</span><span class="op">)</span></span>
-<span><span class="va">index</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/nlp_index_tokens.html">nlp_index_tokens</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 3. Search (BM25 ranked)</span></span>
-<span><span class="fu"><a href="reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>, <span class="st">"parallel distributed"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Wikipedia:</strong> <code>fetch_wiki_urls("topic")</code> → <code>read_urls(urls, exclude_wiki_refs = TRUE)</code>. For citation URLs from an article’s References section: <code>fetch_wiki_refs(wiki_url, n = 10)</code> → <code>read_urls(refs$ref_url)</code>.</p>
 <hr>
 </div>
@@ -263,7 +247,7 @@
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <p>If you use this package in your research, please cite:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
