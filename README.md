@@ -1,4 +1,4 @@
-![](https://www.r-pkg.org/badges/version/textpress)(https://cran.r-project.org/package=textpress)
+![](https://www.r-pkg.org/badges/version/textpress)
 
 # textpress
 
