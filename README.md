@@ -1,4 +1,5 @@
-![](https://www.r-pkg.org/badges/version/textpress)
+[![](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
+[![](http://cranlogs.r-pkg.org/badges/last-month/textpress)](https://cran.r-project.org/package=textpress)
 
 # textpress
 
