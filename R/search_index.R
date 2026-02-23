@@ -1,10 +1,13 @@
-#' Search the BM25 Index
+#' Search the BM25 index
 #'
-#' @param index A data.table created by nlp_index_tokens.
-#' @param query A character string.
-#' @param n Number of results to return.
-#' @param stem Logical; must match the setting used during indexing.
-#' @return A data.table of results ranked by score.
+#' BM25 ranked retrieval. Search the index produced by \code{\link{nlp_index_tokens}}
+#' with a keyword query.
+#'
+#' @param index Object created by \code{\link{nlp_index_tokens}}.
+#' @param query Character string (keywords).
+#' @param n Number of results to return (default 10).
+#' @param stem Logical; must match the setting used during indexing (default \code{FALSE}).
+#' @return Data.table of results ranked by score.
 #' @export
 search_index <- function(index, query, n = 10, stem = FALSE) {
 

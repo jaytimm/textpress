@@ -2,23 +2,22 @@
 % Please edit documentation in R/search_vector.R
 \name{search_vector}
 \alias{search_vector}
-\title{Vector search by cosine similarity}
+\title{Semantic search by cosine similarity}
 \usage{
 search_vector(embeddings, query, n = 10)
 }
 \arguments{
-\item{embeddings}{A numeric or sparse matrix of embeddings (rows = searchable units).}
+\item{embeddings}{Numeric matrix of embeddings; rows are searchable units (row names used as identifiers).}
 
-\item{query}{A character (row name in \code{embeddings}), a numeric vector (single query),
-or a numeric matrix (multiple queries).}
+\item{query}{Row name in \code{embeddings}, a numeric vector (single query), or a numeric matrix (multiple queries).}
 
 \item{n}{Number of results to return per query (default 10).}
 }
 \value{
-A data frame (or list of data frames if multiple queries are provided)
-  containing the match identifiers and similarity scores.
+Data frame (or list of data frames for multiple queries) with match identifiers and similarity scores.
 }
 \description{
-Returns the top-\code{n} matches from an embedding matrix for one or more query vectors.
-Subject-first: \code{embeddings} (haystack) then \code{query} (needle), pipe-friendly.
+Semantic search by cosine similarity. Returns top-\code{n} matches from an
+embedding matrix for one or more query vectors. Subject-first: \code{embeddings}
+(haystack) then \code{query} (needle). Pipe-friendly.
 }

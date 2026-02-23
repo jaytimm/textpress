@@ -2,7 +2,7 @@
 % Please edit documentation in R/nlp_tokenize_text.R
 \name{nlp_tokenize_text}
 \alias{nlp_tokenize_text}
-\title{Tokenize Text Data (mostly) Non-Destructively}
+\title{Tokenize text into a clean token stream}
 \usage{
 nlp_tokenize_text(
   corpus,
@@ -12,21 +12,21 @@ nlp_tokenize_text(
 )
 }
 \arguments{
-\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{by}{A character vector of column names used as unique identifiers.
-The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-the search returns matches at the paragraph level).}
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id", "paragraph_id", "sentence_id")}. The last column is the finest granularity.}
 
-\item{include_spans}{Logical. Include start/end character spans for each token.}
+\item{include_spans}{Logical. Include start/end character spans for each token (default \code{TRUE}).}
 
 \item{method}{Character. \code{"word"} or \code{"biber"}.}
 }
 \value{
-A named list of tokens (or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}).
+Named list of tokens; or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}.
 }
 \description{
-Tokenizes text from a corpus data frame, preserving structure like capitalization and punctuation.
+Normalize text into a clean token stream. Tokenizes corpus text, preserving
+structure (capitalization, punctuation). The last column in \code{by} determines
+the tokenization unit.
 }
 \examples{
 corpus <- data.frame(doc_id = c('1', '1', '2'),

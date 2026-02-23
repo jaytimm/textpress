@@ -12,12 +12,12 @@ fetch_wiki_urls(query, limit = 10)
 \item{limit}{Number of page URLs to return (default 10).}
 }
 \value{
-A character vector of full Wikipedia article URLs.
+Character vector of full Wikipedia article URLs.
 }
 \description{
-Uses the MediaWiki API to get Wikipedia article URLs matching a keyword.
-Does not search your local corpus; it retrieves links from Wikipedia.
-Use \code{\link{read_urls}} to get article content from these URLs.
+Wikipedia. Uses the MediaWiki API to get Wikipedia article URLs matching a
+search phrase. Does not search your local corpus. Use \code{\link{read_urls}}
+to get article content from these URLs.
 }
 \examples{
 \dontrun{

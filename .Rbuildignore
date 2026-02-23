@@ -1,3 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
+^Help for package textpress
+^vignette\.Rmd$
+^Package textpress Contents\.txt$
+^doc$
+^doc/

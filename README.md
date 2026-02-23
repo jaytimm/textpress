@@ -3,7 +3,9 @@
 
 # textpress
 
-A lightweight toolkit for text retrieval and NLP with a consistent API: **Fetch, Read, Process, and Search.** Functions cover the full pipeline from web data to text processing and indexing. Multiple search strategies -- regex, BM25, cosine similarity, dictionary matching. Verb_noun naming; pipe-friendly; no heavy dependencies; outputs are plain data frames.
+**Ol' timey NLP meets modern R** — web search, Wikipedia, scraping, chunking, KWIC, BM25, and semantic search. A lightweight toolkit with a consistent API: **Fetch, Read, Process, and Search.** Simple, unobtrusive, data-frame-friendly; no new classes, no bloat.
+
+For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.
 
 ---
 
@@ -25,19 +27,21 @@ remotes::install_github("jaytimm/textpress")
 
 ## The textpress API map
 
+**Conventions:** Corpus is a data frame with a `text` column plus identifier column(s) in `by` (default `doc_id`; use e.g. `c("url", "node_id")` after `read_urls()`). Outputs are plain data frames or data.tables; pipe-friendly.
+
 ### 1. Data acquisition (`fetch_*`)
 
-These functions talk to the outside world to find **locations** of information. They return URLs or metadata, not full text.
+These functions find **locations** of information (URLs or metadata), not full text. Use `read_urls()` to get content.
 
-- **`fetch_urls()`** — Web (general). Search engines for a list of relevant links.
-- **`fetch_wiki_urls()`** — Wikipedia. Find specific page titles/URLs.
-- **`fetch_wiki_refs()`** — Wikipedia. Extract the external "References" URLs from a page.
+- **`fetch_urls()`** — Web (general). Search engine for a list of relevant links.
+- **`fetch_wiki_urls()`** — Wikipedia. Article URLs matching a search phrase.
+- **`fetch_wiki_refs(url, n)`** — Wikipedia. External citation URLs from an article’s References section; returns a data.table with `source_url` and `ref_url`.
 
 ### 2. Ingestion (`read_*`)
 
-Once you have locations, bring the data into R.
+Bring data into R from URLs.
 
-- **`read_urls()`** — Input: character vector of URLs. Output: data frame of cleaned text/markdown.
+- **`read_urls()`** — Character vector of URLs → data frame (one row per node: headings, paragraphs, lists). For Wikipedia, use `exclude_wiki_refs = TRUE` to drop References / See also / Bibliography / Sources sections.
 
 ### 3. Processing (`nlp_*`)
 
@@ -51,50 +55,61 @@ Prepare raw text for analysis or indexing. Designed to be used with the pipe `|>
 
 ### 4. Retrieval (`search_*`)
 
-Four ways to query your data. Subject-first: first argument is the data (corpus, index, or embeddings); the second is the query/needle. Pipe-friendly.
+Four ways to query your data. Subject-first: data (corpus, index, or embeddings) then query. Pipe-friendly.
 
 | Function | Primary input (needle) | Use case |
 |----------|------------------------|----------|
 | **search_regex(corpus, query, ...)** | Character (pattern) | Specific strings/patterns, KWIC. |
-| **search_dict(corpus, terms, ...)** | Character (vector of terms) | Exact phrases/MWEs; no partial-match risk. |
+| **search_dict(corpus, terms, ...)** | Character (vector of terms) | Exact phrases/MWEs; no partial-match risk. N-gram range is set from word counts in `terms`. Built-in dicts: `dict_generations`, `dict_political`. |
 | **search_index(index, query, ...)** | Character (keywords) | BM25 ranked retrieval. |
-| **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors. |
+| **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors (use `util_fetch_embeddings()` for embeddings). |
 
-**Quick start** (all four stages):
+**Quick start** — runnable in a few seconds, no network:
 
 ```r
 library(textpress)
-links  <- fetch_urls("R high performance computing")
+
+# Minimal corpus (or use read_urls() after fetch_urls() / fetch_wiki_urls())
+corpus <- data.frame(
+  doc_id = c("1", "2"),
+  text   = c("R runs on parallel and distributed systems.", "Use future and OpenMP for speed.")
+)
+
+# Process: sentences or tokens
+sentences <- nlp_split_sentences(corpus, by = "doc_id")
+tokens    <- nlp_tokenize_text(corpus, by = "doc_id", include_spans = FALSE)
+index     <- nlp_index_tokens(tokens)
+
+# Search: regex, exact terms, or BM25
+search_regex(corpus, "parallel|future", by = "doc_id")
+search_dict(corpus, by = "doc_id", terms = c("OpenMP", "distributed"))
+search_index(index, "parallel")
+```
+
+**With web data** — fetch URLs, then read and search (requires network):
+
+```r
+links  <- fetch_urls("R high performance computing", n_pages = 1)
 corpus <- read_urls(links$url)
 corpus$doc_id <- seq_len(nrow(corpus))
-toks   <- nlp_tokenize_text(corpus, by = "doc_id", include_spans = FALSE)
-index  <- nlp_index_tokens(toks)
 search_regex(corpus, "parallel|future", by = "doc_id")
-search_dict(corpus, terms = c("OpenMP", "Socket"), by = "doc_id")
-search_index(index, "distributed computing")
-# search_vector(embeddings, query)  # use util_fetch_embeddings() for embeddings
 ```
+
+**Wikipedia:** `fetch_wiki_urls("topic")` → `read_urls(urls, exclude_wiki_refs = TRUE)`. For citation URLs from an article’s References section: `fetch_wiki_refs(wiki_url, n = 10)` → `read_urls(refs$ref_url)`.
 
 ---
 
-## Extension: Using textpress with LLMs & agents
+## Extension: LLMs & agents
 
-While textpress is a general-purpose text toolkit, its design fits LLM-based workflows (e.g. RAG) and autonomous agents.
+Design fits RAG and agentic workflows.
 
-**Lightweight RAG (retrieval-augmented generation)**  
-You can build a local-first RAG pipeline without a heavy vector DB:
+### RAG
 
-- **Precision retrieval** — Use `search_index()` (BM25) to pull relevant chunks by keyword; often more accurate for technical data than semantic search alone.
-- **Context window management** — Use `nlp_split_paragraphs()` and related functions so you send only relevant snippets to an LLM, cutting token cost and improving answers.
-- **Deterministic tagging** — Use `search_dict()` to extract known entities or IDs before calling an LLM, so the model does not hallucinate core facts.
+Local-first RAG without a heavy vector DB: `search_index()` (BM25) for keyword chunks; `nlp_split_paragraphs()` / `nlp_roll_chunks()` for context windows; `search_dict()` for deterministic entities before the LLM (reduces hallucination).
 
-**Tool-use for autonomous agents**  
-If you are building an agent (e.g. via \pkg{reticulate} or another R framework), textpress functions work well as **tools**: flat naming and predictable data-frame outputs make them easy for a model to call.
+### Agent tools
 
-- `fetch_urls()` — agent "Search" tool.
-- `read_urls()` — agent "Browse" tool.
-- `search_regex()` — agent "Find in page" tool.
-- `search_dict()` — agent "Entity extraction" tool (deterministic; reduces hallucination).
+Flat names and data-frame in/out make functions easy for a model to call: `fetch_urls()` (Search), `read_urls()` (Browse), `search_regex()` (Find in page), `search_dict()` (Entity extraction).
 
 ---
 

@@ -2,26 +2,28 @@
 % Please edit documentation in R/fetch_wiki.R
 \name{fetch_wiki_refs}
 \alias{fetch_wiki_refs}
-\title{Fetch external citation URLs from Wikipedia}
+\title{Fetch external citation URLs from Wikipedia article(s)}
 \usage{
-fetch_wiki_refs(query, n = 10)
+fetch_wiki_refs(url, n = NULL)
 }
 \arguments{
-\item{query}{Search phrase (e.g. "January 6 Capitol attack").}
+\item{url}{Character vector of full Wikipedia article URLs (e.g. from \code{\link{fetch_wiki_urls}}).}
 
-\item{n}{Number of citation URLs to return (default 10).}
+\item{n}{Maximum number of citation URLs to return per source page. Default \code{NULL} returns all; use a number (e.g. \code{10}) to limit.}
 }
 \value{
-A character vector of external citation URLs (prefers archived when present).
+For one URL, a \code{data.table} with columns \code{source_url}, \code{ref_id}, and \code{ref_url}. For multiple URLs, a named list of such data.tables (names are the Wikipedia article titles); elements are \code{NULL} for pages with no refs.
 }
 \description{
-Searches Wikipedia for a topic, then returns external citation URLs from
-the first matching page's references section. Use \code{\link{read_urls}}
-to scrape content from those URLs.
+Wikipedia. Extracts external citation URLs from the References section of one
+or more Wikipedia article URLs. Use \code{\link{read_urls}} to scrape content
+from those URLs.
 }
 \examples{
 \dontrun{
-ref_urls <- fetch_wiki_refs("January 6 Capitol attack", n = 10)
-articles <- read_urls(ref_urls)
+wiki_urls <- fetch_wiki_urls("January 6 Capitol attack")
+refs_dt <- fetch_wiki_refs(wiki_urls[1])           # single URL: data.table
+refs_list <- fetch_wiki_refs(wiki_urls[1:3])      # multiple: named list
+articles <- read_urls(refs_dt$ref_url)
 }
 }

@@ -35,50 +35,67 @@
 }
 
 
-#' Fetch external citation URLs from Wikipedia
+#' Fetch external citation URLs from Wikipedia article(s)
 #'
-#' Searches Wikipedia for a topic, then returns external citation URLs from
-#' the first matching page's references section. Use \code{\link{read_urls}}
-#' to scrape content from those URLs.
+#' Wikipedia. Extracts external citation URLs from the References section of one
+#' or more Wikipedia article URLs. Use \code{\link{read_urls}} to scrape content
+#' from those URLs.
 #'
-#' @param query Search phrase (e.g. "January 6 Capitol attack").
-#' @param n Number of citation URLs to return (default 10).
-#' @return A character vector of external citation URLs (prefers archived when present).
+#' @param url Character vector of full Wikipedia article URLs (e.g. from \code{\link{fetch_wiki_urls}}).
+#' @param n Maximum number of citation URLs to return per source page. Default \code{NULL} returns all; use a number (e.g. \code{10}) to limit.
+#' @return For one URL, a \code{data.table} with columns \code{source_url}, \code{ref_id}, and \code{ref_url}. For multiple URLs, a named list of such data.tables (names are the Wikipedia article titles); elements are \code{NULL} for pages with no refs.
 #' @export
 #' @examples
 #' \dontrun{
-#' ref_urls <- fetch_wiki_refs("January 6 Capitol attack", n = 10)
-#' articles <- read_urls(ref_urls)
+#' wiki_urls <- fetch_wiki_urls("January 6 Capitol attack")
+#' refs_dt <- fetch_wiki_refs(wiki_urls[1])           # single URL: data.table
+#' refs_list <- fetch_wiki_refs(wiki_urls[1:3])      # multiple: named list
+#' articles <- read_urls(refs_dt$ref_url)
 #' }
-fetch_wiki_refs <- function(query, n = 10) {
-  pages <- fetch_wiki_urls(query, limit = 10)
-
-  if (length(pages) == 0) {
-    warning("No Wikipedia pages found for query: ", query)
-    return(character())
+fetch_wiki_refs <- function(url, n = NULL) {
+  url <- unique(url)
+  if (!length(url)) {
+    return(data.table::data.table(source_url = character(), ref_id = character(), ref_url = character()))
   }
 
-  refs <- .extract_wiki_references(pages[1])
+  take_all <- is.null(n) || is.infinite(n)
 
-  if (nrow(refs) == 0) {
-    warning("No external citations found in Wikipedia page: ", pages[1])
-    return(character())
+  out <- lapply(url, function(u) {
+    refs <- .extract_wiki_references(u)
+    if (nrow(refs) == 0) {
+      return(NULL)
+    }
+    if (!take_all) refs <- refs[seq_len(min(n, nrow(refs)))]
+    refs[, source_url := u]
+    refs[, ref_url := citation][, citation := NULL]
+    refs
+  })
+  names(out) <- gsub("_", " ", sub("[#?].*$", "", sub("^.*/wiki/", "", url)))
+
+  if (length(url) == 1L) {
+    if (is.null(out[[1L]])) {
+      warning("No external citations found in Wikipedia page: ", url)
+      return(data.table::data.table(source_url = character(), ref_id = character(), ref_url = character()))
+    }
+    return(out[[1L]])
   }
 
-  urls <- refs$citation
-  head(urls, n)
+  if (all(vapply(out, is.null, logical(1L)))) {
+    warning("No external citations found in any of the given Wikipedia page(s).")
+  }
+  out
 }
 
 
 #' Fetch Wikipedia page URLs by search query
 #'
-#' Uses the MediaWiki API to get Wikipedia article URLs matching a keyword.
-#' Does not search your local corpus; it retrieves links from Wikipedia.
-#' Use \code{\link{read_urls}} to get article content from these URLs.
+#' Wikipedia. Uses the MediaWiki API to get Wikipedia article URLs matching a
+#' search phrase. Does not search your local corpus. Use \code{\link{read_urls}}
+#' to get article content from these URLs.
 #'
 #' @param query Search phrase (e.g. "117th Congress").
 #' @param limit Number of page URLs to return (default 10).
-#' @return A character vector of full Wikipedia article URLs.
+#' @return Character vector of full Wikipedia article URLs.
 #' @export
 #' @examples
 #' \dontrun{

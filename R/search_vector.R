@@ -1,14 +1,13 @@
-#' Vector search by cosine similarity
+#' Semantic search by cosine similarity
 #'
-#' Returns the top-\code{n} matches from an embedding matrix for one or more query vectors.
-#' Subject-first: \code{embeddings} (haystack) then \code{query} (needle), pipe-friendly.
+#' Semantic search by cosine similarity. Returns top-\code{n} matches from an
+#' embedding matrix for one or more query vectors. Subject-first: \code{embeddings}
+#' (haystack) then \code{query} (needle). Pipe-friendly.
 #'
-#' @param embeddings A numeric or sparse matrix of embeddings (rows = searchable units).
-#' @param query A character (row name in \code{embeddings}), a numeric vector (single query),
-#'   or a numeric matrix (multiple queries).
+#' @param embeddings Numeric matrix of embeddings; rows are searchable units (row names used as identifiers).
+#' @param query Row name in \code{embeddings}, a numeric vector (single query), or a numeric matrix (multiple queries).
 #' @param n Number of results to return per query (default 10).
-#' @return A data frame (or list of data frames if multiple queries are provided)
-#'   containing the match identifiers and similarity scores.
+#' @return Data frame (or list of data frames for multiple queries) with match identifiers and similarity scores.
 #' @export
 search_vector <- function(embeddings, query, n = 10) {
 

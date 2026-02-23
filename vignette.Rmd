@@ -1,0 +1,78 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-02-23"
+---
+
+```{r}
+library(dplyr)
+```
+
+
+```{r}
+query <- 'American Generations'
+wiki_urls <- textpress::fetch_wiki_urls(query)
+wiki_urls
+```
+
+
+```{r}
+# ugs <- "worldcat\\.org|x\\.com|doi\\.org|pubmed\\.ncbi\\.nlm\\.nih\\.gov"
+
+# grepl("\\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|mp4|mp3|zip|txt|xml|doi)$",
+      
+      
+full <- textpress::fetch_wiki_refs(wiki_urls[1:5]) |>
+  data.table::rbindlist()
+```
+
+
+```{r}
+web_urls <- textpress::fetch_urls(query, n_pages = 4)
+```
+
+
+
+
+```{r}
+wiki_text <- wiki_urls[1:4] |> textpress::read_urls()
+```
+
+
+
+```{r}
+wiki_refs_text <- ''
+```
+
+
+
+```{r}
+web_text <- web_urls |>  
+  filter(path_depth > 0) |> 
+  pull(url) |> 
+  textpress::read_urls()
+```
+
+```{r}
+web_ss <- web_text |> 
+  # mutate(doc_id = paste0(h1_title, '.', 
+  #                        parent_heading, '.', node_id)) |>
+  textpress::nlp_split_sentences(by = c('url', 'node_id'))
+```
+
+
+nlp_
+
+```{r}
+wiki_ss <- wiki_text |> 
+  mutate(doc_id = paste0(h1_title, '.', 
+                         parent_heading, '.', node_id)) |>
+  textpress::nlp_split_sentences()
+```
+
+
+A familial generation is a group of living beings constituting a single step in the line of descent from an ancestor.[6] 
+ 
+In developed nations the average familial generation length is in the high 20s and has even reached 30 years in some nations.[7] 
+
+Factors such as greater industrialisation and demand for cheap labour, urbanisation, delayed first pregnancy and a greater uncertainty in both employment income and relationship stability have all contributed to the increase of the generation length from the late 18th century to the present.

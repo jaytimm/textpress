@@ -1,10 +1,13 @@
-#' Fetch embeddings (Hugging Face utility)
+#' Fetch embeddings from a Hugging Face inference endpoint
 #'
-#' @param corpus A data frame or data.table with a \code{text} column.
-#' @param by Character vector of column names that identify each text unit.
-#' @param api_token Your Hugging Face API token.
-#' @param api_url The inference endpoint URL.
-#' @return A numeric matrix with row names derived from \code{by}.
+#' Builds a numeric matrix of embeddings for each text unit in the corpus (row names
+#' from \code{by}). Use the result with \code{\link{search_vector}} for semantic search.
+#'
+#' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
+#' @param by Character vector of identifier columns that define each text unit; used for row names of the returned matrix.
+#' @param api_token Hugging Face API token.
+#' @param api_url Inference endpoint URL (default BAAI/bge-small-en-v1.5).
+#' @return Numeric matrix with row names derived from \code{by}.
 #' @export
 util_fetch_embeddings <- function(corpus,
                                   by,

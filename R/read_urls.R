@@ -1,21 +1,21 @@
 #' Read content from URLs
 #'
-#' Fetches each URL and returns a structured data frame (one row per node:
-#' headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}: bring
-#' an external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
-#' in the pipeline: fetch = get locations, read = get text.
+#' Input: character vector of URLs. Output: structured data frame (one row per
+#' node: headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}:
+#' bring an external resource into R. Follows \code{\link{fetch_urls}} or
+#' \code{\link{fetch_wiki_urls}} in the pipeline—fetch gets locations, read gets
+#' text. Wikipedia uses high-fidelity selectors; use \code{parent_heading} to see
+#' which section each node belongs to. External links and empty text rows are
+#' omitted; optionally exclude References/See also/Bibliography/Sources sections for
+#' wiki URLs.
 #'
-#' Wikipedia is handled with high-fidelity selectors: \code{div.mw-parser-output}
-#' and \code{h2}/\code{h3}/\code{h4} hierarchy. Use \code{parent_heading} to see
-#' which section each node belongs to. The \dQuote{External links} section and
-#' rows with empty \code{text} are omitted.
-#'
-#' @param x A character vector of URLs.
+#' @param x Character vector of URLs.
 #' @param cores Number of cores for parallel requests (default 1).
 #' @param detect_boilerplate Logical. Detect boilerplate (e.g. sign-up, related links).
 #' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.
+#' @param exclude_wiki_refs Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.
 #'
-#' @return A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
+#' @return Data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
 #' @export
 #' @examples
 #' \dontrun{
@@ -25,14 +25,15 @@
 read_urls <- function(x,
                      cores = 1,
                      detect_boilerplate = TRUE,
-                     remove_boilerplate = TRUE) {
+                     remove_boilerplate = TRUE,
+                     exclude_wiki_refs = TRUE) {
   mm1 <- data.frame(url = x)
   batches <- split(mm1$url, ceiling(seq_along(mm1$url) / 20))
 
   if (cores == 1) {
     results <- lapply(
       X = batches,
-      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate)
+      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate, exclude_wiki_refs = exclude_wiki_refs)
     )
   } else {
     clust <- parallel::makeCluster(cores)
@@ -43,7 +44,7 @@ read_urls <- function(x,
     )
     results <- pbapply::pblapply(
       X = batches,
-      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate),
+      FUN = function(batch) .article_extract(batch, detect_boilerplate = detect_boilerplate, remove_boilerplate = remove_boilerplate, exclude_wiki_refs = exclude_wiki_refs),
       cl = clust
     )
     parallel::stopCluster(clust)
@@ -59,12 +60,15 @@ read_urls <- function(x,
 #'
 #' @param x Character vector of URLs.
 #' @param detect_boilerplate,remove_boilerplate Logical. See \code{\link{read_urls}}.
+#' @param exclude_wiki_refs Logical. See \code{\link{read_urls}}.
 #' @return A data.table with article content (one row per node; \code{parent_heading} for section).
 #' @importFrom stats na.omit
 #' @noRd
 .article_extract <- function(x,
                              detect_boilerplate = TRUE,
-                             remove_boilerplate = TRUE) {
+                             remove_boilerplate = TRUE,
+                             exclude_wiki_refs = TRUE) {
+  wiki_ref_headings <- c("References", "See also", "Bibliography", "Sources")
   articles <- lapply(x, function(q) {
     raw_site <- .get_site(q)
     is_wiki <- grepl("wikipedia\\.org", q, ignore.case = TRUE)
@@ -81,6 +85,9 @@ read_urls <- function(x,
 
     if (is_wiki) {
       clean_site <- clean_site[!(parent_heading == "External links" | (type %in% c("h2", "h3", "h4") & text == "External links"))]
+      if (exclude_wiki_refs) {
+        clean_site <- clean_site[is.na(parent_heading) | !(parent_heading %in% wiki_ref_headings)]
+      }
     }
     clean_site <- clean_site[nzchar(stringr::str_trim(text))]
     clean_site[, node_id := seq_len(.N), by = .(url)]

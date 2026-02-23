@@ -1,14 +1,20 @@
-#' Search corpus via regex
+#' Search corpus by regex
 #'
-#' @param corpus A data frame or data.table with a \code{text} column.
-#' @param query The search pattern (regex).
-#' @param by Character vector of identifier columns.
-#' @param highlight Length-two character vector (default \code{c('<b>', '</b>')}).
+#' Search corpus by regex. Specific strings/patterns; good for KWIC-style results.
+#' Returns matches with optional highlighting.
+#'
+#' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
+#' @param query Search pattern (regex).
+#' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.
+#' @param highlight Length-two character vector for wrapping matches (default \code{c("<b>", "</b>")}).
+#' @return Data.table with \code{id}, \code{by} columns, \code{text}, \code{start}, \code{end}, \code{pattern}.
 #' @export
 search_regex <- function(corpus,
                          query,
-                         by,
+                         by = c("doc_id"),
                          highlight = c("<b>", "</b>")) {
+
+  if (!all(by %in% names(corpus))) stop("Missing 'by' columns.", call. = FALSE)
 
   # 1. Setup Data & Clean Existing Coordinates
   # We copy to avoid modifying the user's object by reference.

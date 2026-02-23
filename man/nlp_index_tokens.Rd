@@ -2,19 +2,23 @@
 % Please edit documentation in R/nlp_index_tokens.R
 \name{nlp_index_tokens}
 \alias{nlp_index_tokens}
-\title{Create a BM25 Search Index}
+\title{Build a BM25 index for ranked keyword search}
 \usage{
 nlp_index_tokens(tokens, k1 = 1.2, b = 0.75, stem = FALSE)
 }
 \arguments{
-\item{tokens}{A named list of character vectors.}
+\item{tokens}{Named list of character vectors (e.g. from \code{\link{nlp_tokenize_text}}).}
 
-\item{k1}{BM25 saturation parameter.}
+\item{k1}{BM25 saturation parameter (default 1.2).}
 
-\item{b}{BM25 length normalization.}
+\item{b}{BM25 length normalization (default 0.75).}
 
-\item{stem}{Logical; if TRUE, stems tokens.}
+\item{stem}{Logical. If \code{TRUE}, stem tokens (default \code{FALSE}).}
+}
+\value{
+Object (e.g. data.table) suitable for \code{\link{search_index}}.
 }
 \description{
-Create a BM25 Search Index
+Build a weighted BM25 index for ranked keyword search. Creates a searchable
+index from a named list of token vectors.
 }

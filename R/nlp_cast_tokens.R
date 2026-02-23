@@ -1,9 +1,10 @@
-#' Convert Token List to Data Frame
+#' Convert token list to data frame
 #'
-#' This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
+#' Convert the token list returned by \code{\link{nlp_tokenize_text}} into a data
+#' frame (long format), with identifiers and optional spans.
 #'
-#' @param tok A list where each element contains tokens corresponding to a document or a sentence.
-#' @return A data frame with columns for token name and token.
+#' @param tok List with at least a \code{tokens} element (and optionally \code{spans}), e.g. output of \code{nlp_tokenize_text(..., include_spans = TRUE)}.
+#' @return Data frame with columns for unit id, token, and optionally start/end spans.
 #' @export
 #' @examples
 #' tok <- list(

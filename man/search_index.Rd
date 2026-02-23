@@ -2,22 +2,23 @@
 % Please edit documentation in R/search_index.R
 \name{search_index}
 \alias{search_index}
-\title{Search the BM25 Index}
+\title{Search the BM25 index}
 \usage{
 search_index(index, query, n = 10, stem = FALSE)
 }
 \arguments{
-\item{index}{A data.table created by nlp_index_tokens.}
+\item{index}{Object created by \code{\link{nlp_index_tokens}}.}
 
-\item{query}{A character string.}
+\item{query}{Character string (keywords).}
 
-\item{n}{Number of results to return.}
+\item{n}{Number of results to return (default 10).}
 
-\item{stem}{Logical; must match the setting used during indexing.}
+\item{stem}{Logical; must match the setting used during indexing (default \code{FALSE}).}
 }
 \value{
-A data.table of results ranked by score.
+Data.table of results ranked by score.
 }
 \description{
-Search the BM25 Index
+BM25 ranked retrieval. Search the index produced by \code{\link{nlp_index_tokens}}
+with a keyword query.
 }

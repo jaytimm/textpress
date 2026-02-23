@@ -2,7 +2,7 @@
 % Please edit documentation in R/nlp_split_sentences.R
 \name{nlp_split_sentences}
 \alias{nlp_split_sentences}
-\title{Split Text into Sentences}
+\title{Split text into sentences}
 \usage{
 nlp_split_sentences(
   corpus,
@@ -11,24 +11,16 @@ nlp_split_sentences(
 )
 }
 \arguments{
-\item{corpus}{A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{by}{A character vector of column names used as unique identifiers.
-The last column determines the search unit (e.g., if \code{by = c("doc_id", "para_id")},
-the search returns matches at the paragraph level).}
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.}
 
-\item{abbreviations}{A character vector of abbreviations to handle during sentence splitting, defaults to textpress::abbreviations.}
+\item{abbreviations}{Character vector of abbreviations to protect (default \code{textpress::abbreviations}).}
 }
 \value{
-A data.table with columns from \code{by}, plus \code{sentence_id}, \code{text}, \code{start}, \code{end}.
+Data.table with \code{by} columns, \code{sentence_id}, \code{text}, \code{start}, \code{end}.
 }
 \description{
-This function splits text from a data frame into individual sentences based on specified columns and handles abbreviations effectively.
-}
-\examples{
-corpus <- data.frame(doc_id = c('1'),
-                    text = c("Hello world. This is an example. No, this is a party!"))
-sentences <- nlp_split_sentences(corpus)
-
-
+Refine blocks into individual sentences. Splits text into sentences with
+accurate start/end offsets; handles abbreviations (Wikipedia and web optimized).
 }

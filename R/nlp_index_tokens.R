@@ -1,9 +1,13 @@
-#' Create a BM25 Search Index
+#' Build a BM25 index for ranked keyword search
 #'
-#' @param tokens A named list of character vectors.
-#' @param k1 BM25 saturation parameter.
-#' @param b BM25 length normalization.
-#' @param stem Logical; if TRUE, stems tokens.
+#' Build a weighted BM25 index for ranked keyword search. Creates a searchable
+#' index from a named list of token vectors.
+#'
+#' @param tokens Named list of character vectors (e.g. from \code{\link{nlp_tokenize_text}}).
+#' @param k1 BM25 saturation parameter (default 1.2).
+#' @param b BM25 length normalization (default 0.75).
+#' @param stem Logical. If \code{TRUE}, stem tokens (default \code{FALSE}).
+#' @return Object (e.g. data.table) suitable for \code{\link{search_index}}.
 #' @export
 nlp_index_tokens <- function(tokens, k1 = 1.2, b = 0.75, stem = FALSE) {
 

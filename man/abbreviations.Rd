@@ -3,7 +3,7 @@
 \docType{data}
 \name{abbreviations}
 \alias{abbreviations}
-\title{Common Abbreviations for Linguistic Processing}
+\title{Common abbreviations for NLP}
 \format{
 A named list with the following components:
 \describe{
@@ -17,6 +17,7 @@ Internally compiled linguistic resource.
 abbreviations
 }
 \description{
-A named list containing common abbreviations used in text analysis.
+Common abbreviations for NLP (e.g. sentence splitting). Named list; used by
+\code{\link{nlp_split_sentences}}.
 }
 \keyword{datasets}

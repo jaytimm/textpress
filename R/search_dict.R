@@ -1,28 +1,29 @@
-#' Exact n-gram matcher (vector of terms)
+#' Exact phrase / MWE matcher
 #'
-#' Find a long list of multi-word expressions (MWEs) or terms without regex
-#' overhead or partial-match risks. Tokenize corpus, build n-grams, then exact
-#' join against \code{terms}. Word boundaries are respected by design. For
-#' categories (e.g. term = "R Project", category = "Software"), left_join your
-#' metadata onto the result using \code{ngram} or \code{term} as key.
+#' Exact phrase or multi-word expression (MWE) matcher; no partial-match risk.
+#' Tokenizes corpus, builds n-grams, and exact-joins against \code{terms}. Word
+#' boundaries respected. N-gram range is set from the min and max word count of
+#' \code{terms}. Good for deterministic entity extraction (e.g. before an LLM call).
 #'
-#' @param corpus The text data (data frame or data.table with \code{text} and \code{by} columns).
-#' @param by Identifier columns (e.g. \code{c("doc_id", "sentence_id")}).
-#' @param terms A character vector of terms/variants to find (e.g. \code{c("United States", "R Project")}).
-#' @param n_min Integer. Minimum n-gram size (default 1).
-#' @param n_max Integer. Maximum n-gram size (default 5).
-#' @return A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term} (the matched term from \code{terms}).
+#' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
+#' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.
+#' @param terms Character vector of terms or phrases to match exactly. N-gram range derived from word counts of \code{terms}.
+#' @return Data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term}.
 #' @export
 #' @examples
 #' corpus <- data.frame(doc_id = "1", text = "Gen Z and Millennials use social media.")
 #' search_dict(corpus, by = "doc_id", terms = c("Gen Z", "Millennials", "social media"))
 search_dict <- function(corpus,
                        by = c("doc_id"),
-                       terms,
-                       n_min = 1,
-                       n_max = 5) {
+                       terms) {
 
+  if (!length(terms)) {
+    return(data.table::data.table(id = character(), start = numeric(), end = numeric(), n = integer(), ngram = character(), term = character()))
+  }
   dict_dt <- data.table::data.table(variant_lc = tolower(terms))
+  word_counts <- vapply(strsplit(trimws(terms), "\\s+"), function(x) length(x[nzchar(x)]), integer(1))
+  n_min <- max(1L, min(word_counts, na.rm = TRUE))
+  n_max <- max(1L, max(word_counts, na.rm = TRUE))
 
   toks_df_ss <- textpress::nlp_cast_tokens(
     textpress::nlp_tokenize_text(corpus, by = by, include_spans = TRUE)

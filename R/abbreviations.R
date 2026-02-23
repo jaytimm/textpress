@@ -1,6 +1,7 @@
-#' Common Abbreviations for Linguistic Processing
+#' Common abbreviations for NLP
 #'
-#' A named list containing common abbreviations used in text analysis.
+#' Common abbreviations for NLP (e.g. sentence splitting). Named list; used by
+#' \code{\link{nlp_split_sentences}}.
 #'
 #' @format A named list with the following components:
 #' \describe{

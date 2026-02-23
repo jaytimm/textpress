@@ -2,19 +2,23 @@
 % Please edit documentation in R/search_regex.R
 \name{search_regex}
 \alias{search_regex}
-\title{Search corpus via regex}
+\title{Search corpus by regex}
 \usage{
-search_regex(corpus, query, by, highlight = c("<b>", "</b>"))
+search_regex(corpus, query, by = c("doc_id"), highlight = c("<b>", "</b>"))
 }
 \arguments{
-\item{corpus}{A data frame or data.table with a \code{text} column.}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{query}{The search pattern (regex).}
+\item{query}{Search pattern (regex).}
 
-\item{by}{Character vector of identifier columns.}
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.}
 
-\item{highlight}{Length-two character vector (default \code{c('<b>', '</b>')}).}
+\item{highlight}{Length-two character vector for wrapping matches (default \code{c("<b>", "</b>")}).}
+}
+\value{
+Data.table with \code{id}, \code{by} columns, \code{text}, \code{start}, \code{end}, \code{pattern}.
 }
 \description{
-Search corpus via regex
+Search corpus by regex. Specific strings/patterns; good for KWIC-style results.
+Returns matches with optional highlighting.
 }

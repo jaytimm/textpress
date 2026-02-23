@@ -9,16 +9,16 @@ fetch_urls(query, n_pages = 1, date_filter = "w")
 \arguments{
 \item{query}{Search query string.}
 
-\item{n_pages}{Number of DDG Lite pages to fetch (default 1). ~30 results per page.}
+\item{n_pages}{Number of search result pages to fetch (default 1). ~30 results per page.}
 
 \item{date_filter}{Recency filter: \code{"d"} (day), \code{"w"} (week), \code{"m"} (month), or \code{"none"} (default \code{"w"}).}
 }
 \value{
-A \code{data.table} with columns \code{search_engine}, \code{url}, \code{is_excluded}.
+A \code{data.table} with columns \code{search_engine}, \code{url}, \code{is_excluded}, and optionally \code{path_depth}.
 }
 \description{
-Queries DuckDuckGo Lite and returns result URLs (no local text search).
-Use \code{\link{read_urls}} to get content from these URLs.
+Web (general). Queries a search engine and returns result URLs. Use
+\code{\link{read_urls}} to get content from these URLs.
 }
 \examples{
 \dontrun{

@@ -2,28 +2,28 @@
 % Please edit documentation in R/nlp_split_paragraphs.R
 \name{nlp_split_paragraphs}
 \alias{nlp_split_paragraphs}
-\title{Split Text into Paragraphs}
+\title{Split text into paragraphs}
 \usage{
-nlp_split_paragraphs(corpus, paragraph_delim = "\\\\n+")
+nlp_split_paragraphs(corpus, by = c("doc_id"), paragraph_delim = "\\\\n+")
 }
 \arguments{
-\item{corpus}{A data frame or data.table containing a \code{text} column and identifier column(s) (e.g. \code{doc_id}).}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{paragraph_delim}{A regular expression pattern used to split text into paragraphs.}
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.}
+
+\item{paragraph_delim}{Regular expression used to split text into paragraphs (default \code{"\\\\n+"}).}
 }
 \value{
-A data.table with columns: `doc_id`, `paragraph_id`, and `text`.
-        Each row represents a paragraph, along with its associated document and paragraph identifiers.
+Data.table with the \code{by} columns, \code{paragraph_id}, and \code{text}. One row per paragraph.
 }
 \description{
-Splits text from the 'text' column of a data frame into individual paragraphs,
-based on a specified paragraph delimiter.
+Break documents into structural blocks (paragraphs). Splits text from the
+\code{text} column by a paragraph delimiter.
 }
 \examples{
 corpus <- data.frame(doc_id = c('1', '2'),
                      text = c("Hello world.\n\nMind your business!",
                               "This is an example.n\nThis is a party!"))
 paragraphs <- nlp_split_paragraphs(corpus)
-
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/util_fetch_embeddings.R
 \name{util_fetch_embeddings}
 \alias{util_fetch_embeddings}
-\title{Fetch embeddings (Hugging Face utility)}
+\title{Fetch embeddings from a Hugging Face inference endpoint}
 \usage{
 util_fetch_embeddings(
   corpus,
@@ -12,17 +12,18 @@ util_fetch_embeddings(
 )
 }
 \arguments{
-\item{corpus}{A data frame or data.table with a \code{text} column.}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{by}{Character vector of column names that identify each text unit.}
+\item{by}{Character vector of identifier columns that define each text unit; used for row names of the returned matrix.}
 
-\item{api_token}{Your Hugging Face API token.}
+\item{api_token}{Hugging Face API token.}
 
-\item{api_url}{The inference endpoint URL.}
+\item{api_url}{Inference endpoint URL (default BAAI/bge-small-en-v1.5).}
 }
 \value{
-A numeric matrix with row names derived from \code{by}.
+Numeric matrix with row names derived from \code{by}.
 }
 \description{
-Fetch embeddings (Hugging Face utility)
+Builds a numeric matrix of embeddings for each text unit in the corpus (row names
+from \code{by}). Use the result with \code{\link{search_vector}} for semantic search.
 }

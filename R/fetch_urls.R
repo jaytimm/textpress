@@ -3,13 +3,13 @@
 
 #' Fetch URLs from a search engine
 #'
-#' Queries DuckDuckGo Lite and returns result URLs (no local text search).
-#' Use \code{\link{read_urls}} to get content from these URLs.
+#' Web (general). Queries a search engine and returns result URLs. Use
+#' \code{\link{read_urls}} to get content from these URLs.
 #'
 #' @param query Search query string.
-#' @param n_pages Number of DDG Lite pages to fetch (default 1). ~30 results per page.
+#' @param n_pages Number of search result pages to fetch (default 1). ~30 results per page.
 #' @param date_filter Recency filter: \code{"d"} (day), \code{"w"} (week), \code{"m"} (month), or \code{"none"} (default \code{"w"}).
-#' @return A \code{data.table} with columns \code{search_engine}, \code{url}, \code{is_excluded}.
+#' @return A \code{data.table} with columns \code{search_engine}, \code{url}, \code{is_excluded}, and optionally \code{path_depth}.
 #' @importFrom httr GET POST timeout
 #' @importFrom stringr str_detect
 #' @export
@@ -139,11 +139,9 @@ fetch_urls <- function(query, n_pages = 1, date_filter = "w") {
     return(.empty_dt())
   }
 
-  data.table::data.table(
-    search_engine = paste0("duckduckgo_page", page),
-    url           = links,
-    is_excluded   = FALSE
-  )
+  path_depth <- vapply(strsplit(sub("^[^/]*//[^/]+", "", sub("#.*$", "", sub("\\?.*$", "", links))), "/", fixed = TRUE), FUN.VALUE = integer(1L), FUN = function(s) sum(nzchar(s)))
+
+  data.table::data.table(search_engine = paste0("duckduckgo_page", page), url = links, is_excluded = FALSE, path_depth = path_depth)
 }
 
 
@@ -165,21 +163,15 @@ fetch_urls <- function(query, n_pages = 1, date_filter = "w") {
   data.table::data.table(
     search_engine = character(),
     url           = character(),
-    is_excluded   = logical()
+    is_excluded   = logical(),
+    path_depth    = integer()
   )
 }
 
 
-#' Get the search URL(s) used by fetch_urls (for debugging or browser use)
-#'
-#' Page 2+ require POST; only page 1 is a direct browser URL.
-#'
-#' @param query Search query string.
-#' @param n_pages Number of pages (informational for page 2+).
-#' @param date_filter Recency filter: \code{"d"}, \code{"w"}, \code{"m"}, or \code{"none"} (default \code{"w"}).
-#' @return Named character vector of URLs.
-#' @export
-get_search_urls <- function(query, n_pages = 1, date_filter = "w") {
+#' Get the search URL(s) used by fetch_urls (for debugging or browser use).
+#' @noRd
+.get_search_urls <- function(query, n_pages = 1, date_filter = "w") {
   date_filter <- match.arg(date_filter, choices = c("w", "d", "m", "none"))
   df_param    <- if (date_filter == "none") "" else date_filter
 

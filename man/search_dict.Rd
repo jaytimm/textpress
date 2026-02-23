@@ -2,30 +2,25 @@
 % Please edit documentation in R/search_dict.R
 \name{search_dict}
 \alias{search_dict}
-\title{Exact n-gram matcher (vector of terms)}
+\title{Exact phrase / MWE matcher}
 \usage{
-search_dict(corpus, by = c("doc_id"), terms, n_min = 1, n_max = 5)
+search_dict(corpus, by = c("doc_id"), terms)
 }
 \arguments{
-\item{corpus}{The text data (data frame or data.table with \code{text} and \code{by} columns).}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
-\item{by}{Identifier columns (e.g. \code{c("doc_id", "sentence_id")}).}
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id")}.}
 
-\item{terms}{A character vector of terms/variants to find (e.g. \code{c("United States", "R Project")}).}
-
-\item{n_min}{Integer. Minimum n-gram size (default 1).}
-
-\item{n_max}{Integer. Maximum n-gram size (default 5).}
+\item{terms}{Character vector of terms or phrases to match exactly. N-gram range derived from word counts of \code{terms}.}
 }
 \value{
-A data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term} (the matched term from \code{terms}).
+Data.table with \code{id}, \code{start}, \code{end}, \code{n}, \code{ngram}, \code{term}.
 }
 \description{
-Find a long list of multi-word expressions (MWEs) or terms without regex
-overhead or partial-match risks. Tokenize corpus, build n-grams, then exact
-join against \code{terms}. Word boundaries are respected by design. For
-categories (e.g. term = "R Project", category = "Software"), left_join your
-metadata onto the result using \code{ngram} or \code{term} as key.
+Exact phrase or multi-word expression (MWE) matcher; no partial-match risk.
+Tokenizes corpus, builds n-grams, and exact-joins against \code{terms}. Word
+boundaries respected. N-gram range is set from the min and max word count of
+\code{terms}. Good for deterministic entity extraction (e.g. before an LLM call).
 }
 \examples{
 corpus <- data.frame(doc_id = "1", text = "Gen Z and Millennials use social media.")

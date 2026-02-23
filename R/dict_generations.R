@@ -19,12 +19,13 @@ dict_generations <- local({
       "Baby Boom Generation", "Post-War Generation",
       "Generation Jones", "Gen Jones", "Jones Generation", "Late Boomers",
       "Generation X", "Gen X", "Gen-X", "GenX",
+      "Gen Xers", "Gen X-ers", "Gen Xer", "Gen X-er",
       "Latchkey Generation", "Latchkey Kids", "MTV Generation",
       "Baby Busters", "Middle Child Generation",
       "Xennials", "X-ennials", "Oregon Trail Generation",
       "Millennials", "Millennial", "Millenials", "Millenial",
-      "Generation Y", "Gen Y", "Echo Boomers",
-      "Trophy Generation", "Boomerang Generation", "Peter Pan Generation",
+      "Generation Y", "Gen Y", "Gen Yers", "Gen Y-ers", "Gen Yer", "Gen Y-er",
+      "Echo Boomers", "Trophy Generation", "Boomerang Generation", "Peter Pan Generation",
       "Zillennials", "Zillenials", "Zillennial", "Cuspers",
       "Generation Z", "Gen Z", "Gen-Z", "GenZ", "Zoomers", "Zoomer",
       "iGeneration", "iGen", "Post-Millennials", "Homeland Generation",
@@ -33,8 +34,8 @@ dict_generations <- local({
     ),
     TermName = c(
       rep("Greatest", 6), rep("Silent", 4), rep("Boomers", 6),
-      rep("Generation Jones", 4), rep("Gen X", 9), rep("Xennials", 3),
-      rep("Millennial", 10), rep("Zillennials", 4), rep("Gen Z", 14),
+      rep("Generation Jones", 4), rep("Gen X", 13), rep("Xennials", 3),
+      rep("Millennial", 14), rep("Zillennials", 4), rep("Gen Z", 14),
       rep("Alpha", 4)
     ),
     stringsAsFactors = FALSE

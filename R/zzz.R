@@ -12,7 +12,10 @@ utils::globalVariables(c(
   "paragraph_offset",
   "variant_lc", "variant", "TermName", "ngram", "ngram_lc", "term",
   "match_type", "group", "n",
-  "stopwords_en", "idf", "dl", "..final_cols", "..by"
+  "stopwords_en", "idf", "dl", "..final_cols", "..by",
+  "source_url", "ref_url", "citation",
+  "text_processed", "raw_text", "..output_cols",
+  "sentence_raw"
 ))
 
 

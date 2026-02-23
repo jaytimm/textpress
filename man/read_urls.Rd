@@ -4,31 +4,37 @@
 \alias{read_urls}
 \title{Read content from URLs}
 \usage{
-read_urls(x, cores = 1, detect_boilerplate = TRUE, remove_boilerplate = TRUE)
+read_urls(
+  x,
+  cores = 1,
+  detect_boilerplate = TRUE,
+  remove_boilerplate = TRUE,
+  exclude_wiki_refs = TRUE
+)
 }
 \arguments{
-\item{x}{A character vector of URLs.}
+\item{x}{Character vector of URLs.}
 
 \item{cores}{Number of cores for parallel requests (default 1).}
 
 \item{detect_boilerplate}{Logical. Detect boilerplate (e.g. sign-up, related links).}
 
 \item{remove_boilerplate}{Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.}
+
+\item{exclude_wiki_refs}{Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.}
 }
 \value{
-A data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
+Data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
 }
 \description{
-Fetches each URL and returns a structured data frame (one row per node:
-headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}: bring
-an external resource into R. Follows \code{fetch_urls()} or \code{fetch_wiki_urls()}
-in the pipeline: fetch = get locations, read = get text.
-}
-\details{
-Wikipedia is handled with high-fidelity selectors: \code{div.mw-parser-output}
-and \code{h2}/\code{h3}/\code{h4} hierarchy. Use \code{parent_heading} to see
-which section each node belongs to. The \dQuote{External links} section and
-rows with empty \code{text} are omitted.
+Input: character vector of URLs. Output: structured data frame (one row per
+node: headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}:
+bring an external resource into R. Follows \code{\link{fetch_urls}} or
+\code{\link{fetch_wiki_urls}} in the pipeline—fetch gets locations, read gets
+text. Wikipedia uses high-fidelity selectors; use \code{parent_heading} to see
+which section each node belongs to. External links and empty text rows are
+omitted; optionally exclude References/See also/Bibliography/Sources sections for
+wiki URLs.
 }
 \examples{
 \dontrun{

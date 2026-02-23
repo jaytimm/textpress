@@ -1,15 +1,14 @@
 #' Roll units into fixed-size chunks with optional context
 #'
-#' Groups consecutive rows at the finest \code{by} level (e.g. sentences) into
-#' fixed-size chunks and optionally adds surrounding context. Like a rolling
-#' window over the leaf units.
+#' Roll units (e.g. sentences) into fixed-size chunks with optional context
+#' (RAG-style). Groups consecutive rows at the finest \code{by} level into chunks
+#' and optionally adds surrounding context.
 #'
-#' @param corpus A data frame or data.table containing a \code{text} column and the identifiers specified in \code{by}.
-#' @param by A character vector of column names used as unique identifiers.
-#'   The last column determines the search unit and is the level rolled into chunks (e.g., if \code{by = c("doc_id", "sentence_id")}, sentences are rolled into chunks).
+#' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
+#' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). The last column is the level rolled into chunks (e.g. sentences).
 #' @param chunk_size Integer. Number of units per chunk.
 #' @param context_size Integer. Number of units of context around each chunk.
-#' @return A data.table with \code{chunk_id}, \code{chunk} (concatenated text), and \code{chunk_plus_context}.
+#' @return Data.table with \code{chunk_id}, \code{chunk} (concatenated text), and \code{chunk_plus_context}.
 #' @export
 #' @examples
 #' corpus <- data.frame(doc_id = c('1', '1', '2'),
@@ -26,6 +25,7 @@ nlp_roll_chunks <- function(corpus,
                              context_size) {
 
   data.table::setDT(corpus)
+  if (!all(by %in% names(corpus))) stop("Missing 'by' columns.", call. = FALSE)
 
   chunk_level <- tail(by, 1)
   grouping_vars <- head(by, -1)

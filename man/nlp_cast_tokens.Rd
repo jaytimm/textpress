@@ -2,18 +2,19 @@
 % Please edit documentation in R/nlp_cast_tokens.R
 \name{nlp_cast_tokens}
 \alias{nlp_cast_tokens}
-\title{Convert Token List to Data Frame}
+\title{Convert token list to data frame}
 \usage{
 nlp_cast_tokens(tok)
 }
 \arguments{
-\item{tok}{A list where each element contains tokens corresponding to a document or a sentence.}
+\item{tok}{List with at least a \code{tokens} element (and optionally \code{spans}), e.g. output of \code{nlp_tokenize_text(..., include_spans = TRUE)}.}
 }
 \value{
-A data frame with columns for token name and token.
+Data frame with columns for unit id, token, and optionally start/end spans.
 }
 \description{
-This function converts a list of tokens into a data frame, extracting and separating document and sentence identifiers if needed.
+Convert the token list returned by \code{\link{nlp_tokenize_text}} into a data
+frame (long format), with identifiers and optional spans.
 }
 \examples{
 tok <- list(
