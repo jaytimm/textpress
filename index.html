@@ -187,49 +187,55 @@
 <div class="section level2">
 <h2 id="extension-llms--agents">Extension: LLMs &amp; Agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
 </h2>
-<p>textpress handles the heavy lifting of data acquisition and preparation for LLM pipelines.</p>
+<p>textpress handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean “toolset” that can be handed directly to an LLM or an automated agent.</p>
 <div class="section level3">
-<h3 id="rag--retrieval">RAG &amp; Retrieval<a class="anchor" aria-label="anchor" href="#rag--retrieval"></a>
+<h3 id="id_1-context-engineering-rag">1. Context Engineering (RAG)<a class="anchor" aria-label="anchor" href="#id_1-context-engineering-rag"></a>
 </h3>
+<p>Instead of dumping raw text into a prompt, use textpress to refine the intake.</p>
 <ul>
 <li>
-<strong>Context Windows</strong> — <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> creates the precise text snippets needed for prompts or embeddings.</li>
+<strong>Chunking</strong> — Use <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> to create overlapping context windows that fit within model token limits.</li>
 <li>
-<strong>Hybrid Search</strong> — Use <code><a href="reference/search_index.html">search_index()</a></code> (BM25) for fast keyword retrieval, or pipe results into a vector database for semantic search.</li>
+<strong>Hybrid Search</strong> — Combine <code><a href="reference/search_index.html">search_index()</a></code> (BM25) with semantic embeddings for a “best of both worlds” retrieval strategy.</li>
 <li>
-<strong>Fact Checking</strong> — <code><a href="reference/search_dict.html">search_dict()</a></code> provides a deterministic way to verify entities before they reach the model, reducing hallucinations.</li>
+<strong>Fact Checking</strong> — Run <code><a href="reference/search_dict.html">search_dict()</a></code> against a list of known entities to verify data before it reaches the model, cutting down on hallucinations.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="agentic-tooling">Agentic Tooling<a class="anchor" aria-label="anchor" href="#agentic-tooling"></a>
+<h3 id="id_2-the-agents-toolbelt">2. The Agent’s Toolbelt<a class="anchor" aria-label="anchor" href="#id_2-the-agents-toolbelt"></a>
 </h3>
-<p>The consistent API and data-frame outputs make these functions easy to map to an agent’s toolset:</p>
+<p>The consistent API and data-frame outputs make these functions easy to map to an agent’s tool-calling capabilities. An agent can “reach” for these tools to interact with the web:</p>
 <table class="table">
+<colgroup>
+<col width="24%">
+<col width="32%">
+<col width="42%">
+</colgroup>
 <thead><tr class="header">
-<th>Tool</th>
-<th>Function</th>
-<th>Result</th>
+<th>Capability</th>
+<th>textpress Tool</th>
+<th>Real-world Use Case</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>Search</td>
 <td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
-<td>Targeted URL list</td>
+<td>“Find the top 5 articles on R performance.”</td>
 </tr>
 <tr class="even">
 <td>Browse</td>
 <td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
-<td>Structured text nodes</td>
+<td>“Scrape the content of these specific pages.”</td>
 </tr>
 <tr class="odd">
-<td>Find</td>
+<td>Locate</td>
 <td><code><a href="reference/search_regex.html">search_regex()</a></code></td>
-<td>Precise matches/coordinates</td>
+<td>“Find every mention of a currency value in this text.”</td>
 </tr>
 <tr class="even">
 <td>Extract</td>
 <td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
-<td>Categorized entities</td>
+<td>“Identify all mentions of specific competitors.”</td>
 </tr>
 </tbody>
 </table>
