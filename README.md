@@ -14,8 +14,8 @@ In an era of heavy AI frameworks and complex vector databases, textpress takes a
 - **Corpus linguists** — KWIC and BM25 are first-class. Your data stays in data frames; no proprietary objects.
 - **Data journalists** — Speed from lead to data. Fetch URLs from search or Wikipedia, ingest into Tidyverse-ready formats.
 - **LLM & RAG developers** — A no-nonsense middle layer: `nlp_roll_chunks()` for context windows, `search_index()` for keyword retrieval before prompts.
+- **Students & teaching** — textpress also has value as a pedagogy tool: a clear, stepwise view of how raw web content becomes structured text. Standard data frames (no black-box objects) let students inspect every stage.
 - **Everyone** — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a `|>` pipeline.
-- **Stepwise transparency** — textpress is designed for pedagogy, giving a clear, stepwise view of how raw web content becomes structured text. Standard data frames (no black-box objects) let students inspect every stage—from structural scraping and sentence splitting to token normalization and BM25 indexing.
 
 ---
 
