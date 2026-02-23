@@ -9,13 +9,12 @@ For corpus linguists, text analysts, data journalists, and R users building LLM 
 
 ### Why textpress?
 
-In an era of heavy AI frameworks and complex vector databases, textpress takes a rugged, local-first approach. Get from a search query to a structured data frame without the overhead.
+textpress takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.
 
-- **Corpus linguists** — KWIC and BM25 are first-class. Your data stays in data frames; no proprietary objects.
-- **Data journalists** — Speed from lead to data. Fetch URLs from search or Wikipedia, ingest into Tidyverse-ready formats.
-- **LLM & RAG developers** — A no-nonsense middle layer: `nlp_roll_chunks()` for context windows, `search_index()` for keyword retrieval before prompts.
-- **Students & teaching** — textpress also has value as a pedagogy tool: a clear, stepwise view of how raw web content becomes structured text. Standard data frames (no black-box objects) let students inspect every stage.
-- **Everyone** — Zero bloat. A consistent four-step pattern (Fetch → Read → Process → Search) that fits in a `|>` pipeline.
+- **Corpus linguists** — Traditional tools like KWIC and BM25 are first-class citizens. No proprietary object classes; your data stays in the data frames you already know.
+- **Data journalists** — Speed from lead to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, Tidyverse-ready formats in seconds.
+- **LLM & RAG developers** — A transparent middle layer for context engineering—providing the tools to chunk, rank, and inject text into prompts without managing a heavy stack.
+- **Students & educators** — A bridge from theory to practice. By using an inspectable, stepwise flow, it makes the NLP pipeline visible—from raw web content to structured indices.
 
 ---
 
