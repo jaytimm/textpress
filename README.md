@@ -79,24 +79,26 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 
 ## Extension: LLMs & Agents
 
-textpress handles the heavy lifting of data acquisition and preparation for LLM pipelines.
+textpress handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean "toolset" that can be handed directly to an LLM or an automated agent.
 
-### RAG & Retrieval
+### 1. Context Engineering (RAG)
 
-- **Context Windows** — `nlp_roll_chunks()` creates the precise text snippets needed for prompts or embeddings.
-- **Hybrid Search** — Use `search_index()` (BM25) for fast keyword retrieval, or pipe results into a vector database for semantic search.
-- **Fact Checking** — `search_dict()` provides a deterministic way to verify entities before they reach the model, reducing hallucinations.
+Instead of dumping raw text into a prompt, use textpress to refine the intake.
 
-### Agentic Tooling
+- **Chunking** — Use `nlp_roll_chunks()` to create overlapping context windows that fit within model token limits.
+- **Hybrid Search** — Combine `search_index()` (BM25) with semantic embeddings for a "best of both worlds" retrieval strategy.
+- **Fact Checking** — Run `search_dict()` against a list of known entities to verify data before it reaches the model, cutting down on hallucinations.
 
-The consistent API and data-frame outputs make these functions easy to map to an agent's toolset:
+### 2. The Agent's Toolbelt
 
-| Tool | Function | Result |
-|------|----------|--------|
-| Search | `fetch_urls()` | Targeted URL list |
-| Browse | `read_urls()` | Structured text nodes |
-| Find | `search_regex()` | Precise matches/coordinates |
-| Extract | `search_dict()` | Categorized entities |
+The consistent API and data-frame outputs make these functions easy to map to an agent's tool-calling capabilities. An agent can "reach" for these tools to interact with the web:
+
+| Capability | textpress Tool | Real-world Use Case |
+|------------|----------------|---------------------|
+| Search | `fetch_urls()` | "Find the top 5 articles on R performance." |
+| Browse | `read_urls()` | "Scrape the content of these specific pages." |
+| Locate | `search_regex()` | "Find every mention of a currency value in this text." |
+| Extract | `search_dict()` | "Identify all mentions of specific competitors." |
 
 ---
 
