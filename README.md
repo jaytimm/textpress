@@ -3,7 +3,7 @@
 
 # textpress
 
-`textpress` is a lightweight, local-first R toolkit that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent **Fetch**, **Read**, **Process**, **Search** API. Whether you're a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.
+`textpress` is a lightweight, local-first **NLP toolkit for R** toolkit that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent **Fetch**, **Read**, **Process**, **Search** API. Whether you're a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.
 
 ---
 
