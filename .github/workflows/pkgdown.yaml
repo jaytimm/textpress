@@ -36,8 +36,12 @@ jobs:
           needs: website
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = TRUE, quiet = FALSE)
         shell: Rscript {0}
+
+      - name: List built articles
+        run: ls -la docs/articles/ 2>/dev/null || echo "No docs/articles folder"
+        shell: bash
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
