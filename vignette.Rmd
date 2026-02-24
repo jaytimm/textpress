@@ -4,7 +4,7 @@ output: html_document
 date: "2026-02-23"
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 ```
 
@@ -71,8 +71,14 @@ wiki_ss <- wiki_text |>
 ```
 
 
-A familial generation is a group of living beings constituting a single step in the line of descent from an ancestor.[6] 
- 
-In developed nations the average familial generation length is in the high 20s and has even reached 30 years in some nations.[7] 
 
-Factors such as greater industrialisation and demand for cheap labour, urbanisation, delayed first pregnancy and a greater uncertainty in both employment income and relationship stability have all contributed to the increase of the generation length from the late 18th century to the present.
+```{r}
+ggs <- wiki_ss |> textpress::search_dict(by = c('doc_id', 'sentence_id'), 
+                                         terms = textpress::dict_generations$variant)
+```
+
+
+
+
+
+

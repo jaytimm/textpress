@@ -1,0 +1,71 @@
+---
+title: "American Generations: from Wikipedia to search"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{American Generations: from Wikipedia to search}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette runs a full pipeline on the topic "American Generations": fetch Wikipedia and web URLs, read content, split into sentences, and run a dictionary search using the built-in `dict_generations` term list.
+
+## 1. Fetch Wikipedia and web URLs
+
+```{r, eval = FALSE}
+library(textpress)
+
+query <- "American Generations"
+
+# Wikipedia article URLs
+wiki_urls <- textpress::fetch_wiki_urls(query, limit = 10)
+wiki_urls
+
+# Citation URLs from articles' References sections
+refs_list <- textpress::fetch_wiki_refs(wiki_urls[1:5], n = 10)
+refs_dt   <- data.table::rbindlist(refs_list, fill = TRUE)
+refs_dt$ref_url
+
+# Web search results
+web_urls <- textpress::fetch_urls(query, n_pages = 2)
+```
+
+## 2. Read content
+
+```{r, eval = FALSE}
+# Wikipedia article text (exclude References / See also / etc.)
+wiki_text <- textpress::read_urls(wiki_urls[1:4], exclude_wiki_refs = TRUE)
+
+# Web pages (optional: filter by path_depth to favor article-like URLs)
+urls_to_read <- web_urls$url[web_urls$path_depth > 0]
+web_text     <- textpress::read_urls(urls_to_read)
+```
+
+## 3. Process: split into sentences
+
+```{r, eval = FALSE}
+# Wikipedia: use url + node_id as units (read_urls gives these columns)
+wiki_ss <- textpress::nlp_split_sentences(wiki_text, by = c("url", "node_id"))
+
+# Web: same idea
+web_ss <- textpress::nlp_split_sentences(web_text, by = c("url", "node_id"))
+```
+
+## 4. Search: dictionary match for generation terms
+
+```{r, eval = FALSE}
+# Match built-in generation terms (Greatest, Boomers, Gen X, Millennials, Gen Z, etc.)
+hits <- textpress::search_dict(
+  wiki_ss,
+  by    = c("url", "node_id", "sentence_id"),
+  terms = textpress::dict_generations$variant
+)
+hits
+```
+
+Built-in dictionaries:
+
+```{r}
+head(textpress::dict_generations[, c("variant", "TermName")], 12)
+```
+
+You can pass any character vector of terms to `search_dict()`; n-gram range is set automatically from the word counts in `terms`.

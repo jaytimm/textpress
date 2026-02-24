@@ -1,0 +1,34 @@
+---
+title: "Getting started with textpress"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with textpress}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette walks through the core pipeline: fetch URLs, read content, process with `textpress`, and search.
+
+## Fetch and read
+
+```{r, eval = FALSE}
+library(textpress)
+
+# Wikipedia articles
+wiki_urls <- textpress::fetch_wiki_urls("American Generations", limit = 5)
+corpus <- textpress::read_urls(wiki_urls[1:3], exclude_wiki_refs = TRUE)
+```
+
+## Process and search
+
+```{r, eval = FALSE}
+# Add doc_id and split into sentences
+corpus$doc_id <- seq_len(nrow(corpus))
+sentences <- textpress::nlp_split_sentences(corpus, by = c("url", "node_id"))
+
+# Dictionary match (e.g. generation terms)
+hits <- textpress::search_dict(sentences, by = c("doc_id", "sentence_id"),
+                               terms = textpress::dict_generations$variant)
+```
+
+See the [API map](https://jaytimm.github.io/textpress/) for the full Fetch, Read, Process, Search reference.

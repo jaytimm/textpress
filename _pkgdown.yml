@@ -1,0 +1,11 @@
+# pkgdown config for https://jaytimm.github.io/textpress/
+# See https://pkgdown.r-lib.org/reference/build_site.html
+
+url: https://jaytimm.github.io/textpress
+
+navbar:
+  structure:
+    left: [reference, articles, news, changelog]
+  components:
+    articles:
+      text: Articles
