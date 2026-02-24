@@ -70,24 +70,8 @@
 <div class="section level1">
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
-<p><strong>Ol’ timey NLP meets modern R</strong> — web search, Wikipedia, scraping, chunking, KWIC, BM25, and semantic search. A lightweight toolkit with a consistent API: <strong>Fetch, Read, Process, and Search.</strong> Simple, unobtrusive, data-frame-friendly; no new classes, no bloat.</p>
-<p>For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.</p>
-<div class="section level3">
-<h3 id="why-textpress">Why <code>textpress</code>?<a class="anchor" aria-label="anchor" href="#why-textpress"></a>
-</h3>
-<p><code>textpress</code> takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.</p>
-<ul>
-<li>
-<strong>Corpus linguists</strong> — Traditional tools like KWIC and BM25 are first-class citizens. No custom object classes; your data stays in the plain tables you already know.</li>
-<li>
-<strong>Data journalists</strong> — Speed from lede to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, standard data frames in seconds.</li>
-<li>
-<strong>LLM &amp; RAG developers</strong> — A transparent middle layer for context engineering—providing the tools to chunk, rank, and inject text into prompts without managing a heavy stack.</li>
-<li>
-<strong>Students &amp; educators</strong> — A bridge from theory to practice. By using an inspectable, stepwise flow, it makes the NLP pipeline visible—from raw web content to structured indices.</li>
-</ul>
+<p><code>textpress</code> is a lightweight, local-first R toolkit that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong> API. Whether you’re a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.</p>
 <hr>
-</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -191,14 +175,14 @@
 <div class="section level3">
 <h3 id="id_1-context-engineering-rag">1. Context Engineering (RAG)<a class="anchor" aria-label="anchor" href="#id_1-context-engineering-rag"></a>
 </h3>
-<p>Instead of dumping raw text into a prompt, use <code>textpress</code> to refine the intake.</p>
+<p>Instead of dumping raw text into a prompt, use <code>textpress</code> to refine the intake. The pipeline moves in a straight line: chunk the corpus, retrieve the best passages, inject only what’s relevant.</p>
 <ul>
 <li>
-<strong>Chunking</strong> — Use <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> to create overlapping context windows that fit within model token limits.</li>
+<strong>Chunking</strong> — <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> breaks documents into overlapping windows sized to fit model token limits, with enough surrounding context to keep each chunk coherent on its own.</li>
 <li>
-<strong>Hybrid Search</strong> — Combine <code><a href="reference/search_index.html">search_index()</a></code> (BM25) with semantic embeddings for a “best of both worlds” retrieval strategy.</li>
+<strong>Hybrid Search</strong> — <code><a href="reference/search_index.html">search_index()</a></code> (BM25) catches exact keyword matches; <code><a href="reference/search_vector.html">search_vector()</a></code> catches semantic ones. Used together, they surface passages that are both lexically and conceptually relevant to the query.</li>
 <li>
-<strong>Fact Checking</strong> — Run <code><a href="reference/search_dict.html">search_dict()</a></code> against a list of known entities to verify data before it reaches the model, cutting down on hallucinations.</li>
+<strong>Pre-filtering</strong> — <code><a href="reference/search_dict.html">search_dict()</a></code> narrows the chunk pool to only those containing relevant entities or terms before injection, keeping the context window focused and reducing noise.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -237,6 +221,11 @@
 <td>Extract</td>
 <td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
 <td>“Identify all mentions of specific competitors.”</td>
+</tr>
+<tr class="odd">
+<td>Dig deeper</td>
+<td><code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code></td>
+<td>“Follow the citations from this Wikipedia article.”</td>
 </tr>
 </tbody>
 </table>
