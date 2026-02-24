@@ -3,18 +3,7 @@
 
 # textpress
 
-**Ol' timey NLP meets modern R** — web search, Wikipedia, scraping, chunking, KWIC, BM25, and semantic search. A lightweight toolkit with a consistent API: **Fetch, Read, Process, and Search.** Simple, unobtrusive, data-frame-friendly; no new classes, no bloat.
-
-For corpus linguists, text analysts, data journalists, and R users building LLM pipelines — or anyone dipping a toe into NLP.
-
-### Why `textpress`?
-
-`textpress` takes a rugged, local-first approach to NLP. It is built to move from a search query to a structured data frame without the overhead.
-
-- **Corpus linguists** — Traditional tools like KWIC and BM25 are first-class citizens. No custom object classes; your data stays in the plain tables you already know.
-- **Data journalists** — Speed from lede to data. Fetch URLs from search engines or Wikipedia and ingest them into clean, standard data frames in seconds.
-- **LLM & RAG developers** — A transparent middle layer for context engineering—providing the tools to chunk, rank, and inject text into prompts without managing a heavy stack.
-- **Students & educators** — A bridge from theory to practice. By using an inspectable, stepwise flow, it makes the NLP pipeline visible—from raw web content to structured indices.
+`textpress` is a lightweight, local-first R toolkit that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent **Fetch**, **Read**, **Process**, **Search** API. Whether you're a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.
 
 ---
 
@@ -83,11 +72,11 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 
 ### 1. Context Engineering (RAG)
 
-Instead of dumping raw text into a prompt, use `textpress` to refine the intake.
+Instead of dumping raw text into a prompt, use `textpress` to refine the intake. The pipeline moves in a straight line: chunk the corpus, retrieve the best passages, inject only what's relevant.
 
-- **Chunking** — Use `nlp_roll_chunks()` to create overlapping context windows that fit within model token limits.
-- **Hybrid Search** — Combine `search_index()` (BM25) with semantic embeddings for a "best of both worlds" retrieval strategy.
-- **Fact Checking** — Run `search_dict()` against a list of known entities to verify data before it reaches the model, cutting down on hallucinations.
+- **Chunking** — `nlp_roll_chunks()` breaks documents into overlapping windows sized to fit model token limits, with enough surrounding context to keep each chunk coherent on its own.
+- **Hybrid Search** — `search_index()` (BM25) catches exact keyword matches; `search_vector()` catches semantic ones. Used together, they surface passages that are both lexically and conceptually relevant to the query.
+- **Pre-filtering** — `search_dict()` narrows the chunk pool to only those containing relevant entities or terms before injection, keeping the context window focused and reducing noise.
 
 ### 2. The Agent's Toolbelt
 
@@ -99,6 +88,7 @@ The consistent API and data-frame outputs make these functions easy to map to an
 | Browse | `read_urls()` | "Scrape the content of these specific pages." |
 | Locate | `search_regex()` | "Find every mention of a currency value in this text." |
 | Extract | `search_dict()` | "Identify all mentions of specific competitors." |
+| Dig deeper | `fetch_wiki_refs()` | "Follow the citations from this Wikipedia article." |
 
 ---
 
