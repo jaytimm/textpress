@@ -192,66 +192,44 @@
 <div class="section level2">
 <h2 id="extension-llms--agents">Extension: LLMs &amp; Agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
 </h2>
-<p><code>textpress</code> handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean “toolset” that can be handed directly to an LLM or an automated agent.</p>
-<div class="section level3">
-<h3 id="id_1-context-engineering-rag">1. Context Engineering (RAG)<a class="anchor" aria-label="anchor" href="#id_1-context-engineering-rag"></a>
-</h3>
-<p>Instead of dumping raw text into a prompt, use <code>textpress</code> to refine the intake. The pipeline moves in a straight line: chunk the corpus, retrieve the best passages, inject only what’s relevant.</p>
-<ul>
-<li>
-<strong>Chunking</strong> — <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> breaks documents into overlapping windows sized to fit model token limits, with enough surrounding context to keep each chunk coherent on its own.</li>
-<li>
-<strong>Hybrid Search</strong> — <code><a href="reference/search_index.html">search_index()</a></code> (BM25) catches exact keyword matches; <code><a href="reference/search_vector.html">search_vector()</a></code> catches semantic ones. Used together, they surface passages that are both lexically and conceptually relevant to the query.</li>
-<li>
-<strong>Pre-filtering</strong> — <code><a href="reference/search_dict.html">search_dict()</a></code> narrows the chunk pool to only those containing relevant entities or terms before injection, keeping the context window focused and reducing noise.</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="id_2-the-agents-toolbelt">2. The Agent’s Toolbelt<a class="anchor" aria-label="anchor" href="#id_2-the-agents-toolbelt"></a>
-</h3>
-<p>The consistent API and data-frame outputs make these functions easy to map to an agent’s tool-calling capabilities. An agent can “reach” for these tools to interact with the web:</p>
+<p><code>textpress</code> is designed to function as a clean toolset for LLM pipelines and autonomous agents.</p>
+<p><strong>RAG</strong> — Chunk with <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code>, retrieve with <code><a href="reference/search_index.html">search_index()</a></code> + <code><a href="reference/search_vector.html">search_vector()</a></code> in combination, then pre-filter with <code><a href="reference/search_dict.html">search_dict()</a></code> to keep the context window focused.</p>
+<p><strong>Agents</strong> — The consistent API and plain data-frame outputs map naturally to tool-calling. A few example mappings:</p>
 <table class="table">
 <colgroup>
-<col width="24%">
-<col width="32%">
-<col width="42%">
+<col width="44%">
+<col width="22%">
+<col width="33%">
 </colgroup>
 <thead><tr class="header">
 <th>Capability</th>
-<th>
-<code>textpress</code> Tool</th>
-<th>Real-world Use Case</th>
+<th>Tool</th>
+<th>Example</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>Search</td>
 <td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
-<td>“Find the top 5 articles on R performance.”</td>
+<td>“Find recent articles on X”</td>
 </tr>
 <tr class="even">
 <td>Browse</td>
 <td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
-<td>“Scrape the content of these specific pages.”</td>
+<td>“Scrape these pages”</td>
 </tr>
 <tr class="odd">
-<td>Locate</td>
-<td><code><a href="reference/search_regex.html">search_regex()</a></code></td>
-<td>“Find every mention of a currency value in this text.”</td>
-</tr>
-<tr class="even">
 <td>Extract</td>
 <td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
-<td>“Identify all mentions of specific competitors.”</td>
+<td>“Find all mentions of these entities”</td>
 </tr>
-<tr class="odd">
-<td>Dig deeper</td>
+<tr class="even">
+<td>Follow citations</td>
 <td><code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code></td>
-<td>“Follow the citations from this Wikipedia article.”</td>
+<td>“Dig deeper into this Wikipedia article”</td>
 </tr>
 </tbody>
 </table>
 <hr>
-</div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
