@@ -1,13 +1,13 @@
 ---
-title: "Regex searches: web to highlighted results"
+title: "From web to KWIC: regex search on a live corpus"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Regex searches: web to highlighted results}
+  %\VignetteIndexEntry{From web to KWIC: regex search on a live corpus}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette runs **web search** (multiple queries) → **web text** → **web corpus** (`web_ss`), then runs **regex** patterns with `search_regex()` and outputs each search in a **DataTable** with a **different colored span** for the match.
+This vignette builds a web corpus around generational politics using `fetch_urls()` and `read_urls()`, processes the text into sentences with `nlp_split_sentences()`, and demonstrates a range of regex patterns with `search_regex()` — from age range constructions to voter turnout language to numeric change expressions.
 
 ## Search terms and web URLs
 
@@ -53,7 +53,7 @@ web_ss <- web_text |>
 ```{r patterns}
 patterns <- list(
   energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
-  age_range = "\\b(?:aged?|ages?|between|under\\s+age|over\\s+age)\\s+\\d{1,2}(?:\\s*(?:[-–]|to)\\s*\\d{1,2})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}\\s*(?:\\+|and\\s+(?:older|younger|over|under))\\b",
+age_range = "\\b(?:ages?|between|under\\s+age|over\\s+age|aged\\s+between)\\s+\\d{2,3}(?:\\s*(?:[-–]|to)\\s*\\d{2,3})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}(?=\\s*\\+|\\s+and\\s+(?:older|younger|over|under))\\b",
   from_to   = "\\bfrom\\s+\\d+\\s+to\\s+\\d+\\b"
 )
 ```
