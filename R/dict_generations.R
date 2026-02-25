@@ -14,7 +14,7 @@ dict_generations <- local({
     variant = c(
       "Greatest Generation", "GI Generation", "G.I. Generation",
       "WWII Generation", "World War II Generation", "Depression Era Generation",
-      "Silent Generation", "Radio Generation", "Forgotten Generation", "The Silent Generation",
+      "Silent Generation", "Radio Generation", "The Silent Generation",
       "Baby Boomers", "Baby-Boomers", "Boomers", "Boomer",
       "Baby Boom Generation", "Post-War Generation",
       "Generation Jones", "Gen Jones", "Jones Generation", "Late Boomers",
@@ -33,7 +33,7 @@ dict_generations <- local({
       "Generation Alpha", "Gen Alpha", "Generation A", "Gen A"
     ),
     TermName = c(
-      rep("Greatest", 6), rep("Silent", 4), rep("Boomers", 6),
+      rep("Greatest", 6), rep("Silent", 3), rep("Boomers", 6),
       rep("Generation Jones", 4), rep("Gen X", 13), rep("Xennials", 3),
       rep("Millennial", 14), rep("Zillennials", 4), rep("Gen Z", 14),
       rep("Alpha", 4)

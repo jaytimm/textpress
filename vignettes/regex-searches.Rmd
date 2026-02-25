@@ -1,0 +1,106 @@
+---
+title: "Regex searches: web to highlighted results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Regex searches: web to highlighted results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette runs **web search** (multiple queries) → **web text** → **web corpus** (`web_ss`), then runs **regex** patterns with `search_regex()` and outputs each search in a **DataTable** with a **different colored span** for the match.
+
+## Search terms and web URLs
+
+```{r search-terms}
+search_terms <- c(
+  "US Gen Z voters 2026",
+  "US Millennial political party 2026",
+  "US Gen X politics forgotten generation 2026",
+  "US Baby Boomer Republican Democrat 2026"
+)
+```
+
+```{r web-urls}
+library(textpress)
+library(dplyr)
+library(DT)
+
+web_urls <- lapply(search_terms, function(x)
+  textpress::fetch_urls(query = x, n_pages = 3, date_filter = 'm'))
+
+web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
+```
+
+## Web text and sentence split
+
+```{r web-text}
+web_text <- web_urls99 |>
+  filter(path_depth > 0) |>
+  pull(url) |>
+  textpress::read_urls() |>
+  mutate(doc_id = match(url, unique(url))) |>
+  relocate(doc_id, .before = 1)
+```
+
+```{r web-ss}
+web_ss <- web_text |>
+  textpress::nlp_split_sentences(by = c('doc_id', 'node_id'))
+```
+
+## Regex patterns
+
+```{r patterns}
+patterns <- list(
+  energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
+  age_range = "\\b(?:aged?|ages?|between)\\s+\\d{1,2}(?:\\s*(?:[-–]|to)\\s*\\d{1,2})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}\\s+and\\s+(?:older|younger|over|under)\\b",
+  from_to   = "\\bfrom\\s+\\d+\\s+to\\s+\\d+\\b"
+)
+```
+
+
+
+## Search results
+
+### energized 
+
+```{r out-energized}
+fs <- web_ss |> textpress::search_regex(
+  query = patterns$energized,
+  by = c('doc_id', 'node_id'),
+  highlight = c('<span style="background:#9fd7a6;">', '</span>')
+) |>
+  distinct(text, .keep_all = TRUE) |>
+  select(doc_id, node_id, pattern, text)
+
+if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
+```
+
+
+
+### age_range
+
+```{r out-age-range}
+fs <- web_ss |> textpress::search_regex(
+  query = patterns$age_range,
+  by = c('doc_id', 'node_id'),
+  highlight = c('<span style="background:#a6cbe1;">', '</span>')
+) |>
+  distinct(text, .keep_all = TRUE) |>
+  select(doc_id, node_id, pattern, text)
+
+if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
+```
+
+### from_to
+
+```{r out-from-to}
+fs <- web_ss |> textpress::search_regex(
+  query = patterns$from_to,
+  by = c('doc_id', 'node_id'),
+  highlight = c('<span style="background:#fdc4a8;">', '</span>')
+) |>
+  distinct(text, .keep_all = TRUE) |>
+  select(doc_id, node_id, pattern, text)
+
+if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
+```
