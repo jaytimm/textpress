@@ -20,7 +20,7 @@ search_terms <- c(
 )
 ```
 
-```{r web-urls}
+```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
 library(DT)
@@ -37,7 +37,8 @@ web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
 web_text <- web_urls99 |>
   filter(path_depth > 0) |>
   pull(url) |>
-  textpress::read_urls() |>
+  
+  textpress::read_urls(cores = 5) |>
   mutate(doc_id = match(url, unique(url))) |>
   relocate(doc_id, .before = 1)
 ```
@@ -52,7 +53,7 @@ web_ss <- web_text |>
 ```{r patterns}
 patterns <- list(
   energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
-  age_range = "\\b(?:aged?|ages?|between)\\s+\\d{1,2}(?:\\s*(?:[-–]|to)\\s*\\d{1,2})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}\\s+and\\s+(?:older|younger|over|under)\\b",
+  age_range = "\\b(?:aged?|ages?|between|under\\s+age|over\\s+age)\\s+\\d{1,2}(?:\\s*(?:[-–]|to)\\s*\\d{1,2})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}\\s*(?:\\+|and\\s+(?:older|younger|over|under))\\b",
   from_to   = "\\bfrom\\s+\\d+\\s+to\\s+\\d+\\b"
 )
 ```
@@ -61,7 +62,7 @@ patterns <- list(
 
 ## Search results
 
-### energized 
+### Search 1: `energized` 
 
 ```{r out-energized}
 fs <- web_ss |> textpress::search_regex(
@@ -77,7 +78,7 @@ if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape =
 
 
 
-### age_range
+### Search 2: `age_range`
 
 ```{r out-age-range}
 fs <- web_ss |> textpress::search_regex(
@@ -91,7 +92,9 @@ fs <- web_ss |> textpress::search_regex(
 if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
 ```
 
-### from_to
+
+
+### Search 3: `from_to`
 
 ```{r out-from-to}
 fs <- web_ss |> textpress::search_regex(
