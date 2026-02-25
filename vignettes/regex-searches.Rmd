@@ -53,7 +53,7 @@ web_ss <- web_text |>
 ```{r patterns}
 patterns <- list(
   energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
-age_range = "\\b(?:ages?|between|under\\s+age|over\\s+age|aged\\s+between)\\s+\\d{2,3}(?:\\s*(?:[-–]|to)\\s*\\d{2,3})?(?:\\s+and\\s+(?:older|younger|over|under))?\\b|\\b\\d{2,3}(?=\\s*\\+|\\s+and\\s+(?:older|younger|over|under))\\b",
+age_range = "\\b(?:aged?(?:\\s+between)?|ages?|under\\s+age|over\\s+age)\\s+\\d{2,3}(?:(?:\\s*(?:[-–]|to|and)\\s*\\d{2,3})|(?:\\s+and\\s+(?:older|younger|over|under)))\\b|\\b\\d{2,3}\\s*\\+\\b",
   from_to   = "\\bfrom\\s+\\d+\\s+to\\s+\\d+\\b"
 )
 ```
