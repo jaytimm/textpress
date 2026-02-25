@@ -68,27 +68,18 @@ Four ways to query your data. Subject-first: data (corpus, index, or embeddings)
 
 ## Extension: LLMs & Agents
 
-`textpress` handles the heavy lifting of data acquisition and preparation. It is designed to function as a clean "toolset" that can be handed directly to an LLM or an automated agent.
+`textpress` is designed to function as a clean toolset for LLM pipelines and autonomous agents.
 
-### 1. Context Engineering (RAG)
+**RAG** — Chunk with `nlp_roll_chunks()`, retrieve with `search_index()` + `search_vector()` in combination, then pre-filter with `search_dict()` to keep the context window focused.
 
-Instead of dumping raw text into a prompt, use `textpress` to refine the intake. The pipeline moves in a straight line: chunk the corpus, retrieve the best passages, inject only what's relevant.
+**Agents** — The consistent API and plain data-frame outputs map naturally to tool-calling. A few example mappings:
 
-- **Chunking** — `nlp_roll_chunks()` breaks documents into overlapping windows sized to fit model token limits, with enough surrounding context to keep each chunk coherent on its own.
-- **Hybrid Search** — `search_index()` (BM25) catches exact keyword matches; `search_vector()` catches semantic ones. Used together, they surface passages that are both lexically and conceptually relevant to the query.
-- **Pre-filtering** — `search_dict()` narrows the chunk pool to only those containing relevant entities or terms before injection, keeping the context window focused and reducing noise.
-
-### 2. The Agent's Toolbelt
-
-The consistent API and data-frame outputs make these functions easy to map to an agent's tool-calling capabilities. An agent can "reach" for these tools to interact with the web:
-
-| Capability | `textpress` Tool | Real-world Use Case |
-|------------|----------------|---------------------|
-| Search | `fetch_urls()` | "Find the top 5 articles on R performance." |
-| Browse | `read_urls()` | "Scrape the content of these specific pages." |
-| Locate | `search_regex()` | "Find every mention of a currency value in this text." |
-| Extract | `search_dict()` | "Identify all mentions of specific competitors." |
-| Dig deeper | `fetch_wiki_refs()` | "Follow the citations from this Wikipedia article." |
+| Capability | Tool | Example |
+|------------|------|---------|
+| Search | `fetch_urls()` | "Find recent articles on X" |
+| Browse | `read_urls()` | "Scrape these pages" |
+| Extract | `search_dict()` | "Find all mentions of these entities" |
+| Follow citations | `fetch_wiki_refs()` | "Dig deeper into this Wikipedia article" |
 
 ---
 
