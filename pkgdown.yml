@@ -4,7 +4,8 @@ pkgdown_sha: ~
 articles:
   american-generations: american-generations.html
   getting-started: getting-started.html
-last_built: 2026-02-24T19:05Z
+  regex-searches: regex-searches.html
+last_built: 2026-02-25T01:20Z
 urls:
   reference: https://jaytimm.github.io/textpress/reference
   article: https://jaytimm.github.io/textpress/articles
