@@ -32,6 +32,8 @@ Imports:
     lubridate
 Suggests:
     SnowballC (>= 0.7.0),
+    DT,
+    dplyr,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
