@@ -1,0 +1,115 @@
+---
+title: "Wikipedia to dictionary search: generations and co-occurrence"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Wikipedia to dictionary search: generations and co-occurrence}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette pulls Wikipedia articles and their reference URLs with `fetch_wiki_urls()` and `fetch_wiki_refs()`, reads article text with `read_urls()`, splits into sentences with `nlp_split_sentences()`, runs a dictionary search with `search_dict()` using `dict_generations`, then finds sentences where **Gen X** co-occurs with **political affiliation** language.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(textpress)
+```
+
+## Fetch Wikipedia URLs
+
+```{r}
+query <- 'American Generations'
+wiki_urls <- textpress::fetch_wiki_urls(query)
+wiki_urls
+```
+
+## Citation URLs (optional)
+
+```{r}
+# Optional: filter refs by domain or file type before reading, e.g.:
+# grepl("worldcat\\.org|x\\.com|doi\\.org|pubmed\\.ncbi", url)
+# grepl("\\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|mp4|mp3|zip|txt|xml|doi)$", url)
+
+full <- textpress::fetch_wiki_refs(wiki_urls[1:5]) |>
+  data.table::rbindlist()
+```
+
+## Read article text
+
+```{r}
+wiki_text <- wiki_urls[1:4] |> textpress::read_urls()
+```
+
+## Process: sentence split
+
+```{r}
+wiki_ss <- wiki_text |>
+  mutate(doc_id = paste0(h1_title, '.', parent_heading, '.', node_id)) |>
+  textpress::nlp_split_sentences(by = c('doc_id'))
+```
+
+## Dictionary search: generation terms
+
+```{r}
+ggs <- wiki_ss |> textpress::search_dict(
+  by = c('doc_id', 'sentence_id'),
+  terms = textpress::dict_generations$variant
+)
+ggs
+```
+
+## Dictionary search: political affiliation terms
+
+```{r}
+affil <- wiki_ss |> textpress::search_dict(
+  by = c('doc_id', 'sentence_id'),
+  terms = textpress::dict_political$variant
+)
+affil
+```
+
+## Normalize: join dicts back to get TermName
+
+`search_dict` returns matched `term` (variant); join to the dicts to get standardized `TermName` for counts and PMI.
+
+```{r}
+dict_gen <- textpress::dict_generations |> mutate(variant_lc = tolower(variant))
+dict_pol <- textpress::dict_political   |> mutate(variant_lc = tolower(variant))
+
+ggs <- ggs |> left_join(select(dict_gen, variant_lc, gen = TermName), by = c("term" = "variant_lc"))
+affil <- affil |> left_join(select(dict_pol, variant_lc, affil = TermName), by = c("term" = "variant_lc"))
+```
+
+## Stack both outputs
+
+```{r}
+stacked <- bind_rows(
+  ggs  |> distinct(id, gen)  |> rename(term = gen)  |> mutate(cat = "gen"),
+  affil |> distinct(id, affil) |> rename(term = affil) |> mutate(cat = "affil")
+)
+stacked |> arrange(id)
+```
+
+## Co-occurrence: counts and PMI (gen × affiliation)
+
+Sentences that appear in both tables; build (gen, affil) pairs per sentence, then count and PMI.
+
+```{r}
+ids_both <- intersect(ggs$id, affil$id)
+
+pairs <- ggs |> filter(id %in% ids_both) |> distinct(id, gen) |>
+  inner_join(affil |> filter(id %in% ids_both) |> distinct(id, affil), by = "id")
+
+n_total <- nrow(pairs)
+count_xy <- pairs |> count(gen, affil, name = "n_xy")
+count_x  <- pairs |> count(gen, name = "n_gen")
+count_y  <- pairs |> count(affil, name = "n_affil")
+
+cooccur <- count_xy |>
+  left_join(count_x, by = "gen") |>
+  left_join(count_y, by = "affil") |>
+  mutate(pmi = log(n_total * n_xy / (n_gen * n_affil))) |>
+  select(gen, affil, n_xy, n_gen, n_affil, pmi) |>
+  arrange(desc(n_xy))
+
+cooccur
+```

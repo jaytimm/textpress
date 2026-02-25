@@ -31,6 +31,8 @@ web_urls <- lapply(search_terms, function(x)
 web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
 ```
 
+
+
 ## Web text and sentence split
 
 ```{r web-text}
@@ -43,6 +45,44 @@ web_text <- web_urls99 |>
   relocate(doc_id, .before = 1)
 ```
 
+```{r}
+library(dplyr)
+library(DT)
+
+metas_dt <- web_text |>
+  group_by(doc_id) |>
+  summarise(
+    url      = first(url),
+    h1_title = first(h1_title),
+    date     = first(date),
+
+    word_count = sum(
+      stringr::str_count(text, stringr::boundary("word")),
+      na.rm = TRUE
+    ),
+
+    source = sub("^https?://([^/]+).*", "\\1", first(url)),
+
+    link = paste0(
+      '<a href="', first(url),
+      '" target="_blank" title="Open article">&#x2197;</a>'
+    ),
+
+    .groups = "drop"
+  ) |>
+  arrange(desc(date))
+
+DT::datatable(
+  metas_dt |>
+    select(doc_id, h1_title, source, date, word_count, link),
+  escape   = FALSE,
+  rownames = FALSE
+)
+```
+
+
+
+
 ```{r web-ss}
 web_ss <- web_text |>
   textpress::nlp_split_sentences(by = c('doc_id', 'node_id'))
@@ -53,7 +93,12 @@ web_ss <- web_text |>
 ```{r patterns}
 patterns <- list(
   energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
-age_range = "\\b(?:aged?(?:\\s+between)?|ages?|under\\s+age|over\\s+age)\\s+\\d{2,3}(?:(?:\\s*(?:[-–]|to|and)\\s*\\d{2,3})|(?:\\s+and\\s+(?:older|younger|over|under)))\\b|\\b\\d{2,3}\\s*\\+\\b",
+age_range = paste(
+  "\\b(?:aged?(?:\\s+between)?|ages?)\\s+\\d{2,3}(?:(?:\\s*(?:[-–]|to|and)\\s*\\d{2,3})|(?:\\s+and\\s+(?:older|younger|over|under)))\\b",
+  "\\bunder\\s+\\d{2}(?!\\d|,|%)\\b",
+  "\\b\\d{2,3}(?!\\d|,|%)\\s*(?:\\+|and\\s+(?:older|younger|over|under))\\b",
+  sep = "|"
+),
   from_to   = "\\bfrom\\s+\\d+\\s+to\\s+\\d+\\b"
 )
 ```
@@ -62,23 +107,7 @@ age_range = "\\b(?:aged?(?:\\s+between)?|ages?|under\\s+age|over\\s+age)\\s+\\d{
 
 ## Search results
 
-### Search 1: `energized` 
-
-```{r out-energized}
-fs <- web_ss |> textpress::search_regex(
-  query = patterns$energized,
-  by = c('doc_id', 'node_id'),
-  highlight = c('<span style="background:#9fd7a6;">', '</span>')
-) |>
-  distinct(text, .keep_all = TRUE) |>
-  select(doc_id, node_id, pattern, text)
-
-if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
-```
-
-
-
-### Search 2: `age_range`
+### Search ~ `age_range`
 
 ```{r out-age-range}
 fs <- web_ss |> textpress::search_regex(
@@ -94,7 +123,7 @@ if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape =
 
 
 
-### Search 3: `from_to`
+### Search ~ `from_to`
 
 ```{r out-from-to}
 fs <- web_ss |> textpress::search_regex(
