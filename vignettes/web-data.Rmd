@@ -1,13 +1,19 @@
 ---
-title: "Search terms and web URLs"
+title: "Web data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Search terms and web URLs}
+  %\VignetteIndexEntry{Web data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-## Search and web URLs
+This vignette builds a small web corpus from a single search: discover URLs with `fetch_urls()`, then read page content with `read_urls()`. A few lines give you a filterable table of articles with linked titles—no sentence splitting or extra processing.
+
+**Functions used:** `fetch_urls()` returns a data frame of search-result URLs and metadata (including `path_depth`). `read_urls()` takes a character vector of URLs and returns one row per text node (headings, paragraphs) with columns such as `url`, `h1_title`, `date`, and `text`. Using `path_depth` to keep only article-like URLs (see below) makes small corpus building straightforward.
+
+**`path_depth`:** The number of path segments in the URL (e.g. `example.com/a` has depth 1, `example.com/a/b/c` has depth 3). Search results often include index pages, category pages, or shallow links. Filtering with `path_depth > 0` (or a higher threshold) keeps deeper, article-style pages and drops many non-article hits.
+
+## Search and read
 
 ```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
@@ -21,30 +27,22 @@ web_urls <- textpress::fetch_urls(
 )
 ```
 
-## Web text and sentence split
-
 ```{r web-text}
 web_text <- web_urls |>
   filter(path_depth > 0) |>
   pull(url) |>
-  textpress::read_urls(cores = 1) |>
-  mutate(doc_id = match(url, unique(url))) |>
-  relocate(doc_id, .before = 1)
+  textpress::read_urls(cores = 1)
 ```
 
 ```{r}
 metas_dt <- web_text |>
-  group_by(doc_id) |>
+  group_by(url) |>
   summarise(
     url       = first(url),
     h1_title  = first(h1_title),
     date      = first(date),
-    word_count = sum(
-      stringr::str_count(text, stringr::boundary("word")),
-      na.rm = TRUE
-    ),
-    source = sub("^https?://([^/]+).*", "\\1", first(url)),
-    .groups = "drop"
+    source    = sub("^https?://([^/]+).*", "\\1", first(url)),
+    .groups   = "drop"
   ) |>
   filter(!is.na(h1_title) & nzchar(trimws(h1_title))) |>
   arrange(desc(date)) |>
@@ -55,9 +53,9 @@ metas_dt <- web_text |>
   )
 
 DT::datatable(
-  metas_dt |> select(doc_id, title_link, source, date, word_count),
+  metas_dt |> select(date, source, title_link),
   options = list(columnDefs = list(
-    list(targets = 1, orderable = FALSE)
+    list(targets = 2, orderable = FALSE)
   )),
   escape   = FALSE,
   rownames = FALSE
