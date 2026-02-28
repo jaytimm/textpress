@@ -1,0 +1,65 @@
+---
+title: "Search terms and web URLs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Search terms and web URLs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Search and web URLs
+
+```{r web-urls, message=FALSE, warning=FALSE}
+library(textpress)
+library(dplyr)
+library(DT)
+
+web_urls <- textpress::fetch_urls(
+  query       = "us polling on immigration",
+  n_pages     = 4,
+  date_filter = "m"
+)
+```
+
+## Web text and sentence split
+
+```{r web-text}
+web_text <- web_urls |>
+  filter(path_depth > 0) |>
+  pull(url) |>
+  textpress::read_urls(cores = 1) |>
+  mutate(doc_id = match(url, unique(url))) |>
+  relocate(doc_id, .before = 1)
+```
+
+```{r}
+metas_dt <- web_text |>
+  group_by(doc_id) |>
+  summarise(
+    url       = first(url),
+    h1_title  = first(h1_title),
+    date      = first(date),
+    word_count = sum(
+      stringr::str_count(text, stringr::boundary("word")),
+      na.rm = TRUE
+    ),
+    source = sub("^https?://([^/]+).*", "\\1", first(url)),
+    .groups = "drop"
+  ) |>
+  filter(!is.na(h1_title) & nzchar(trimws(h1_title))) |>
+  arrange(desc(date)) |>
+  mutate(
+    title_link = paste0(
+      '<a href="', url, '" target="_blank">', h1_title, '</a>'
+    )
+  )
+
+DT::datatable(
+  metas_dt |> select(doc_id, title_link, source, date, word_count),
+  options = list(columnDefs = list(
+    list(targets = 1, orderable = FALSE)
+  )),
+  escape   = FALSE,
+  rownames = FALSE
+)
+```

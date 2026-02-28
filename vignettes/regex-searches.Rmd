@@ -20,6 +20,7 @@ search_terms <- c(
 )
 ```
 
+
 ```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
@@ -45,48 +46,13 @@ web_text <- web_urls99 |>
   relocate(doc_id, .before = 1)
 ```
 
-```{r}
-library(dplyr)
-library(DT)
-
-metas_dt <- web_text |>
-  group_by(doc_id) |>
-  summarise(
-    url      = first(url),
-    h1_title = first(h1_title),
-    date     = first(date),
-
-    word_count = sum(
-      stringr::str_count(text, stringr::boundary("word")),
-      na.rm = TRUE
-    ),
-
-    source = sub("^https?://([^/]+).*", "\\1", first(url)),
-
-    link = paste0(
-      '<a href="', first(url),
-      '" target="_blank" title="Open article">&#x2197;</a>'
-    ),
-
-    .groups = "drop"
-  ) |>
-  arrange(desc(date))
-
-DT::datatable(
-  metas_dt |>
-    select(doc_id, h1_title, source, date, word_count, link),
-  escape   = FALSE,
-  rownames = FALSE
-)
-```
-
-
-
 
 ```{r web-ss}
 web_ss <- web_text |>
   textpress::nlp_split_sentences(by = c('doc_id', 'node_id'))
 ```
+
+
 
 ## Regex patterns
 
