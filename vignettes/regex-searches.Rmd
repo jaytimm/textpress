@@ -37,10 +37,12 @@ web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
 ## Web text and sentence split
 
 ```{r web-text}
-web_text <- web_urls99 |>
+web_text_meta <- web_urls99 |>
   filter(path_depth > 0) |>
   pull(url) |>
-  textpress::read_urls(cores = 1) |>
+  textpress::read_urls(cores = 4) 
+
+web_text <- web_text_meta$text |>
   mutate(doc_id = match(url, unique(url))) |>
   relocate(doc_id, .before = 1)
 ```
