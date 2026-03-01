@@ -1,0 +1,54 @@
+---
+title: "Wikipedia data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Wikipedia data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette is about **Wikipedia data**: using Wikipedia’s own structure to expand your search. We use the **January 6 Capitol attack** (J6) as the running example -- start with that topic, get article URLs, follow References to collect cited URLs, then read content into R. The fetch functions return URLs or metadata, not full text; use `read_urls()` to get content.
+
+## Expand via Wikipedia
+
+**Start from a topic.** `fetch_wiki_urls(query, limit)` returns Wikipedia article URLs matching a search phrase. Use that as your seed set.
+
+```{r fetch-wiki-urls, eval = FALSE}
+library(textpress)
+
+wiki_urls <- textpress::fetch_wiki_urls("January 6 Capitol attack", limit = 5)
+wiki_urls
+```
+
+**Follow References.** Articles cite external sources; those URLs are often high-value (primary sources, reports, news). `fetch_wiki_refs(url, n)` returns a `data.table` with `source_url` (the Wikipedia page) and `ref_url` (the cited link). Pass one URL for one table, or multiple URLs for a named list of tables. Use `n` to cap refs per page.
+
+```{r fetch-wiki-refs, eval = FALSE}
+refs_list <- textpress::fetch_wiki_refs(wiki_urls[1:3], n = 15) |>
+  bind_rows()
+
+refs_list |> 
+  slice(1:10) |> 
+  select(-source_url) |> 
+  DT::datatable(rownames = F)
+```
+
+So: **wiki article URLs** + **URLs from their References sections** = an expanded URL list. You can then read both the articles and the cited pages.
+
+## Ingest with read_urls()
+
+Character vector of URLs → data frame (one row per node: headings, paragraphs, lists). Use `read_urls()` on any of the URLs you collected above.
+
+**Wikipedia has special status in `read_urls()`.** When the URL is a Wikipedia page, the function uses Wikipedia’s main-content selector (`div.mw-parser-output`) and preserves section structure via `parent_heading`. Boilerplate detection is off for Wikipedia. **`exclude_wiki_refs = TRUE`** (default) drops nodes under References, See also, Bibliography, and Sources so you get article body only; set to `FALSE` to include those sections.
+
+```{r read-urls, eval = FALSE}
+# Article body only (no References / See also); wiki_read$text, wiki_read$meta
+wiki_read <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
+
+wiki_read$text |> slice(1:10) |> DT::datatable(rownames = F)
+```
+
+
+
+
+
+Summary: use **fetch_wiki_urls()** and **fetch_wiki_refs()** to follow Wikipedia’s links and build a URL list; **read_urls()** returns `list(text = node-level corpus, meta = one row per URL)`.

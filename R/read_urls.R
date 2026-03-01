@@ -15,12 +15,14 @@
 #' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.
 #' @param exclude_wiki_refs Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.
 #'
-#' @return Data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
+#' @return A list with \code{text} (node-level data: \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{url}, \code{h1_title}, \code{date}, \code{source}).
 #' @export
 #' @examples
 #' \dontrun{
 #' urls <- fetch_urls("R programming", n_pages = 1)$url
-#' nodes <- read_urls(urls[1:3], cores = 1)
+#' out <- read_urls(urls[1:3], cores = 1)
+#' nodes <- out$text
+#' meta <- out$meta
 #' }
 read_urls <- function(x,
                      cores = 1,
@@ -50,7 +52,31 @@ read_urls <- function(x,
     parallel::stopCluster(clust)
   }
 
-  data.table::rbindlist(results)
+  full <- data.table::rbindlist(results)
+
+  # meta: one row per url (url, h1_title, date, source)
+  meta <- full[, .(h1_title = h1_title[1L]), by = url]
+  if ("date" %in% names(full)) {
+    meta[, date := full[, .(date = date[1L]), by = url]$date]
+  } else {
+    meta[, date := NA_character_]
+  }
+  url_for_source <- meta$url
+  arch <- grepl("^https?://web\\.archive\\.org/web/\\d{14}(?:id_)?/", url_for_source, ignore.case = TRUE)
+  if (any(arch)) {
+    url_for_source[arch] <- sub("^https?://web\\.archive\\.org/web/\\d{14}(?:id_)?/(.+)$", "\\1", url_for_source[arch], ignore.case = TRUE)
+  }
+  meta[, source := sub("^https?://([^/]+).*", "\\1", url_for_source)]
+  data.table::setcolorder(meta, c("url", "h1_title", "date", "source"))
+
+  # text: node-level only (drop h1_title, date), ordered by date descending
+  drop_cols <- c("h1_title", "date")
+  text_cols <- setdiff(names(full), drop_cols)
+  text <- full[, .SD, .SDcols = text_cols]
+  meta_by_date <- meta[order(-as.Date(meta$date, optional = TRUE))]
+  text <- text[order(match(url, meta_by_date$url))]
+
+  list(text = text, meta = meta)
 }
 
 

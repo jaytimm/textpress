@@ -33,11 +33,11 @@ web_urls <- textpress::fetch_urls(query, n_pages = 2)
 
 ```{r, eval = FALSE}
 # Wikipedia article text (exclude References / See also / etc.)
-wiki_text <- textpress::read_urls(wiki_urls[1:4], exclude_wiki_refs = TRUE)
+wiki_text <- textpress::read_urls(wiki_urls[1:4], exclude_wiki_refs = TRUE)$text
 
 # Web pages (optional: filter by path_depth to favor article-like URLs)
 urls_to_read <- web_urls$url[web_urls$path_depth > 0]
-web_text     <- textpress::read_urls(urls_to_read)
+web_text     <- textpress::read_urls(urls_to_read)$text
 ```
 
 ## 3. Process: split into sentences

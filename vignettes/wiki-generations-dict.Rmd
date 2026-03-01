@@ -36,15 +36,15 @@ full <- textpress::fetch_wiki_refs(wiki_urls[1:5]) |>
 ## Read article text
 
 ```{r}
-wiki_text <- wiki_urls[1:4] |> textpress::read_urls()
+out <- wiki_urls[1:4] |> textpress::read_urls()
+wiki_text <- out$text
 ```
 
 ## Process: sentence split
 
 ```{r}
 wiki_ss <- wiki_text |>
-  mutate(doc_id = paste0(h1_title, '.', parent_heading, '.', node_id)) |>
-  textpress::nlp_split_sentences(by = c('doc_id'))
+  textpress::nlp_split_sentences(by = c("url", "node_id"))
 ```
 
 ## Dictionary search: generation terms

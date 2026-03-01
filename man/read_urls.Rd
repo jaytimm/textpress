@@ -24,7 +24,7 @@ read_urls(
 \item{exclude_wiki_refs}{Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.}
 }
 \value{
-Data frame with \code{url}, \code{h1_title}, \code{date}, \code{type}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{is_boilerplate}.
+A list with \code{text} (node-level data: \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{url}, \code{h1_title}, \code{date}, \code{source}).
 }
 \description{
 Input: character vector of URLs. Output: structured data frame (one row per
@@ -39,6 +39,8 @@ wiki URLs.
 \examples{
 \dontrun{
 urls <- fetch_urls("R programming", n_pages = 1)$url
-nodes <- read_urls(urls[1:3], cores = 1)
+out <- read_urls(urls[1:3], cores = 1)
+nodes <- out$text
+meta <- out$meta
 }
 }
