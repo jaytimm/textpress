@@ -39,19 +39,16 @@ wiki URLs."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/american-generations.html">American Generations: from Wikipedia to search</a>
-    </li>
-    <li>
-      <a href="../articles/getting-started.html">Getting started with textpress</a>
-    </li>
-    <li>
       <a href="../articles/regex-searches.html">From web to KWIC: regex search on a live corpus</a>
     </li>
     <li>
       <a href="../articles/web-data.html">Web data</a>
     </li>
     <li>
-      <a href="../articles/wiki-generations-dict.html">Wikipedia to dictionary search: generations and co-occurrence</a>
+      <a href="../articles/wiki-data.html">Wikipedia data</a>
+    </li>
+    <li>
+      <a href="../articles/wiki-generations-dict.html">Web corpus: generations and politics</a>
     </li>
   </ul></li>
 <li>
@@ -124,14 +121,16 @@ wiki URLs.</p>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Data frame with <code>url</code>, <code>h1_title</code>, <code>date</code>, <code>type</code>, <code>node_id</code>, <code>parent_heading</code>, <code>text</code>, and optionally <code>is_boilerplate</code>.</p>
+    <p>A list with <code>text</code> (node-level data: <code>url</code>, <code>node_id</code>, <code>parent_heading</code>, <code>text</code>, and optionally <code>type</code>, <code>is_boilerplate</code>) and <code>meta</code> (one row per URL: <code>url</code>, <code>h1_title</code>, <code>date</code>, <code>source</code>).</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="fetch_urls.html">fetch_urls</a></span><span class="op">(</span><span class="st">"R programming"</span>, n_pages <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">url</span></span></span>
-<span class="r-in"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu">read_urls</span><span class="op">(</span><span class="va">urls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">read_urls</span><span class="op">(</span><span class="va">urls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">text</span></span></span>
+<span class="r-in"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">meta</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
