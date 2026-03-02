@@ -27,9 +27,11 @@ library(dplyr)
 library(DT)
 
 web_urls <- lapply(search_terms, function(x)
-  textpress::fetch_urls(query = x, n_pages = 3, date_filter = 'm'))
-
-web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
+  textpress::fetch_urls(query = x, 
+                        n_pages = 3, 
+                        date_filter = 'm')) |>
+  bind_rows() |>
+  unique()
 ```
 
 
@@ -37,12 +39,12 @@ web_urls99 <- web_urls |> data.table::rbindlist() |> unique()
 ## Web text and sentence split
 
 ```{r web-text}
-web_text_meta <- web_urls99 |>
+web_text_list <- web_urls |>
   filter(path_depth > 0) |>
   pull(url) |>
-  textpress::read_urls(cores = 4) 
+  textpress::read_urls(cores = 6) 
 
-web_text <- web_text_meta$text |>
+web_text <- web_text_list$text |>
   mutate(doc_id = match(url, unique(url))) |>
   relocate(doc_id, .before = 1)
 ```
@@ -77,11 +79,14 @@ age_range = paste(
 ### Search ~ `age_range`
 
 ```{r out-age-range}
-fs <- web_ss |> textpress::search_regex(
-  query = patterns$age_range,
-  by = c('doc_id', 'node_id'),
-  highlight = c('<span style="background:#a6cbe1;">', '</span>')
-) |>
+fs <- web_ss |> 
+  
+  textpress::search_regex(
+    query = patterns$age_range,
+    by = c('doc_id', 'node_id'),
+    highlight = c('<span style="background:#a6cbe1;">', '</span>')
+    ) |>
+  
   distinct(text, .keep_all = TRUE) |>
   select(doc_id, node_id, pattern, text)
 
@@ -93,13 +98,16 @@ if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape =
 ### Search ~ `from_to`
 
 ```{r out-from-to}
-fs <- web_ss |> textpress::search_regex(
-  query = patterns$from_to,
-  by = c('doc_id', 'node_id'),
-  highlight = c('<span style="background:#fdc4a8;">', '</span>')
-) |>
+fs1 <- web_ss |> 
+  
+  textpress::search_regex(
+    query = patterns$from_to,
+    by = c('doc_id', 'node_id'),
+    highlight = c('<span style="background:#fdc4a8;">', '</span>')
+    ) |>
+  
   distinct(text, .keep_all = TRUE) |>
   select(doc_id, node_id, pattern, text)
 
-if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
+if (!is.null(fs1) && nrow(fs1) > 0) fs1 |> DT::datatable(rownames = FALSE, escape = FALSE)
 ```

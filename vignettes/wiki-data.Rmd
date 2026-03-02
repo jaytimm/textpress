@@ -42,9 +42,9 @@ Character vector of URLs → data frame (one row per node: headings, paragraphs,
 
 ```{r read-urls, eval = FALSE}
 # Article body only (no References / See also); wiki_read$text, wiki_read$meta
-wiki_read <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
+wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
 
-wiki_read$text |> slice(1:10) |> DT::datatable(rownames = F)
+wiki_text_list$text |> slice(1:10) |> DT::datatable(rownames = F)
 ```
 
 

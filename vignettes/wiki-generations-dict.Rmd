@@ -1,115 +1,182 @@
 ---
-title: "Wikipedia to dictionary search: generations and co-occurrence"
+title: "Web corpus to dictionary search: generations and co-occurrence"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Wikipedia to dictionary search: generations and co-occurrence}
+  %\VignetteIndexEntry{Web corpus to dictionary search: generations and co-occurrence}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette pulls Wikipedia articles and their reference URLs with `fetch_wiki_urls()` and `fetch_wiki_refs()`, reads article text with `read_urls()`, splits into sentences with `nlp_split_sentences()`, runs a dictionary search with `search_dict()` using `dict_generations`, then finds sentences where **Gen X** co-occurs with **political affiliation** language.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+
+
+This vignette walks through a complete `textpress` pipeline — from raw web search to sentence-level dictionary matching to a PMI-weighted co-occurrence view — using recent news about US generational politics as the corpus. We **fetch** article URLs via `fetch_urls()`, **read and split** into sentences with `read_urls()` and `nlp_split_sentences()`, and **search** using built-in dictionaries (`dict_generations`, `dict_political`) via `search_dict()`.
 
 ```{r message=FALSE, warning=FALSE}
-library(dplyr)
 library(textpress)
+library(dplyr)
+library(DT)
 ```
 
-## Fetch Wikipedia URLs
 
-```{r}
-query <- 'American Generations'
-wiki_urls <- textpress::fetch_wiki_urls(query)
-wiki_urls
-```
 
-## Citation URLs (optional)
 
-```{r}
-# Optional: filter refs by domain or file type before reading, e.g.:
-# grepl("worldcat\\.org|x\\.com|doi\\.org|pubmed\\.ncbi", url)
-# grepl("\\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|mp4|mp3|zip|txt|xml|doi)$", url)
+## Search terms and web URLs
 
-full <- textpress::fetch_wiki_refs(wiki_urls[1:5]) |>
-  data.table::rbindlist()
-```
-
-## Read article text
-
-```{r}
-out <- wiki_urls[1:4] |> textpress::read_urls()
-wiki_text <- out$text
-```
-
-## Process: sentence split
-
-```{r}
-wiki_ss <- wiki_text |>
-  textpress::nlp_split_sentences(by = c("url", "node_id"))
-```
-
-## Dictionary search: generation terms
-
-```{r}
-ggs <- wiki_ss |> textpress::search_dict(
-  by = c('doc_id', 'sentence_id'),
-  terms = textpress::dict_generations$variant
+```{r search-terms}
+search_terms <- c(
+  "US Gen Z voters 2026",
+  "US Millennial political party 2026",
+  "US Gen X politics forgotten generation 2026",
+  "US Baby Boomer Republican Democrat 2026"
 )
-ggs
 ```
 
-## Dictionary search: political affiliation terms
+```{r web-urls}
+web_urls <- lapply(search_terms, function(x)
+  textpress::fetch_urls(query = x, 
+                        n_pages = 3, 
+                        date_filter = "m")) |>
+  bind_rows() |>
+  unique()
+```
 
-```{r}
-affil <- wiki_ss |> textpress::search_dict(
-  by = c('doc_id', 'sentence_id'),
-  terms = textpress::dict_political$variant
+## Web text and sentence split
+
+`read_urls()` scrapes and parses the article text; `nlp_split_sentences()` segments each document into analysis-ready sentence rows.
+
+```{r web-text}
+web_text_list <- web_urls |>
+  filter(path_depth > 0) |>
+  pull(url) |>
+  textpress::read_urls(cores = 4)
+
+web_ss <- web_text_list$text |>
+  mutate(doc_id = match(url, unique(url))) |>
+  relocate(doc_id, .before = 1) |>
+  textpress::nlp_split_sentences(by = c("doc_id", "node_id"))
+```
+
+
+
+## Dictionaries and one combined search
+
+`textpress` ships with two curated dictionaries: `dict_generations` maps surface variants (e.g., *"Gen Z"*, *"Zoomers"*, *"iGen"*) to a canonical `TermName`; `dict_political` does the same for political identity labels (*"Democrat"*, *"progressive"*, *"MAGA"*, etc.). We show the political dictionary first, then stack both and run a single dictionary search.
+
+```{r show-dict-political}
+DT::datatable(
+  textpress::dict_political,
+  options = list(pageLength = 10),
+  rownames = FALSE
 )
-affil
 ```
 
-## Normalize: join dicts back to get TermName
 
-`search_dict` returns matched `term` (variant); join to the dicts to get standardized `TermName` for counts and PMI.
+
+Stack both dictionaries (with a category), pass all variants to `search_dict()` once, then join back to get standardized `TermName` and category. One search covers generation and political terms.
+
+```{r stacked-dict}
+dict_gen <- textpress::dict_generations |>
+  mutate(variant_lc = tolower(variant), cat = "gen") |>
+  select(variant, variant_lc, term_name = TermName, cat)
+dict_pol <- textpress::dict_political |>
+  mutate(variant_lc = tolower(variant), cat = "affil") |>
+  select(variant, variant_lc, term_name = TermName, cat)
+stacked_dict <- bind_rows(dict_gen, dict_pol)
+```
+
+
 
 ```{r}
-dict_gen <- textpress::dict_generations |> mutate(variant_lc = tolower(variant))
-dict_pol <- textpress::dict_political   |> mutate(variant_lc = tolower(variant))
-
-ggs <- ggs |> left_join(select(dict_gen, variant_lc, gen = TermName), by = c("term" = "variant_lc"))
-affil <- affil |> left_join(select(dict_pol, variant_lc, affil = TermName), by = c("term" = "variant_lc"))
+matches <- web_ss |>
+  textpress::search_dict(
+    by   = c("doc_id", "sentence_id"),
+    terms = stacked_dict$variant
+  ) |>
+  left_join(
+    stacked_dict |> select(variant_lc, term_name, cat),
+    by = c("term" = "variant_lc")
+  )
+matches |> arrange(id) |> DT::datatable(rownames = F)
 ```
 
-## Stack both outputs
 
-```{r}
-stacked <- bind_rows(
-  ggs  |> distinct(id, gen)  |> rename(term = gen)  |> mutate(cat = "gen"),
-  affil |> distinct(id, affil) |> rename(term = affil) |> mutate(cat = "affil")
-)
-stacked |> arrange(id)
-```
 
 ## Co-occurrence: counts and PMI (gen × affiliation)
 
-Sentences that appear in both tables; build (gen, affil) pairs per sentence, then count and PMI.
+Sentences that appear in both generation and affiliation matches form (gen, affil) pairs. We count pairs and compute PMI:
 
-```{r}
+$$\text{PMI}(x, y) = \log \frac{N \cdot n_{xy}}{n_x \cdot n_y}$$
+
+where $N$ is total pair count, $n_{xy}$ is joint count, and $n_x$, $n_y$ are marginal counts. 
+
+```{r cooccur}
+ggs   <- matches |> filter(cat == "gen")   |> distinct(id, gen = term_name)
+affil <- matches |> filter(cat == "affil") |> distinct(id, affil = term_name)
 ids_both <- intersect(ggs$id, affil$id)
 
-pairs <- ggs |> filter(id %in% ids_both) |> distinct(id, gen) |>
-  inner_join(affil |> filter(id %in% ids_both) |> distinct(id, affil), by = "id")
+pairs <- ggs |> filter(id %in% ids_both) |>
+  inner_join(affil |> filter(id %in% ids_both), by = "id")
 
-n_total <- nrow(pairs)
+n_total  <- nrow(pairs)
 count_xy <- pairs |> count(gen, affil, name = "n_xy")
-count_x  <- pairs |> count(gen, name = "n_gen")
+count_x  <- pairs |> count(gen,   name = "n_gen")
 count_y  <- pairs |> count(affil, name = "n_affil")
 
 cooccur <- count_xy |>
   left_join(count_x, by = "gen") |>
   left_join(count_y, by = "affil") |>
-  mutate(pmi = log(n_total * n_xy / (n_gen * n_affil))) |>
+  mutate(pmi = round(log(n_total * n_xy / (n_gen * n_affil)), 2)) |>
   select(gen, affil, n_xy, n_gen, n_affil, pmi) |>
   arrange(desc(n_xy))
 
-cooccur
+DT::datatable(cooccur, options = list(pageLength = 15), rownames = FALSE)
+```
+
+
+
+## Visualize: PMI heatmap
+
+Filtering to pairs with at least two co-occurrences reduces noise. Tile color encodes PMI; label is raw co-occurrence count. Not much doing.
+
+```{r heatmap, fig.height=6, out.width="100%", fig.alt="PMI heatmap of generation x political affiliation co-occurrence"}
+library(ggplot2)
+plot_data <- cooccur |>
+  filter(n_xy >= 2) |>
+  mutate(
+    gen   = reorder(gen,   n_gen),
+    affil = reorder(affil, n_affil)
+  )
+
+ggplot(plot_data, aes(x = affil, y = gen)) +
+  geom_tile(aes(fill = pmi), color = "white", linewidth = 0.6) +
+  geom_text(aes(label = n_xy, size = n_xy), color = "white", fontface = "bold", show.legend = FALSE) +
+  scale_fill_gradient2(
+    low = "#ef8a62", mid = "#f7f7f7", high = "#67a9cf",
+    midpoint = 0, name = "PMI"
+  ) +
+  scale_size_continuous(range = c(2.5, 5)) +
+  labs(
+    title = "Generations × political affiliation in recent US news",
+    subtitle = "Tile color = PMI  |  Label = co-occurrence count  |  Pairs with n ≥ 2 only",
+    x = NULL, y = NULL,
+    caption = "Source: textpress web corpus · dict_generations + dict_political"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 35, hjust = 1),
+    panel.grid = element_blank(),
+    plot.title = element_text(face = "bold"),
+    plot.subtitle = element_text(color = "grey40"),
+    legend.position = "right"
+  )
 ```

@@ -27,15 +27,17 @@ web_urls <- textpress::fetch_urls(
 )
 ```
 
+
+
 ```{r web-text}
-out <- web_urls |>
+web_text_list <- web_urls |>
   filter(path_depth > 0) |>
   pull(url) |>
   textpress::read_urls(cores = 4)
 ```
 
 ```{r}
-metas_dt <- out$meta |>
+metas_dt <- web_text_list$meta |>
   filter(!is.na(h1_title) & nzchar(trimws(h1_title))) |>
   arrange(desc(date)) |>
   mutate(
