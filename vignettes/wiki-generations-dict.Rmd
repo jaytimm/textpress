@@ -1,8 +1,8 @@
 ---
-title: "Web corpus to dictionary search: generations and co-occurrence"
+title: "Web corpus: generations and politics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Web corpus to dictionary search: generations and co-occurrence}
+  %\VignetteIndexEntry{Web corpus: generations and politics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -143,40 +143,3 @@ DT::datatable(cooccur, options = list(pageLength = 15), rownames = FALSE)
 ```
 
 
-
-## Visualize: PMI heatmap
-
-Filtering to pairs with at least two co-occurrences reduces noise. Tile color encodes PMI; label is raw co-occurrence count. Not much doing.
-
-```{r heatmap, fig.height=6, out.width="100%", fig.alt="PMI heatmap of generation x political affiliation co-occurrence"}
-library(ggplot2)
-plot_data <- cooccur |>
-  filter(n_xy >= 2) |>
-  mutate(
-    gen   = reorder(gen,   n_gen),
-    affil = reorder(affil, n_affil)
-  )
-
-ggplot(plot_data, aes(x = affil, y = gen)) +
-  geom_tile(aes(fill = pmi), color = "white", linewidth = 0.6) +
-  geom_text(aes(label = n_xy, size = n_xy), color = "white", fontface = "bold", show.legend = FALSE) +
-  scale_fill_gradient2(
-    low = "#ef8a62", mid = "#f7f7f7", high = "#67a9cf",
-    midpoint = 0, name = "PMI"
-  ) +
-  scale_size_continuous(range = c(2.5, 5)) +
-  labs(
-    title = "Generations × political affiliation in recent US news",
-    subtitle = "Tile color = PMI  |  Label = co-occurrence count  |  Pairs with n ≥ 2 only",
-    x = NULL, y = NULL,
-    caption = "Source: textpress web corpus · dict_generations + dict_political"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    axis.text.x = element_text(angle = 35, hjust = 1),
-    panel.grid = element_blank(),
-    plot.title = element_text(face = "bold"),
-    plot.subtitle = element_text(color = "grey40"),
-    legend.position = "right"
-  )
-```
