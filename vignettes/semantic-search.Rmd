@@ -277,6 +277,9 @@ mechanisms_out <- chat$chat_structured(
   ),
   type = mechanism_schema
 )
+```
+
+```{r}
 mechanisms_out$mechanisms |> DT::datatable(rownames = F)
 ```
 
