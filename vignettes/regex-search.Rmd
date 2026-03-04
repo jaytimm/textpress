@@ -2,7 +2,7 @@
 title: "Regex search on a live corpus"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{From web to KWIC: regex search on a live corpus}
+  %\VignetteIndexEntry{Regex search on a live corpus}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
