@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
+HUGGINGFACE_API_TOKEN <- Sys.getenv("HUGGINGFACE_API_TOKEN")
+OPENAI_API_KEY <- Sys.getenv("OPENAI_API_KEY")
 ```
 
 
@@ -83,13 +85,13 @@ chunks <- textpress::nlp_roll_chunks(
 
 ## Embeddings for chunks
 
-Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search. Set `HUGGINGFACE_API_TOKEN` so the API call can run.
+Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search. The vignette uses `HUGGINGFACE_API_TOKEN` set in the setup chunk.
 
 ```{r embeddings}
 embeddings <- textpress::util_fetch_embeddings(
   chunks,
   by = "uid",
-  api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")
+  api_token = HUGGINGFACE_API_TOKEN
 )
 dim(embeddings)
 head(rownames(embeddings))
@@ -143,7 +145,7 @@ Embed a query phrase that matches the corpus theme (generational politics, voter
 ```{r search-semantic}
 query_embed <- textpress::util_fetch_embeddings(
   query_text,
-  api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")
+  api_token = HUGGINGFACE_API_TOKEN
 )
 
 semantic_hits <- search_vector(embeddings, query_embed, n = 25)
@@ -188,7 +190,7 @@ ff <- fused |>
 
 ## LLM calls over retrieved chunks
 
-Context and chat are set once; each example below uses them. Requires `ellmer` and `OPENAI_API_KEY`.
+Context and chat are set once; each example below uses them. Requires `ellmer`. The vignette uses `OPENAI_API_KEY` set in the setup chunk.
 
 ```{r llm-setup}
 meta <- web_text_list$meta |> select(doc_id, date)
@@ -201,7 +203,7 @@ ff_meta <- ff |> left_join(meta, by = "doc_id") |>
     block = paste0(header, text)
   )
 context <- paste(ff_meta$block, collapse = "\n\n---\n\n")
-chat <- ellmer::chat_openai(model = "gpt-4o-mini")
+chat <- ellmer::chat_openai(model = "gpt-4o-mini", credentials = function() OPENAI_API_KEY)
 ```
 
 
@@ -278,6 +280,11 @@ mechanisms_out <- chat$chat_structured(
   type = mechanism_schema
 )
 ```
+
+```{r}
+mechanisms_out$mechanisms
+```
+
 
 ```{r}
 mechanisms_out$mechanisms |> DT::datatable(rownames = F)
