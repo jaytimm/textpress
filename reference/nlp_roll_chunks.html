@@ -34,16 +34,19 @@ and optionally adds surrounding context."><!-- mathjax --><script src="https://c
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regex-searches.html">From web to KWIC: regex search on a live corpus</a>
+      <a href="../articles/dict-search.html">Dictionary search</a>
+    </li>
+    <li>
+      <a href="../articles/regex-search.html">Regex search on a live corpus</a>
+    </li>
+    <li>
+      <a href="../articles/semantic-search.html">Semantic search</a>
     </li>
     <li>
       <a href="../articles/web-data.html">Web data</a>
     </li>
     <li>
       <a href="../articles/wiki-data.html">Wikipedia data</a>
-    </li>
-    <li>
-      <a href="../articles/wiki-generations-dict.html">Web corpus: generations and politics</a>
     </li>
   </ul></li>
 <li>
@@ -76,7 +79,7 @@ and optionally adds surrounding context.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nlp_roll_chunks</span><span class="op">(</span><span class="va">corpus</span>, <span class="va">by</span>, <span class="va">chunk_size</span>, <span class="va">context_size</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">nlp_roll_chunks</span><span class="op">(</span><span class="va">corpus</span>, <span class="va">by</span>, <span class="va">chunk_size</span>, <span class="va">context_size</span>, id_col <span class="op">=</span> <span class="st">"uid"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -98,10 +101,14 @@ and optionally adds surrounding context.</p>
 <dt id="arg-context-size">context_size<a class="anchor" aria-label="anchor" href="#arg-context-size"></a></dt>
 <dd><p>Integer. Number of units of context around each chunk.</p></dd>
 
+
+<dt id="arg-id-col">id_col<a class="anchor" aria-label="anchor" href="#arg-id-col"></a></dt>
+<dd><p>Character. Name of the column holding the unique chunk id (default <code>"uid"</code>).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Data.table with <code>chunk_id</code>, <code>chunk</code> (concatenated text), and <code>chunk_plus_context</code>.</p>
+    <p>Data.table with <code>id_col</code> (pasted grouping + chunk index), grouping columns from <code>by</code>, and <code>text</code> (chunk plus context). Unique on <code>by[1]</code> and <code>text</code>.</p>
     </div>
 
     <div id="ref-examples">

@@ -39,16 +39,19 @@ wiki URLs."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regex-searches.html">From web to KWIC: regex search on a live corpus</a>
+      <a href="../articles/dict-search.html">Dictionary search</a>
+    </li>
+    <li>
+      <a href="../articles/regex-search.html">Regex search on a live corpus</a>
+    </li>
+    <li>
+      <a href="../articles/semantic-search.html">Semantic search</a>
     </li>
     <li>
       <a href="../articles/web-data.html">Web data</a>
     </li>
     <li>
       <a href="../articles/wiki-data.html">Wikipedia data</a>
-    </li>
-    <li>
-      <a href="../articles/wiki-generations-dict.html">Web corpus: generations and politics</a>
     </li>
   </ul></li>
 <li>
@@ -121,7 +124,7 @@ wiki URLs.</p>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with <code>text</code> (node-level data: <code>url</code>, <code>node_id</code>, <code>parent_heading</code>, <code>text</code>, and optionally <code>type</code>, <code>is_boilerplate</code>) and <code>meta</code> (one row per URL: <code>url</code>, <code>h1_title</code>, <code>date</code>, <code>source</code>).</p>
+    <p>A list with <code>text</code> (node-level data: <code>doc_id</code>, <code>url</code>, <code>node_id</code>, <code>parent_heading</code>, <code>text</code>, and optionally <code>type</code>, <code>is_boilerplate</code>) and <code>meta</code> (one row per URL: <code>doc_id</code>, <code>url</code>, <code>h1_title</code>, <code>date</code>, <code>source</code>). <code>doc_id</code> is an integer key (1 to number of distinct URLs) in first-appearance order of the input vector.</p>
     </div>
 
     <div id="ref-examples">

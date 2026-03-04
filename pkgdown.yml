@@ -2,11 +2,12 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  regex-searches: regex-searches.html
+  dict-search: dict-search.html
+  regex-search: regex-search.html
+  semantic-search: semantic-search.html
   web-data: web-data.html
   wiki-data: wiki-data.html
-  wiki-generations-dict: wiki-generations-dict.html
-last_built: 2026-03-02T16:04Z
+last_built: 2026-03-04T03:13Z
 urls:
   reference: https://jaytimm.github.io/textpress/reference
   article: https://jaytimm.github.io/textpress/articles

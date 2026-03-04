@@ -34,16 +34,19 @@ embedding matrix for one or more query vectors. Subject-first: embeddings
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/regex-searches.html">From web to KWIC: regex search on a live corpus</a>
+      <a href="../articles/dict-search.html">Dictionary search</a>
+    </li>
+    <li>
+      <a href="../articles/regex-search.html">Regex search on a live corpus</a>
+    </li>
+    <li>
+      <a href="../articles/semantic-search.html">Semantic search</a>
     </li>
     <li>
       <a href="../articles/web-data.html">Web data</a>
     </li>
     <li>
       <a href="../articles/wiki-data.html">Wikipedia data</a>
-    </li>
-    <li>
-      <a href="../articles/wiki-generations-dict.html">Web corpus: generations and politics</a>
     </li>
   </ul></li>
 <li>
@@ -97,7 +100,7 @@ embedding matrix for one or more query vectors. Subject-first: <code>embeddings<
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Data frame (or list of data frames for multiple queries) with match identifiers and similarity scores.</p>
+    <p>Data frame with columns <code>query</code>, <code>method</code> (“cosine”), <code>score</code> (3 significant figures), and the unit-id column (e.g. <code>uid</code>). For multiple queries, a list of such data frames.</p>
     </div>
 
   </div>
