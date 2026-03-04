@@ -15,6 +15,7 @@ Same fetch-then-read pipeline as the web-data vignette, but starting from Wikipe
 
 ```{r fetch-wiki-urls}
 library(textpress)
+library(dplyr)
 
 wiki_urls <- textpress::fetch_wiki_urls("January 6 Capitol attack", limit = 5)
 wiki_urls
