@@ -237,7 +237,7 @@ synthesis <- chat$chat(glue::glue(
 ), echo = FALSE)
 ```
 
-```{r}
+```{r, eval=run_llm}
 cat('<div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; font-size:0.95em;">',
     synthesis,
     '</div>')
