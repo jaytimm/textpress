@@ -8,7 +8,8 @@
 #' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). The last column is the level rolled into chunks (e.g. sentences).
 #' @param chunk_size Integer. Number of units per chunk.
 #' @param context_size Integer. Number of units of context around each chunk.
-#' @return Data.table with \code{chunk_id}, \code{chunk} (concatenated text), and \code{chunk_plus_context}.
+#' @param id_col Character. Name of the column holding the unique chunk id (default \code{"uid"}).
+#' @return Data.table with \code{id_col} (pasted grouping + chunk index), grouping columns from \code{by}, and \code{text} (chunk plus context). Unique on \code{by[1]} and \code{text}.
 #' @export
 #' @examples
 #' corpus <- data.frame(doc_id = c('1', '1', '2'),
@@ -20,12 +21,14 @@
 #'                           chunk_size = 2, context_size = 1)
 
 nlp_roll_chunks <- function(corpus,
-                             by,
-                             chunk_size,
-                             context_size) {
+                            by,
+                            chunk_size,
+                            context_size,
+                            id_col = "uid") {
 
-  data.table::setDT(corpus)
+  corpus <- data.table::copy(data.table::as.data.table(corpus))
   if (!all(by %in% names(corpus))) stop("Missing 'by' columns.", call. = FALSE)
+  if (any(duplicated(corpus, by = by))) stop("'by' must uniquely identify rows; found duplicate key combinations.", call. = FALSE)
 
   chunk_level <- tail(by, 1)
   grouping_vars <- head(by, -1)
@@ -50,21 +53,24 @@ nlp_roll_chunks <- function(corpus,
 
   chunk_dt <- corpus[, .(chunk = paste(text, collapse = " ")), by = c(grouping_vars, "chunk_id")]
 
-  join_conditions <- setNames(rep(names(corpus)[names(corpus) %in% grouping_vars], 1), grouping_vars)
-  join_conditions[chunk_level] <- "neighbor_id"
+  corpus_one_per_key <- unique(corpus, by = c(grouping_vars, chunk_level))
+  join_on <- c(setNames(grouping_vars, grouping_vars), "neighbor_id" = chunk_level)
+  dt_neighbors_joined <- neighbors_dt[corpus_one_per_key, on = join_on, nomatch = 0]
 
-  dt_neighbors_joined <- corpus[neighbors_dt, on = join_conditions]
-
-  chunk_with_context_df <- dt_neighbors_joined[!is.na(text),
-                                               .(chunk_plus_context = paste(text, collapse = " ")),
-                                               by = c(grouping_vars, "i.chunk_id")]
-
-  data.table::setnames(chunk_with_context_df, "i.chunk_id", "chunk_id")
+  chunk_with_context_df <- dt_neighbors_joined[,
+    .(chunk_plus_context = paste(text[order(neighbor_id)], collapse = " ")),
+    by = c(grouping_vars, "chunk_id")]
   result_df <- merge(chunk_dt, chunk_with_context_df, by = c(grouping_vars, "chunk_id"),
                      all.x = TRUE,
                      sort = FALSE)
 
   result_df[, chunk_id := seq_len(.N), by = grouping_vars]
+  result_df[, (id_col) := do.call(paste, c(.SD, sep = "_")), .SDcols = c(grouping_vars, "chunk_id")]
+  drop_cols <- c("chunk", "chunk_id")
+  result_df[, (drop_cols) := NULL]
+  data.table::setnames(result_df, "chunk_plus_context", "text")
+  result_df <- unique(result_df, by = c(by[1L], "text"))
+  data.table::setcolorder(result_df, c(id_col, setdiff(names(result_df), id_col)))
 
   return(result_df)
 }

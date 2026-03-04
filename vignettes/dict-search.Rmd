@@ -1,8 +1,8 @@
 ---
-title: "Web corpus: generations and politics"
+title: "Dictionary search"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Web corpus: generations and politics}
+  %\VignetteIndexEntry{Dictionary search}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 
-This vignette walks through a complete `textpress` pipeline — from raw web search to sentence-level dictionary matching to a PMI-weighted co-occurrence view — using recent news about US generational politics as the corpus. We **fetch** article URLs via `fetch_urls()`, **read and split** into sentences with `read_urls()` and `nlp_split_sentences()`, and **search** using built-in dictionaries (`dict_generations`, `dict_political`) via `search_dict()`.
+Pattern matching works when you know what you're looking for; dictionaries work when you want to cast a wider net systematically. This vignette uses `search_dict()` with textpress's built-in `dict_generations` and `dict_political` — which map surface variants like "Zoomers" or "MAGA" to canonical term names — to match whole vocabulary sets at once across a web corpus, then uses PMI-weighted co-occurrence to surface which generation and political terms actually travel together in the text.
 
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
@@ -68,7 +68,7 @@ web_ss <- web_text_list$text |>
 
 
 
-## Dictionaries and one combined search
+## Dictionaries and search
 
 `textpress` ships with two curated dictionaries: `dict_generations` maps surface variants (e.g., *"Gen Z"*, *"Zoomers"*, *"iGen"*) to a canonical `TermName`; `dict_political` does the same for political identity labels (*"Democrat"*, *"progressive"*, *"MAGA"*, etc.). We show the political dictionary first, then stack both and run a single dictionary search.
 

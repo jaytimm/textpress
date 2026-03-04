@@ -6,24 +6,25 @@
 \usage{
 util_fetch_embeddings(
   corpus,
-  by,
+  by = NULL,
   api_token,
   api_url = "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5"
 )
 }
 \arguments{
-\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
+\item{corpus}{A data frame with \code{text} and \code{by} columns, or a character vector of texts. If a named character vector, names become row names; if unnamed, the strings themselves are used as row names.}
 
-\item{by}{Character vector of identifier columns that define each text unit; used for row names of the returned matrix.}
+\item{by}{Character vector of identifier columns; required when \code{corpus} is a data frame (row names), ignored when \code{corpus} is a character vector.}
 
 \item{api_token}{Hugging Face API token.}
 
 \item{api_url}{Inference endpoint URL (default BAAI/bge-small-en-v1.5).}
 }
 \value{
-Numeric matrix with row names derived from \code{by}.
+Numeric matrix with row names (unit ids).
 }
 \description{
-Builds a numeric matrix of embeddings for each text unit in the corpus (row names
-from \code{by}). Use the result with \code{\link{search_vector}} for semantic search.
+Builds a numeric matrix of embeddings for each text unit. Row names come from
+\code{by} (data frame) or from \code{names(corpus)} / \code{corpus} (character vector).
+Use the result with \code{\link{search_vector}} for semantic search.
 }

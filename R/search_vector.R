@@ -7,7 +7,7 @@
 #' @param embeddings Numeric matrix of embeddings; rows are searchable units (row names used as identifiers).
 #' @param query Row name in \code{embeddings}, a numeric vector (single query), or a numeric matrix (multiple queries).
 #' @param n Number of results to return per query (default 10).
-#' @return Data frame (or list of data frames for multiple queries) with match identifiers and similarity scores.
+#' @return Data frame with columns \code{query}, \code{method} (\dQuote{cosine}), \code{score} (3 significant figures), and the unit-id column (e.g. \code{uid}). For multiple queries, a list of such data frames.
 #' @export
 search_vector <- function(embeddings, query, n = 10) {
 
@@ -29,18 +29,20 @@ search_vector <- function(embeddings, query, n = 10) {
   # Resulting sim_mat: [Queries x Documents]
   sim_mat <- q_norm %*% t(m_norm)
 
-  # 4. Extract Top N efficiently
+  match_id_col <- attr(embeddings, "id_col") %||% "uid"
+
   out <- lapply(seq_len(nrow(sim_mat)), function(i) {
     scores <- sim_mat[i, ]
     idx <- order(scores, decreasing = TRUE)[1:min(n, length(scores))]
 
-    data.frame(
-      query_id = rownames(query)[i] %||% paste0("q", i),
-      match_id = names(scores)[idx] %||% idx,
-      cos_sim  = as.numeric(scores[idx]),
-      rank     = 1:length(idx),
+    df <- data.frame(
+      query  = rownames(query)[i] %||% paste0("q", i),
+      method = "cosine",
+      score  = signif(as.numeric(scores[idx]), 3),
       stringsAsFactors = FALSE
     )
+    df[[match_id_col]] <- names(scores)[idx] %||% idx
+    df[, c("query", "method", "score", match_id_col)]
   })
 
   if (length(out) == 1) return(out[[1]]) else return(out)

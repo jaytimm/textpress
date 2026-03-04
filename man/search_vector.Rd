@@ -14,7 +14,7 @@ search_vector(embeddings, query, n = 10)
 \item{n}{Number of results to return per query (default 10).}
 }
 \value{
-Data frame (or list of data frames for multiple queries) with match identifiers and similarity scores.
+Data frame with columns \code{query}, \code{method} (\dQuote{cosine}), \code{score} (3 significant figures), and the unit-id column (e.g. \code{uid}). For multiple queries, a list of such data frames.
 }
 \description{
 Semantic search by cosine similarity. Returns top-\code{n} matches from an

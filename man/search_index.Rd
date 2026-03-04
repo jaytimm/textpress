@@ -16,9 +16,9 @@ search_index(index, query, n = 10, stem = FALSE)
 \item{stem}{Logical; must match the setting used during indexing (default \code{FALSE}).}
 }
 \value{
-Data.table of results ranked by score.
+Data.table with columns \code{query}, \code{method} (\dQuote{bm25}), \code{score} (3 significant figures), and the unit-id column (e.g. \code{uid}), ranked by score.
 }
 \description{
 BM25 ranked retrieval. Search the index produced by \code{\link{nlp_index_tokens}}
-with a keyword query.
+with a keyword query. The unit-id column in results is taken from \code{attr(index, "id_col")} when present, else \code{"uid"}.
 }

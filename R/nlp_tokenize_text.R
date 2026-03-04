@@ -6,6 +6,7 @@
 #'
 #' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
 #' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id", "paragraph_id", "sentence_id")}. The last column is the finest granularity.
+#' @param id_col Character. Name of the column (and list names) used for the unit id (default \code{"uid"}).
 #' @param include_spans Logical. Include start/end character spans for each token (default \code{TRUE}).
 #' @param method Character. \code{"word"} or \code{"biber"}.
 #' @return Named list of tokens; or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}.
@@ -19,6 +20,7 @@
 #' tokens <- nlp_tokenize_text(corpus, by = c('doc_id', 'sentence_id'))
 nlp_tokenize_text <- function(corpus,
                               by = c("doc_id", "paragraph_id", "sentence_id"),
+                              id_col = "uid",
                               include_spans = TRUE,
                               method = "word") {
   if (!is.data.frame(corpus)) {
@@ -33,7 +35,11 @@ nlp_tokenize_text <- function(corpus,
          paste(missing_columns, collapse = ", "), call. = FALSE)
   }
 
-  corpus[, id := do.call(paste, c(.SD, sep = ".")), .SDcols = by]
+  if (length(by) == 1L) {
+    corpus[, (id_col) := .SD, .SDcols = by]
+  } else {
+    corpus[, (id_col) := do.call(paste, c(.SD, sep = ".")), .SDcols = by]
+  }
 
   tokenized <- switch(method,
                       word  = lapply(corpus$text, function(text) .token_split_with_spans(text, include_spans)),
@@ -42,12 +48,15 @@ nlp_tokenize_text <- function(corpus,
   )
 
   tokens <- lapply(tokenized, function(x) x$tokens)
-  names(tokens) <- corpus$id
+  names(tokens) <- corpus[[id_col]]
+  attr(tokens, "id_col") <- id_col
 
   if (include_spans) {
     spans <- lapply(tokenized, function(x) x$spans)
-    names(spans) <- corpus$id
-    return(list(tokens = tokens, spans = spans))
+    names(spans) <- corpus[[id_col]]
+    out <- list(tokens = tokens, spans = spans)
+    attr(out, "id_col") <- id_col
+    return(out)
   } else {
     return(tokens)
   }

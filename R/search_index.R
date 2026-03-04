@@ -1,32 +1,28 @@
 #' Search the BM25 index
 #'
 #' BM25 ranked retrieval. Search the index produced by \code{\link{nlp_index_tokens}}
-#' with a keyword query.
+#' with a keyword query. The unit-id column in results is taken from \code{attr(index, "id_col")} when present, else \code{"uid"}.
 #'
 #' @param index Object created by \code{\link{nlp_index_tokens}}.
 #' @param query Character string (keywords).
 #' @param n Number of results to return (default 10).
 #' @param stem Logical; must match the setting used during indexing (default \code{FALSE}).
-#' @return Data.table of results ranked by score.
+#' @return Data.table with columns \code{query}, \code{method} (\dQuote{bm25}), \code{score} (3 significant figures), and the unit-id column (e.g. \code{uid}), ranked by score.
 #' @export
 search_index <- function(index, query, n = 10, stem = FALSE) {
 
-  # 1. Validation
-  # Changed 'bm25' to 'score' to match the indexer output
+  id_col <- attr(index, "id_col")
+  if (is.null(id_col)) id_col <- "uid"
+
   if (!data.table::is.data.table(index) ||
-      !all(c("id", "token", "score") %in% names(index))) {
-    stop("'index' must be a data.table with columns id, token, score.", call. = FALSE)
+      !all(c(id_col, "token", "score") %in% names(index))) {
+    stop("'index' must be a data.table with columns ", id_col, ", token, score.", call. = FALSE)
   }
 
-  # 2. Tokenize Query
   terms <- tolower(unlist(strsplit(as.character(query), "\\s+")))
-  # Keep alphanumeric (to match our indexer's [[:alnum:]] logic)
   terms <- terms[grepl("[[:alnum:]]", terms)]
-
-  # Remove stopwords (using the same global list as the indexer)
   terms <- terms[!terms %in% stopwords_en]
 
-  # 3. Optional Stemming
   if (isTRUE(stem)) {
     if (!requireNamespace("SnowballC", quietly = TRUE)) {
       stop("package 'SnowballC' is required for stemming.", call. = FALSE)
@@ -36,18 +32,13 @@ search_index <- function(index, query, n = 10, stem = FALSE) {
 
   if (length(terms) == 0) return(NULL)
 
-  # 4. Filter and Aggregate
-  # We sum the pre-calculated BM25 scores for any token that matches the query
-  out <- index[token %in% terms,
-               .(score = sum(score),
-                 matched = paste(unique(token), collapse = ", ")),
-               by = id]
-
-  # 5. Rank and Cap
+  query_str <- as.character(query)
+  out <- index[token %in% terms, .(score = sum(score)), by = c(id_col)]
   out <- out[order(-score)]
-
-  # Ensure we don't try to return more results than exist
   n_final <- min(n, nrow(out))
-
-  return(out[seq_len(n_final)])
+  out <- out[seq_len(n_final)]
+  out[, `:=`(query = query_str, method = "bm25")]
+  out[, score := signif(score, 3)]
+  data.table::setcolorder(out, c("query", "method", "score", id_col))
+  return(out)
 }

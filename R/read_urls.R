@@ -15,7 +15,7 @@
 #' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.
 #' @param exclude_wiki_refs Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.
 #'
-#' @return A list with \code{text} (node-level data: \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{url}, \code{h1_title}, \code{date}, \code{source}).
+#' @return A list with \code{text} (node-level data: \code{doc_id}, \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{doc_id}, \code{url}, \code{h1_title}, \code{date}, \code{source}). \code{doc_id} is an integer key (1 to number of distinct URLs) in first-appearance order of the input vector.
 #' @export
 #' @examples
 #' \dontrun{
@@ -53,9 +53,11 @@ read_urls <- function(x,
   }
 
   full <- data.table::rbindlist(results)
+  url_order <- unique(x)
+  full[, doc_id := match(url, url_order)]
 
-  # meta: one row per url (url, h1_title, date, source)
-  meta <- full[, .(h1_title = h1_title[1L]), by = url]
+  # meta: one row per url (url, doc_id, h1_title, date, source)
+  meta <- full[, .(h1_title = h1_title[1L], doc_id = doc_id[1L]), by = url]
   if ("date" %in% names(full)) {
     meta[, date := full[, .(date = date[1L]), by = url]$date]
   } else {
@@ -67,12 +69,13 @@ read_urls <- function(x,
     url_for_source[arch] <- sub("^https?://web\\.archive\\.org/web/\\d{14}(?:id_)?/(.+)$", "\\1", url_for_source[arch], ignore.case = TRUE)
   }
   meta[, source := sub("^https?://([^/]+).*", "\\1", url_for_source)]
-  data.table::setcolorder(meta, c("url", "h1_title", "date", "source"))
+  data.table::setcolorder(meta, c("doc_id", "url", "h1_title", "date", "source"))
 
   # text: node-level only (drop h1_title, date), ordered by date descending
   drop_cols <- c("h1_title", "date")
   text_cols <- setdiff(names(full), drop_cols)
   text <- full[, .SD, .SDcols = text_cols]
+  data.table::setcolorder(text, c("doc_id", "url", setdiff(names(text), c("doc_id", "url"))))
   meta_by_date <- meta[order(-as.Date(meta$date, optional = TRUE))]
   text <- text[order(match(url, meta_by_date$url))]
 

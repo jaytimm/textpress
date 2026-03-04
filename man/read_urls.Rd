@@ -24,7 +24,7 @@ read_urls(
 \item{exclude_wiki_refs}{Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.}
 }
 \value{
-A list with \code{text} (node-level data: \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{url}, \code{h1_title}, \code{date}, \code{source}).
+A list with \code{text} (node-level data: \code{doc_id}, \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{doc_id}, \code{url}, \code{h1_title}, \code{date}, \code{source}). \code{doc_id} is an integer key (1 to number of distinct URLs) in first-appearance order of the input vector.
 }
 \description{
 Input: character vector of URLs. Output: structured data frame (one row per

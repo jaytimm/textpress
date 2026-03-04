@@ -16,9 +16,10 @@ nlp_index_tokens(tokens, k1 = 1.2, b = 0.75, stem = FALSE)
 \item{stem}{Logical. If \code{TRUE}, stem tokens (default \code{FALSE}).}
 }
 \value{
-Object (e.g. data.table) suitable for \code{\link{search_index}}.
+Data.table with unit-id column, \code{token}, \code{score}; \code{attr(., "id_col")} set for \code{\link{search_index}}.
 }
 \description{
 Build a weighted BM25 index for ranked keyword search. Creates a searchable
-index from a named list of token vectors.
+index from a named list of token vectors. The unit-id column name is taken
+from \code{attr(tokens, "id_col")} when present (e.g. from \code{\link{nlp_tokenize_text}}), else \code{"uid"}.
 }

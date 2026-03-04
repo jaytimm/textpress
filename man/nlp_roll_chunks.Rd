@@ -4,7 +4,7 @@
 \alias{nlp_roll_chunks}
 \title{Roll units into fixed-size chunks with optional context}
 \usage{
-nlp_roll_chunks(corpus, by, chunk_size, context_size)
+nlp_roll_chunks(corpus, by, chunk_size, context_size, id_col = "uid")
 }
 \arguments{
 \item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
@@ -14,9 +14,11 @@ nlp_roll_chunks(corpus, by, chunk_size, context_size)
 \item{chunk_size}{Integer. Number of units per chunk.}
 
 \item{context_size}{Integer. Number of units of context around each chunk.}
+
+\item{id_col}{Character. Name of the column holding the unique chunk id (default \code{"uid"}).}
 }
 \value{
-Data.table with \code{chunk_id}, \code{chunk} (concatenated text), and \code{chunk_plus_context}.
+Data.table with \code{id_col} (pasted grouping + chunk index), grouping columns from \code{by}, and \code{text} (chunk plus context). Unique on \code{by[1]} and \code{text}.
 }
 \description{
 Roll units (e.g. sentences) into fixed-size chunks with optional context

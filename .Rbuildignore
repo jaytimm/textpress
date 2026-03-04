@@ -1,5 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.Rhistory$
+^_pkgdown\.yml$
 ^\.github$
 ^Help for package textpress
 ^vignette\.Rmd$

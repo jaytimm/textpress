@@ -1,0 +1,325 @@
+---
+title: "Semantic search"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Semantic search}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+
+This vignette completes the search side of the textpress pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning — useful when the query and the relevant passage share little surface vocabulary. Here all three are run on the same generational-politics corpus, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
+
+```{r message=FALSE, warning=FALSE}
+library(textpress)
+library(dplyr)
+library(ellmer)
+```
+
+
+
+## Search terms and web URLs
+
+```{r search-terms}
+search_terms <- c(
+  "US Gen Z voters 2026",
+  "US Millennial political party 2026",
+  "US Gen X politics 2026",
+  "US Baby Boomer Republican Democrat 2026"
+)
+```
+
+
+
+```{r web-urls}
+web_urls <- lapply(search_terms, function(x)
+  textpress::fetch_urls(query = x,
+                        n_pages = 1,
+                        date_filter = "m")) |>
+  bind_rows() |>
+  unique()
+```
+
+> 
+
+## Web text and sentence split
+
+`read_urls()` scrapes and parses the article text; `nlp_split_sentences()` segments each document into analysis-ready sentence rows.
+
+```{r web-text}
+web_text_list <- web_urls |>
+  filter(path_depth > 0) |>
+  pull(url) |>
+  textpress::read_urls(cores = 4)
+
+web_ss <- web_text_list$text |>
+  textpress::nlp_split_sentences(by = c("doc_id", "node_id"))
+```
+
+
+
+## Chunks: 1 sentence + 1 sentence context
+
+Roll each sentence into a chunk with one sentence of context (before/after) for retrieval. `nlp_roll_chunks()` with `chunk_size = 1` and `context_size = 1` yields a focal sentence plus surrounding context in `chunk_plus_context`.
+
+```{r chunks}
+chunks <- textpress::nlp_roll_chunks(
+  web_ss,
+  by = c("doc_id", "node_id", "sentence_id"),
+  id_col = 'uid',
+  chunk_size = 1,
+  context_size = 1)
+```
+
+
+
+## Embeddings for chunks
+
+Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search. Set `HUGGINGFACE_API_TOKEN` so the API call can run.
+
+```{r}
+embeddings <- textpress::util_fetch_embeddings(
+  chunks,
+  by = "uid",
+  api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")
+)
+dim(embeddings)
+head(rownames(embeddings))
+```
+
+
+
+## BM25 index
+
+Build a BM25 index over the same chunk text for keyword search. Tokenize by chunk, then index.
+
+```{r index}
+index <- textpress::nlp_tokenize_text(
+  chunks,
+  by = c("uid"),
+  include_spans = FALSE
+  ) |>
+  textpress::nlp_index_tokens(stem = T)
+```
+
+
+
+## Search
+
+```{r}
+query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"
+```
+
+
+### BM25
+
+Search the index with a short query relevant to the corpus (e.g. generations and voter turnout).
+
+```{r search-bm25, message=FALSE, warning=FALSE}
+bm25_hits <- search_index(index,
+                          query_text,
+                          n = 25,
+                          stem = TRUE)
+
+bm25_hits |>
+  DT::datatable(
+    rownames = FALSE,
+    options = list(dom = "lrtip",
+                   pageLength = 5))
+```
+
+### Semantic
+
+Embed a query phrase that matches the corpus theme (generational politics, voter behavior), then run `search_vector()` and join back to chunks to show the retrieved text.
+
+```{r}
+query_embed <- textpress::util_fetch_embeddings(
+  query_text,
+  api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")
+)
+
+semantic_hits <- search_vector(embeddings, query_embed, n = 25)
+
+semantic_hits |>
+  DT::datatable(
+    rownames = FALSE,
+    options = list(dom = "lrtip",
+                   pageLength = 5))
+```
+
+
+
+
+### Hybrid: reciprocal rank fusion (RRF)
+
+Merge the two ranked lists by *uid* and score each hit with `1 / (k + rank)`. *k* is a smoothing constant (here 60); larger *k* flattens the curve so lower ranks contribute more. Sum scores per *uid*, then sort descending. Chunks that appear in both lists get a higher fused score.
+
+```{r message=FALSE, warning=FALSE}
+k <- 60
+both <- bind_rows(bm25_hits, semantic_hits) |>
+  group_by(query, method) |>
+  mutate(rank = row_number()) |>
+  ungroup()
+
+fused <- both |>
+  mutate(rrf = 1 / (k + rank)) |>
+  group_by(uid) |>
+  summarise(rrf_score = round(100 * sum(rrf), 3), .groups = "drop") |>
+  arrange(desc(rrf_score))
+
+ff <- fused |>
+  left_join(chunks) |>
+  group_by(doc_id, node_id) |>
+  slice_max(nchar(text), n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  slice_max(rrf_score, n = 15)
+```
+
+
+
+
+## LLM calls over retrieved chunks
+
+Context and chat are set once; each example below uses them. Requires `ellmer` and `OPENAI_API_KEY`.
+
+```{r llm-setup, eval=requireNamespace("ellmer", quietly=TRUE) && nzchar(Sys.getenv("OPENAI_API_KEY"))}
+meta <- web_text_list$meta |> select(doc_id, date)
+ff_meta <- ff |> left_join(meta, by = "doc_id") |>
+  mutate(
+    header = if_else(!is.na(date) & nzchar(trimws(date)),
+      paste0("## Source ", doc_id, " (", date, ")\n\n"),
+      paste0("## Source ", doc_id, "\n\n")
+    ),
+    block = paste0(header, text)
+  )
+context <- paste(ff_meta$block, collapse = "\n\n---\n\n")
+chat <- ellmer::chat_openai(model = "gpt-4o-mini")
+```
+
+
+
+
+
+### Narrative synthesis (free-form)
+
+Single open-ended prompt; model returns prose.
+
+```{r llm-synthesis, eval=requireNamespace("ellmer", quietly=TRUE) && nzchar(Sys.getenv("OPENAI_API_KEY"))}
+synthesis <- chat$chat(glue::glue(
+  "You are a political analyst covering the 2026 US electoral landscape.
+   Using ONLY the passages below, write a 3–4 paragraph synthesis that:
+   1. Opens with the single most striking finding about how any generation —
+      Gen Z, Millennials, Gen X, or Boomers — is aligning with or shifting
+      away from the Republican or Democratic party heading into 2026.
+   2. Explains what is driving those alignments — economic anxiety, cultural
+      identity, candidate appeal, institutional trust, or other factors
+      mentioned in the passages.
+   3. Notes any tensions or surprises: where generational behavior defies
+      expectations or where generations are splitting internally.
+   4. Closes with what remains uncertain or contested about how generational
+      politics will shape the 2026 elections.
+   5. Where a finding is specific enough to warrant it, cite the source inline
+   as (Source N, YYYY-MM-DD) immediately after the claim.
+   
+   Tone: sharp and analytical. Do NOT add information not in the passages.
+
+   PASSAGES:\n{context}"
+), echo = FALSE)
+```
+
+```{r}
+cat('<div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; font-size:0.95em;">',
+    synthesis,
+    '</div>')
+```
+
+
+
+### Causal mechanism map (structured)
+
+Structured extraction of cause–effect pathways with labels and passage support.
+
+```{r llm-mechanisms, eval=requireNamespace("ellmer", quietly=TRUE) && nzchar(Sys.getenv("OPENAI_API_KEY"))}
+mechanism_schema <- ellmer::type_object(
+  "Causal mechanisms driving generational party alignment in 2026.",
+  mechanisms = ellmer::type_array(
+    ellmer::type_object(
+      "One causal pathway.",
+      mechanism_name  = ellmer::type_string("Short label, e.g. 'Economic anxiety driving Millennial GOP shift'."),
+      cause           = ellmer::type_string("The generational, cultural, or political factor."),
+      effect          = ellmer::type_string("The party alignment or electoral behavior outcome."),
+      mediators       = ellmer::type_string("Any intervening variables mentioned."),
+      passage_support = ellmer::type_string("Brief quote or paraphrase from the passages."),
+      source = ellmer::type_string("Source ID and date, e.g. 'Source 13, 2026-02-10'. Use 'Multiple' if drawn from more than one passage."
+    )
+  )
+  )
+)
+  
+mechanisms_out <- chat$chat_structured(
+  glue::glue(
+    "Identify every causal mechanism the passages invoke to explain why
+     Gen Z, Millennials, Gen X, or Boomers are aligning with Republicans
+     or Democrats in 2026. Consider economic, cultural, institutional,
+     and candidate-driven explanations.
+     
+     For each mechanism, note the Source ID and date from the passage header.
+
+     PASSAGES:\n{context}"
+  ),
+  type = mechanism_schema
+)
+mechanisms_out$mechanisms |> DT::datatable(rownames = F)
+```
+
+
+
+
+### Generational portrait (structured)
+
+Comparative structured portrait per generation (alignment, drivers, divisions).
+
+```{r llm-portraits, eval=requireNamespace("ellmer", quietly=TRUE) && nzchar(Sys.getenv("OPENAI_API_KEY"))}
+portrait_schema <- ellmer::type_object(
+  "Comparative political portraits of each generation in 2026.",
+  portraits = ellmer::type_array(
+    ellmer::type_object(
+      "Portrait of one generation.",
+      generation               = ellmer::type_string("Gen Z / Millennial / Gen X / Boomer."),
+      party_alignment          = ellmer::type_string("Current lean or alignment per the passages."),
+      key_drivers              = ellmer::type_string("What is driving their alignment or behavior."),
+      internal_divisions       = ellmer::type_string("Any splits within the generation mentioned."),
+      contrast_with_prior      = ellmer::type_string("How they differ from the prior generation."),
+      most_recent_source = ellmer::type_string("Date of the most recent passage informing this portrait, as YYYY-MM-DD.")
+    )
+  )
+)
+portraits_out <- chat$chat_structured(
+  glue::glue(
+    "Write a comparative political portrait of each generation — Gen Z,
+     Millennials, Gen X, Boomers — based solely on the passages.
+     Focus on party alignment, key drivers, and internal divisions in 2026.
+     
+     Note the date of the most recent passage you draw on for each generation.
+
+     PASSAGES:\n{context}"
+  ),
+  type = portrait_schema
+)
+portraits_out$portraits |> DT::datatable(rownames = F)
+```
+
+
+
+
+
+
+

@@ -7,6 +7,7 @@
 nlp_tokenize_text(
   corpus,
   by = c("doc_id", "paragraph_id", "sentence_id"),
+  id_col = "uid",
   include_spans = TRUE,
   method = "word"
 )
@@ -15,6 +16,8 @@ nlp_tokenize_text(
 \item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
 
 \item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id", "paragraph_id", "sentence_id")}. The last column is the finest granularity.}
+
+\item{id_col}{Character. Name of the column (and list names) used for the unit id (default \code{"uid"}).}
 
 \item{include_spans}{Logical. Include start/end character spans for each token (default \code{TRUE}).}
 

@@ -1,5 +1,5 @@
 ---
-title: "From web to KWIC: regex search on a live corpus"
+title: "Regex search on a live corpus"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{From web to KWIC: regex search on a live corpus}
@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette builds a web corpus around generational politics using `fetch_urls()` and `read_urls()`, processes the text into sentences with `nlp_split_sentences()`, and demonstrates a range of regex patterns with `search_regex()` — from age range constructions to voter turnout language to numeric change expressions.
+With a corpus built and split into sentences, the simplest form of search is pattern matching. This vignette uses `search_regex()` across a generational-politics corpus to show what well-constructed regex actually buys you — age range constructions, turnout language, numeric change expressions — and how the results come back in a KWIC format ready for close reading or downstream aggregation.
 
 ## Search terms and web URLs
 

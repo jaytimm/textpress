@@ -27,22 +27,28 @@ nlp_split_sentences <- function(corpus,
   space_pat    <- "([\\s]*)"
   abbrev_sub <- gsub("\\.", "_", abbreviations)
 
+  # Single-letter initials (regex): mask before citation swap so "W." in "George W. [1]" is protected
+  .mask_single_letter <- function(x) gsub("\\b([A-Z])\\.", "\\1_", x, perl = TRUE)
+  .unmask_single_letter <- function(x) gsub("\\b([A-Z])_", "\\1.", x, perl = TRUE)
+
   # Transformation Helper
   .transform <- function(x, op = "replace") {
     if (op == "replace") {
+      x <- .mask_single_letter(x)
       # Move citations BEFORE the period so stringi sees 'period + space'
       x <- gsub(paste0(punct_pat, space_pat, cite_pat), "\\3\\2\\1", x, perl = TRUE)
-      # Mask abbreviations
+      # Mask abbreviations (literal)
       for (i in seq_along(abbreviations)) {
         x <- gsub(abbreviations[i], abbrev_sub[i], x, fixed = TRUE)
       }
     } else {
-      # Unmask abbreviations
+      # Unmask abbreviations (literal)
       for (i in seq_along(abbrev_sub)) {
         x <- gsub(abbrev_sub[i], abbreviations[i], x, fixed = TRUE)
       }
       # Restore original Wikipedia/Web order
       x <- gsub(paste0(cite_pat, space_pat, punct_pat), "\\3\\2\\1", x, perl = TRUE)
+      x <- .unmask_single_letter(x)
     }
     return(x)
   }
@@ -62,7 +68,7 @@ nlp_split_sentences <- function(corpus,
     out <- lapply(seq_len(.N), function(i) {
       t <- text[i]
       bounds <- stringi::stri_locate_all_boundaries(t, type = "sentence")[[1]]
-      data.table(
+      data.table::data.table(
         sentence_raw = stringi::stri_sub(t, bounds[, 1], bounds[, 2]),
         start = bounds[, 1] + paragraph_offset[i],
         end = bounds[, 2] + paragraph_offset[i]
