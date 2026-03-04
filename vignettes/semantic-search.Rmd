@@ -13,8 +13,6 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
-run_api <- nzchar(Sys.getenv("HUGGINGFACE_API_TOKEN"))
-run_llm <- run_api && requireNamespace("ellmer", quietly = TRUE) && nzchar(Sys.getenv("OPENAI_API_KEY"))
 ```
 
 
@@ -87,7 +85,7 @@ chunks <- textpress::nlp_roll_chunks(
 
 Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search. Set `HUGGINGFACE_API_TOKEN` so the API call can run.
 
-```{r embeddings, eval=run_api}
+```{r embeddings}
 embeddings <- textpress::util_fetch_embeddings(
   chunks,
   by = "uid",
@@ -142,7 +140,7 @@ bm25_hits |>
 
 Embed a query phrase that matches the corpus theme (generational politics, voter behavior), then run `search_vector()` and join back to chunks to show the retrieved text.
 
-```{r search-semantic, eval=run_api}
+```{r search-semantic}
 query_embed <- textpress::util_fetch_embeddings(
   query_text,
   api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")
@@ -164,7 +162,7 @@ semantic_hits |>
 
 Merge the two ranked lists by *uid* and score each hit with `1 / (k + rank)`. *k* is a smoothing constant (here 60); larger *k* flattens the curve so lower ranks contribute more. Sum scores per *uid*, then sort descending. Chunks that appear in both lists get a higher fused score.
 
-```{r rrf, eval=run_api, message=FALSE, warning=FALSE}
+```{r rrf, message=FALSE, warning=FALSE}
 k <- 60
 both <- bind_rows(bm25_hits, semantic_hits) |>
   group_by(query, method) |>
@@ -192,7 +190,7 @@ ff <- fused |>
 
 Context and chat are set once; each example below uses them. Requires `ellmer` and `OPENAI_API_KEY`.
 
-```{r llm-setup, eval=run_llm}
+```{r llm-setup}
 meta <- web_text_list$meta |> select(doc_id, date)
 ff_meta <- ff |> left_join(meta, by = "doc_id") |>
   mutate(
@@ -214,7 +212,7 @@ chat <- ellmer::chat_openai(model = "gpt-4o-mini")
 
 Single open-ended prompt; model returns prose.
 
-```{r llm-synthesis, eval=run_llm}
+```{r llm-synthesis}
 synthesis <- chat$chat(glue::glue(
   "You are a political analyst covering the 2026 US electoral landscape.
    Using ONLY the passages below, write a 3–4 paragraph synthesis that:
@@ -237,7 +235,7 @@ synthesis <- chat$chat(glue::glue(
 ), echo = FALSE)
 ```
 
-```{r, eval=run_llm}
+```{r}
 cat('<div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; font-size:0.95em;">',
     synthesis,
     '</div>')
@@ -249,7 +247,7 @@ cat('<div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; fo
 
 Structured extraction of cause–effect pathways with labels and passage support.
 
-```{r llm-mechanisms, eval=run_llm}
+```{r llm-mechanisms}
 mechanism_schema <- ellmer::type_object(
   "Causal mechanisms driving generational party alignment in 2026.",
   mechanisms = ellmer::type_array(
@@ -289,7 +287,7 @@ mechanisms_out$mechanisms |> DT::datatable(rownames = F)
 
 Comparative structured portrait per generation (alignment, drivers, divisions).
 
-```{r llm-portraits, eval=run_llm}
+```{r llm-portraits}
 portrait_schema <- ellmer::type_object(
   "Comparative political portraits of each generation in 2026.",
   portraits = ellmer::type_array(
