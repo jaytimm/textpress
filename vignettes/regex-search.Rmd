@@ -1,8 +1,8 @@
 ---
-title: "Regex search on a live corpus"
+title: "Regex search"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Regex search on a live corpus}
+  %\VignetteIndexEntry{Regex search}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

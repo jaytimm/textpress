@@ -13,7 +13,7 @@ Same fetch-then-read pipeline as the web-data vignette, but starting from Wikipe
 
 **Start from a topic.** `fetch_wiki_urls(query, limit)` returns Wikipedia article URLs matching a search phrase. Use that as your seed set.
 
-```{r fetch-wiki-urls}
+```{r fetch-wiki-urls, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
 
@@ -45,7 +45,10 @@ Character vector of URLs → data frame (one row per node: headings, paragraphs,
 # Article body only (no References / See also); wiki_read$text, wiki_read$meta
 wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
 
-wiki_text_list$text |> slice(1:10) |> DT::datatable(rownames = F)
+wiki_text_list$text |> 
+  select(-url) |>
+  slice(1:5) |> 
+  DT::datatable(rownames = F)
 ```
 
 
