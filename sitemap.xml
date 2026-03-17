@@ -1,6 +1,13 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://jaytimm.github.io/textpress/404.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/LICENSE-text.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/basic-nlp.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/dict-search.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/index.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/regex-search.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/semantic-search.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/web-data.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/articles/wiki-data.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/authors.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/index.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/news/index.html</loc></url>

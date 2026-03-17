@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
       </span>
     </div>
 
@@ -25,6 +25,31 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/basic-nlp.html">Basic NLP</a>
+    </li>
+    <li>
+      <a href="../articles/dict-search.html">Dictionary search</a>
+    </li>
+    <li>
+      <a href="../articles/regex-search.html">Regex search</a>
+    </li>
+    <li>
+      <a href="../articles/semantic-search.html">Semantic search</a>
+    </li>
+    <li>
+      <a href="../articles/web-data.html">Web data</a>
+    </li>
+    <li>
+      <a href="../articles/wiki-data.html">Wikipedia data</a>
+    </li>
+  </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
@@ -51,14 +76,16 @@
 <h2 class="page-header" data-toc-text="1.1.1" id="textpress-111">textpress 1.1.1<a class="anchor" aria-label="anchor" href="#textpress-111"></a></h2>
 <div class="section level3">
 <h3 id="documentation-1-1-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-1"></a></h3>
-<ul><li>Five vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, and semantic search (RAG).</li>
-<li>New Basic NLP vignette demonstrating <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code>, <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> (word and Biber methods), and <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> stepwise and as a single pipe.</li>
+<ul><li>Six vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, semantic search (RAG), and basic NLP processing.</li>
+<li>Basic NLP vignette walks through <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code>, <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> (word and Biber methods), and <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> stepwise and as a single pipe.</li>
 <li>README revamped: tighter intro, API map, RAG/agent positioning, vignette links.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-1-1-1">Changes<a class="anchor" aria-label="anchor" href="#changes-1-1-1"></a></h3>
 <ul><li>
 <code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> re-added for embedding generation via Hugging Face inference endpoints (reversed 1.1.0 removal; now calls the HF inference API rather than loading models locally).</li>
+<li>
+<code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> documented and surfaced – flattens the token list from <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> into a long-format data frame with optional character spans.</li>
 <li>Suggests trimmed: <code>ellmer</code> and unused packages removed.</li>
 </ul><hr></div>
 </div>

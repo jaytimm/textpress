@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
       </span>
     </div>
 
@@ -243,61 +243,6 @@ differently: hyphens within words are temporarily masked so
 <pre><code><span><span class="co">#&gt; [1] "The"          "Strauss"      "–"            "Howe"         "generational"</span></span>
 <span><span class="co">#&gt; [6] "theory"</span></span></code></pre>
 </div>
-<div class="section level3">
-<h3 id="tokenizers-package">tokenizers package<a class="anchor" aria-label="anchor" href="#tokenizers-package"></a>
-</h3>
-<p>The <code>tokenizers</code> package provides a simple, fast baseline
-via <code>tokenize_words()</code>. It lowercases by default, strips
-punctuation, and returns a named list – one character vector per input
-string. No spans, no contraction splitting, no biber logic, but useful
-for quick bag-of-words pipelines or as a reference point.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Sen. Sanders argued that they've long been ignored."</span>,</span>
-<span>  <span class="st">"The well-known theory spans four generational archetypes."</span>,</span>
-<span>  <span class="st">"U.S. voters aged 18-29 shifted dramatically from 2020 to 2024."</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">tokenizers</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/tokenizers/reference/basic-tokenizers.html" class="external-link">tokenize_words</a></span><span class="op">(</span><span class="va">eg</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [1] "sen"     "sanders" "argued"  "that"    "they've" "long"    "been"   </span></span>
-<span><span class="co">#&gt; [8] "ignored"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [1] "the"          "well"         "known"        "theory"       "spans"       </span></span>
-<span><span class="co">#&gt; [6] "four"         "generational" "archetypes"  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt;  [1] "u"            "s"            "voters"       "aged"         "18"          </span></span>
-<span><span class="co">#&gt;  [6] "29"           "shifted"      "dramatically" "from"         "2020"        </span></span>
-<span><span class="co">#&gt; [11] "to"           "2024"</span></span></code></pre>
-<p>The same sentences through the biber method – note contraction
-splitting (<em>“they’ve”</em> → <em>“they”</em> + <em>“’ve”</em>),
-hyphen preservation (<em>“well-known”</em> as one token), and
-punctuation retention:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">eg</span>, doc_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">eg</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
-<span>    by            <span class="op">=</span> <span class="st">"doc_id"</span>,</span>
-<span>    include_spans <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    method        <span class="op">=</span> <span class="st">"biber"</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; $`1`</span></span>
-<span><span class="co">#&gt;  [1] "Sen"     "."       "Sanders" "argued"  "that"    "they"    "'ve"    </span></span>
-<span><span class="co">#&gt;  [8] "long"    "been"    "ignored" "."      </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $`2`</span></span>
-<span><span class="co">#&gt; [1] "The"          "well-known"   "theory"       "spans"        "four"        </span></span>
-<span><span class="co">#&gt; [6] "generational" "archetypes"   "."           </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $`3`</span></span>
-<span><span class="co">#&gt;  [1] "U"            "."            "S"            "."            "voters"      </span></span>
-<span><span class="co">#&gt;  [6] "aged"         "18-29"        "shifted"      "dramatically" "from"        </span></span>
-<span><span class="co">#&gt; [11] "2020"         "to"           "2024"         "."           </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; attr(,"id_col")</span></span>
-<span><span class="co">#&gt; [1] "uid"</span></span></code></pre>
-</div>
 </div>
 <div class="section level2">
 <h2 id="step-3-cast-to-data-frame">Step 3 – cast to data frame<a class="anchor" aria-label="anchor" href="#step-3-cast-to-data-frame"></a>
@@ -305,7 +250,7 @@ punctuation retention:</p>
 <p><code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens the token list into a
 long-format data table: one row per token, with <code>id</code>,
 <code>token</code>, <code>start</code>, and <code>end</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">token_df</span> <span class="op">&lt;-</span> <span class="va">tokens</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">token_df</span> <span class="op">|&gt;</span></span>
@@ -318,7 +263,7 @@ long-format data table: one row per token, with <code>id</code>,
 <h2 id="full-pipeline">Full pipeline<a class="anchor" aria-label="anchor" href="#full-pipeline"></a>
 </h2>
 <p>All three steps as a single pipe from the abstract corpus.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
