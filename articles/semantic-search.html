@@ -102,12 +102,12 @@
 
     
     
-<p>This vignette completes the search side of the textpress pipeline.
-Where regex and dictionary search match on form, and BM25 matches on
-term frequency, embedding-based search matches on meaning – useful when
-the query and the relevant passage share little surface vocabulary. Here
-all three are run on the same generational-politics corpus, BM25 via
-<code><a href="../reference/search_index.html">search_index()</a></code> and semantic via
+<p>This vignette completes the search side of the <code>textpress</code>
+pipeline. Where regex and dictionary search match on form, and BM25
+matches on term frequency, embedding-based search matches on meaning –
+useful when the query and the relevant passage share little surface
+vocabulary. Here all three are run on the same generational-politics
+corpus, BM25 via <code><a href="../reference/search_index.html">search_index()</a></code> and semantic via
 <code><a href="../reference/search_vector.html">search_vector()</a></code>, then combined with reciprocal rank fusion
 (RRF). The top-ranked chunks are passed to an LLM for synthesis and
 structured extraction, showing the full arc from raw URLs to generated

@@ -73,6 +73,23 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.1" id="textpress-111">textpress 1.1.1<a class="anchor" aria-label="anchor" href="#textpress-111"></a></h2>
+<div class="section level3">
+<h3 id="documentation-1-1-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-1"></a></h3>
+<ul><li>Five vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, and semantic search (RAG).</li>
+<li>New Basic NLP vignette demonstrating <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code>, <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> (word and Biber methods), and <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> stepwise and as a single pipe.</li>
+<li>README revamped: tighter intro, API map, RAG/agent positioning, vignette links.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-1-1-1">Changes<a class="anchor" aria-label="anchor" href="#changes-1-1-1"></a></h3>
+<ul><li>
+<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> re-added for embedding generation via Hugging Face inference endpoints.</li>
+<li>
+<code>VignetteBuilder: knitr</code> added to DESCRIPTION.</li>
+<li>Suggests trimmed: <code>ellmer</code> and unused packages removed.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.0" id="textpress-110">textpress 1.1.0<small>2026-02-23</small><a class="anchor" aria-label="anchor" href="#textpress-110"></a></h2>
 <div class="section level3">
 <h3 id="api-and-naming-1-1-0">API and naming<a class="anchor" aria-label="anchor" href="#api-and-naming-1-1-0"></a></h3>
@@ -93,7 +110,7 @@
 <li>Legacy names: <code>web_search</code>, <code>wiki_search</code>, <code>wiki_find_references</code>, <code>web_scrape_urls</code>, <code>ner_extract_entities</code>, <code>sem_nearest_neighbors</code> / <code>sem_search_corpus</code> (replaced by <code>search_vector</code> and <code>search_regex</code>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-1-1-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-0"></a></h3>
+<h3 id="docs-1-1-0">Docs<a class="anchor" aria-label="anchor" href="#docs-1-1-0"></a></h3>
 <ul><li>README revamped around the API map and a single “golden path” workflow.</li>
 <li>DESCRIPTION and package help updated for the four-stage pipeline; version set to 1.1.0.</li>
 </ul><hr></div>
