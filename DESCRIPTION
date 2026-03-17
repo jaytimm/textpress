@@ -35,8 +35,7 @@ Suggests:
     DT,
     dplyr,
     knitr,
-    rmarkdown,
-    tokenizers
+    rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/

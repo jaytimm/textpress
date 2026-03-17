@@ -8,8 +8,7 @@
 
 ## Changes
 
-- `util_fetch_embeddings()` re-added for embedding generation via Hugging Face inference endpoints.
-- `VignetteBuilder: knitr` added to DESCRIPTION.
+- `util_fetch_embeddings()` re-added for embedding generation via Hugging Face inference endpoints (reversed 1.1.0 removal; now calls the HF inference API rather than loading models locally).
 - Suggests trimmed: `ellmer` and unused packages removed.
 
 ---
