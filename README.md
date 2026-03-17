@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/textpress)](https://cran.r-project.org/package=textpress)
 
-`textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), and the pipeline composes cleanly with the pipe.
+`textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all composing cleanly with `|>`.
 
 ---
 

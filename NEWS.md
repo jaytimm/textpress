@@ -1,3 +1,19 @@
+# textpress 1.1.1
+
+## Documentation
+
+- Five vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, and semantic search (RAG).
+- New Basic NLP vignette demonstrating `nlp_split_sentences()`, `nlp_tokenize_text()` (word and Biber methods), and `nlp_cast_tokens()` stepwise and as a single pipe.
+- README revamped: tighter intro, API map, RAG/agent positioning, vignette links.
+
+## Changes
+
+- `util_fetch_embeddings()` re-added for embedding generation via Hugging Face inference endpoints.
+- `VignetteBuilder: knitr` added to DESCRIPTION.
+- Suggests trimmed: `ellmer` and unused packages removed.
+
+---
+
 # textpress 1.1.0
 
 ## API and naming
@@ -14,7 +30,7 @@
 - In-package embedding generation (e.g. Hugging Face API). Use your own embedding pipeline and pass your embedding matrix as the \code{embeddings} argument to \code{search_vector()}.
 - Legacy names: `web_search`, `wiki_search`, `wiki_find_references`, `web_scrape_urls`, `ner_extract_entities`, `sem_nearest_neighbors` / `sem_search_corpus` (replaced by `search_vector` and `search_regex`).
 
-## Documentation
+## Docs
 
 - README revamped around the API map and a single “golden path” workflow.
 - DESCRIPTION and package help updated for the four-stage pipeline; version set to 1.1.0.

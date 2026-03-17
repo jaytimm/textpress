@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-textpress is organized around four actions -- fetch, read, process, search. This vignette covers the first two. `fetch_urls()` runs a search query and returns candidate URLs with metadata; `read_urls()` scrapes their content into a node-level data frame. Together they turn a search term into an analysis-ready corpus in a few lines, which the remaining vignettes build on.
+`textpress` is organized around four actions -- fetch, read, process, search. This vignette covers the first two. `fetch_urls()` runs a search query and returns candidate URLs with metadata; `read_urls()` scrapes their content into a node-level data frame. Together they turn a search term into an analysis-ready corpus in a few lines, which the remaining vignettes build on.
 
 ## Search and read
 
@@ -64,4 +64,4 @@ DT::datatable(
 
 ## Summary
 
-`fetch_urls()` and `read_urls()` are the entry points for any textpress pipeline -- from search query to node-level corpus in a few lines. `fetch_urls()` returns candidate URLs with metadata; `read_urls()` scrapes and parses them into `$text` (one row per node) and `$meta` (one row per URL). The remaining vignettes take this output as their starting point.
+`fetch_urls()` and `read_urls()` are the entry points for any `textpress` pipeline -- from search query to node-level corpus in a few lines. `fetch_urls()` returns candidate URLs with metadata; `read_urls()` scrapes and parses them into `$text` (one row per node) and `$meta` (one row per URL). The remaining vignettes take this output as their starting point.

@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 
-`search_dict()` matches a vocabulary list against a sentence corpus and returns hits with standardized term names. This vignette uses textpress's built-in `dict_generations` and `dict_political` -- surface variants like *"Zoomers"* or *"MAGA"* mapped to canonical labels -- across the same generational-politics corpus, then computes PMI-weighted co-occurrence to see which generation and political terms travel together in the text.
+`search_dict()` matches a vocabulary list against a sentence corpus and returns hits with standardized term names. This vignette uses `textpress`'s built-in `dict_generations` and `dict_political` -- surface variants like *"Zoomers"* or *"MAGA"* mapped to canonical labels -- across the same generational-politics corpus, then computes PMI-weighted co-occurrence to see which generation and political terms travel together in the text.
 
 ```{r message=FALSE, warning=FALSE}
 library(textpress)

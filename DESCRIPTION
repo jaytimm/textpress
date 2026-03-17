@@ -37,6 +37,7 @@ Suggests:
     knitr,
     rmarkdown,
     tokenizers
+VignetteBuilder: knitr
 RoxygenNote: 7.3.3
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
 BugReports: https://github.com/jaytimm/textpress/issues
