@@ -110,10 +110,11 @@
 <p>Three <code>nlp_*</code> functions form the core processing pipeline:
 <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> segments text into sentence rows;
 <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> tokenizes each sentence into a named
-list with optional character spans; <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code>
-flattens that list into a long-format data frame ready for counting,
-filtering, or indexing. This vignette walks through each step on a
-PubMed abstract corpus, then collapses them into a single pipe.</p>
+list with optional character spans (two methods: standard word-boundary
+and Biber-style); <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens that list into
+a long-format data frame ready for counting, filtering, or indexing.
+This vignette walks through each step on a Wikipedia corpus, then
+collapses them into a single pipe.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -144,10 +145,14 @@ sentence within the source text.</p>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">web_ss</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>text <span class="op">=</span> <span class="op">{</span></span>
+<span>    <span class="va">words</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">text</span>, <span class="st">"\\s+"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">words</span>, <span class="kw">function</span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">w</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span>, <span class="st">"..."</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[[1,1,1,1,1,1,1,1,1,1],[1,1,1,2,2,2,3,3,3,3],["1","2","3","1","2","3","1","2","3","4"],["The Strauss–Howe generational theory, devised by William Strauss and Neil Howe, describes a theorized recurring generation cycle in American and Western history in which historical events are associated with recurring generational personas called archetypes. ","Each generational persona unleashes a new era (called a \"turning\") lasting around 21 years, in which a new social, political, and economic climate (\"mood\") exists. ","They are part of a larger cyclical \"saeculum\", a long human life, which usually spans around 85 years, although some saecula have lasted longer.","The theory states that a crisis recurs in American history after every saeculum, which is followed by a recovery (\"high\"). ","During this recovery, institutions and communitarian values are strong. ","Ultimately, succeeding generational archetypes attack and weaken institutions in the name of autonomy and individualism, which eventually creates a tumultuous political environment that ripens conditions for another crisis.[citation needed]","Academic response to the theory has been mixed, with some applauding Strauss and Howe for their \"bold and imaginative thesis\", while others have criticized the theory as being overly deterministic, unfalsifiable, and unsupported by rigorous evidence.[1][2][3][4][5] ","The theory has been influential in the fields of generational studies, marketing, and business management literature.[3] ","However, the theory has also been described by some historians and journalists as pseudoscientific,[3][6][7] \"kooky\",[8] and \"an elaborate historical horoscope that will never withstand scholarly scrutiny\".[9][10][11] ","Academic criticism has focused on the lack of rigorous empirical evidence for their claims,[12] as well as the authors' view that generational groupings are more powerful than other social groupings, such as economic class, race, ethnicity, sex, religion, culture, and political affiliation.[13]"],[1,260,424,1,124,196,1,267,388,606],[259,423,567,123,195,435,266,387,605,900]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>sentence_id<\/th>\n      <th>text<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1,4,5]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"sentence_id","targets":2},{"name":"text","targets":3},{"name":"start","targets":4},{"name":"end","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="section level3">
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[[1,1,1,1,1],[1,1,1,2,2],["1","2","3","1","2"],["The Strauss–Howe generational theory, devised by William Strauss and Neil Howe, describes a theorized recurring generation cycle in American and Western history in which historical ...","Each generational persona unleashes a new era (called a \"turning\") lasting around 21 years, in which a new social, political, and economic climate (\"mood\") exists. ...","They are part of a larger cyclical \"saeculum\", a long human life, which usually spans around 85 years, although some saecula have lasted longer. ...","The theory states that a crisis recurs in American history after every saeculum, which is followed by a recovery (\"high\"). ...","During this recovery, institutions and communitarian values are strong. ..."],[1,260,424,1,124],[259,423,567,123,195]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>sentence_id<\/th>\n      <th>text<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1,4,5]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"sentence_id","targets":2},{"name":"text","targets":3},{"name":"start","targets":4},{"name":"end","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="section level3">
 <h3 id="abbreviation-handling">Abbreviation handling<a class="anchor" aria-label="anchor" href="#abbreviation-handling"></a>
 </h3>
 <p>Sentence splitting fails at abbreviations – a period after
@@ -190,7 +195,12 @@ entirely.</p>
 <p><code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> tokenizes each sentence into a named
 list. With <code>include_spans = TRUE</code> the result carries two
 parallel lists – <code>tokens</code> and <code>spans</code> – keyed by a
-composite <code>uid</code> built from the <code>by</code> columns.</p>
+composite <code>uid</code> built from the <code>by</code> columns. Two
+tokenization methods are available via <code>method</code>:
+<code>"word"</code> (default) splits on word boundaries;
+<code>"biber"</code> applies a linguistically motivated scheme that
+splits contractions, handles hyphenated compounds, and follows
+Biber-style corpus tokenization conventions.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
@@ -212,6 +222,27 @@ composite <code>uid</code> built from the <code>by</code> columns.</p>
 <span><span class="co">#&gt; [4,]    13  16</span></span>
 <span><span class="co">#&gt; [5,]    18  29</span></span>
 <span><span class="co">#&gt; [6,]    31  36</span></span></code></pre>
+<div class="section level3">
+<h3 id="biber-method">Biber method<a class="anchor" aria-label="anchor" href="#biber-method"></a>
+</h3>
+<p>The key difference is contraction handling. <code>"word"</code>
+treats <em>“they’ve”</em> as a single token; <code>"biber"</code> splits
+it into <em>“they”</em> + <em>“’ve”</em> – and does the same for all
+common English contractions. Hyphenated compounds are also handled
+differently: hyphens within words are temporarily masked so
+<em>“well-known”</em> tokenizes as one unit rather than three.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tokens_biber</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
+<span>    by            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span>, <span class="st">"sentence_id"</span><span class="op">)</span>,</span>
+<span>    include_spans <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>    method        <span class="op">=</span> <span class="st">"biber"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens_biber</span><span class="op">$</span><span class="va">tokens</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] "The"          "Strauss"      "–"            "Howe"         "generational"</span></span>
+<span><span class="co">#&gt; [6] "theory"</span></span></code></pre>
+</div>
 </div>
 <div class="section level2">
 <h2 id="step-3-cast-to-data-frame">Step 3 – cast to data frame<a class="anchor" aria-label="anchor" href="#step-3-cast-to-data-frame"></a>
@@ -219,7 +250,7 @@ composite <code>uid</code> built from the <code>by</code> columns.</p>
 <p><code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens the token list into a
 long-format data table: one row per token, with <code>id</code>,
 <code>token</code>, <code>start</code>, and <code>end</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">token_df</span> <span class="op">&lt;-</span> <span class="va">tokens</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">token_df</span> <span class="op">|&gt;</span></span>
@@ -232,7 +263,7 @@ long-format data table: one row per token, with <code>id</code>,
 <h2 id="full-pipeline">Full pipeline<a class="anchor" aria-label="anchor" href="#full-pipeline"></a>
 </h2>
 <p>All three steps as a single pipe from the abstract corpus.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
