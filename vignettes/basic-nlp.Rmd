@@ -111,6 +111,33 @@ head(tokens_biber$tokens[[1]])
 
 
 
+### tokenizers package
+
+The `tokenizers` package provides a simple, fast baseline via `tokenize_words()`. It lowercases by default, strips punctuation, and returns a named list -- one character vector per input string. No spans, no contraction splitting, no biber logic, but useful for quick bag-of-words pipelines or as a reference point.
+
+```{r tokenizers-eg}
+eg <- c(
+  "Sen. Sanders argued that they've long been ignored.",
+  "The well-known theory spans four generational archetypes.",
+  "U.S. voters aged 18-29 shifted dramatically from 2020 to 2024."
+)
+
+tokenizers::tokenize_words(eg)
+```
+
+The same sentences through the biber method -- note contraction splitting (*"they've"* → *"they"* + *"'ve"*), hyphen preservation (*"well-known"* as one token), and punctuation retention:
+
+```{r tokenizers-vs-biber}
+data.frame(text = eg, doc_id = seq_along(eg)) |>
+  textpress::nlp_tokenize_text(
+    by            = "doc_id",
+    include_spans = FALSE,
+    method        = "biber"
+  )
+```
+
+
+
 ## Step 3 -- cast to data frame
 
 `nlp_cast_tokens()` flattens the token list into a long-format data table: one row per token, with `id`, `token`, `start`, and `end`.
