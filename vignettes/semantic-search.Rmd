@@ -14,11 +14,10 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 HUGGINGFACE_API_TOKEN <- Sys.getenv("HUGGINGFACE_API_TOKEN")
-OPENAI_API_KEY <- Sys.getenv("OPENAI_API_KEY")
 ```
 
 
-This vignette completes the search side of the textpress pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning — useful when the query and the relevant passage share little surface vocabulary. Here all three are run on the same generational-politics corpus, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
+This vignette completes the search side of the textpress pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here all three are run on the same generational-politics corpus, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
 
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
@@ -85,7 +84,7 @@ chunks <- textpress::nlp_roll_chunks(
 
 ## Embeddings for chunks
 
-Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search. The vignette uses `HUGGINGFACE_API_TOKEN` set in the setup chunk.
+Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search.
 
 ```{r embeddings}
 embeddings <- textpress::util_fetch_embeddings(
@@ -115,6 +114,8 @@ index <- textpress::nlp_tokenize_text(
 
 
 ## Search
+
+A single query string is used for both BM25 and semantic search, enabling a direct comparison of the two methods on the same input.
 
 ```{r}
 query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"
@@ -147,7 +148,6 @@ query_embed <- textpress::util_fetch_embeddings(
   query_text,
   api_token = HUGGINGFACE_API_TOKEN
 )
-
 semantic_hits <- search_vector(embeddings, query_embed, n = 25)
 
 semantic_hits |>
@@ -190,9 +190,9 @@ ff <- fused |>
 
 ## LLM calls over retrieved chunks
 
-Context and chat are set once; each example below uses them. Requires `ellmer`. The vignette uses `OPENAI_API_KEY` set in the setup chunk.
+Format the top-ranked chunks as labeled source blocks and concatenate into a single context string for the LLM. Initialize the chat client.
 
-```{r llm-setup}
+```{r llm-setup, eval=FALSE}
 meta <- web_text_list$meta |> select(doc_id, date)
 ff_meta <- ff |> left_join(meta, by = "doc_id") |>
   mutate(
@@ -203,101 +203,17 @@ ff_meta <- ff |> left_join(meta, by = "doc_id") |>
     block = paste0(header, text)
   )
 context <- paste(ff_meta$block, collapse = "\n\n---\n\n")
-chat <- ellmer::chat_openai(model = "gpt-4o-mini", credentials = function() OPENAI_API_KEY)
+chat <- ellmer::chat_openai(model = "gpt-4o-mini")
 ```
 
 
 
 
-
-### Narrative synthesis (free-form)
-
-Single open-ended prompt; model returns prose.
-
-```{r llm-synthesis}
-synthesis <- chat$chat(glue::glue(
-  "You are a political analyst covering the 2026 US electoral landscape.
-   Using ONLY the passages below, write a 3–4 paragraph synthesis that:
-   1. Opens with the single most striking finding about how any generation —
-      Gen Z, Millennials, Gen X, or Boomers — is aligning with or shifting
-      away from the Republican or Democratic party heading into 2026.
-   2. Explains what is driving those alignments — economic anxiety, cultural
-      identity, candidate appeal, institutional trust, or other factors
-      mentioned in the passages.
-   3. Notes any tensions or surprises: where generational behavior defies
-      expectations or where generations are splitting internally.
-   4. Closes with what remains uncertain or contested about how generational
-      politics will shape the 2026 elections.
-   5. Where a finding is specific enough to warrant it, cite the source inline
-   as (Source N, YYYY-MM-DD) immediately after the claim.
-   
-   Tone: sharp and analytical. Do NOT add information not in the passages.
-
-   PASSAGES:\n{context}"
-), echo = FALSE)
-```
-
-```{r}
-cat('<div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; font-size:0.95em;">',
-    synthesis,
-    '</div>')
-```
-
-
-
-### Causal mechanism map (structured)
-
-Structured extraction of cause–effect pathways with labels and passage support.
-
-```{r llm-mechanisms}
-mechanism_schema <- ellmer::type_object(
-  "Causal mechanisms driving generational party alignment in 2026.",
-  mechanisms = ellmer::type_array(
-    ellmer::type_object(
-      "One causal pathway.",
-      mechanism_name  = ellmer::type_string("Short label, e.g. 'Economic anxiety driving Millennial GOP shift'."),
-      cause           = ellmer::type_string("The generational, cultural, or political factor."),
-      effect          = ellmer::type_string("The party alignment or electoral behavior outcome."),
-      mediators       = ellmer::type_string("Any intervening variables mentioned."),
-      passage_support = ellmer::type_string("Brief quote or paraphrase from the passages."),
-      source = ellmer::type_string("Source ID and date, e.g. 'Source 13, 2026-02-10'. Use 'Multiple' if drawn from more than one passage."
-    )
-  )
-  )
-)
-  
-mechanisms_out <- chat$chat_structured(
-  glue::glue(
-    "Identify every causal mechanism the passages invoke to explain why
-     Gen Z, Millennials, Gen X, or Boomers are aligning with Republicans
-     or Democrats in 2026. Consider economic, cultural, institutional,
-     and candidate-driven explanations.
-     
-     For each mechanism, note the Source ID and date from the passage header.
-
-     PASSAGES:\n{context}"
-  ),
-  type = mechanism_schema
-)
-```
-
-```{r}
-mechanisms_out$mechanisms
-```
-
-
-```{r}
-mechanisms_out$mechanisms |> DT::datatable(rownames = F)
-```
-
-
-
-
-### Generational portrait (structured)
+### Generational portrait
 
 Comparative structured portrait per generation (alignment, drivers, divisions).
 
-```{r llm-portraits}
+```{r llm-portraits, eval=FALSE}
 portrait_schema <- ellmer::type_object(
   "Comparative political portraits of each generation in 2026.",
   portraits = ellmer::type_array(
@@ -308,24 +224,28 @@ portrait_schema <- ellmer::type_object(
       key_drivers              = ellmer::type_string("What is driving their alignment or behavior."),
       internal_divisions       = ellmer::type_string("Any splits within the generation mentioned."),
       contrast_with_prior      = ellmer::type_string("How they differ from the prior generation."),
-      most_recent_source = ellmer::type_string("Date of the most recent passage informing this portrait, as YYYY-MM-DD.")
+      most_recent_source       = ellmer::type_string("Date of the most recent passage informing this portrait, as YYYY-MM-DD.")
     )
   )
 )
 portraits_out <- chat$chat_structured(
   glue::glue(
-    "Write a comparative political portrait of each generation — Gen Z,
-     Millennials, Gen X, Boomers — based solely on the passages.
-     Focus on party alignment, key drivers, and internal divisions in 2026.
-     
-     Note the date of the most recent passage you draw on for each generation.
+    "Write a comparative political portrait of each generation -- Gen Z,
+   Millennials, Gen X, Boomers -- based solely on the passages.
+   Focus on party alignment, key drivers, and internal divisions in 2026.
 
-     PASSAGES:\n{context}"
+   Note the date of the most recent passage you draw on for each generation.
+
+   PASSAGES:\n{context}"
   ),
   type = portrait_schema
 )
 portraits_out$portraits |> DT::datatable(rownames = F)
 ```
+
+## Summary
+
+`search_vector()` and `search_index()` cover complementary retrieval modes -- meaning vs. term frequency. Combining them with reciprocal rank fusion consistently outperforms either alone: chunks that rank well in both lists rise to the top regardless of surface vocabulary overlap. Passing the fused top chunks to an LLM closes the loop from raw URLs to structured output.
 
 
 

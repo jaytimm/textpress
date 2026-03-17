@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 
-Pattern matching works when you know what you're looking for; dictionaries work when you want to cast a wider net systematically. This vignette uses `search_dict()` with textpress's built-in `dict_generations` and `dict_political` — which map surface variants like "Zoomers" or "MAGA" to canonical term names — to match whole vocabulary sets at once across a web corpus, then uses PMI-weighted co-occurrence to surface which generation and political terms actually travel together in the text.
+`search_dict()` matches a vocabulary list against a sentence corpus and returns hits with standardized term names. This vignette uses textpress's built-in `dict_generations` and `dict_political` -- surface variants like *"Zoomers"* or *"MAGA"* mapped to canonical labels -- across the same generational-politics corpus, then computes PMI-weighted co-occurrence to see which generation and political terms travel together in the text.
 
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
@@ -96,6 +96,8 @@ stacked_dict <- bind_rows(dict_gen, dict_pol)
 
 
 
+Run `search_dict()` with all variants, then join back to the stacked dictionary to attach canonical `term_name` and category.
+
 ```{r}
 matches <- web_ss |>
   textpress::search_dict(
@@ -141,5 +143,9 @@ cooccur <- count_xy |>
 
 DT::datatable(cooccur, options = list(pageLength = 15), rownames = FALSE)
 ```
+
+## Summary
+
+`search_dict()` covers vocabulary breadth that regex can't -- every surface form of a concept matched in a single pass, with canonical labels for grouping. Stacking `dict_generations` and `dict_political` into one search gives co-labeled hits across both dimensions; PMI co-occurrence over those sentences surfaces which generation and political terms are actually associated in the corpus.
 
 

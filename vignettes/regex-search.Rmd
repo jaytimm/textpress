@@ -7,7 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-With a corpus built and split into sentences, the simplest form of search is pattern matching. This vignette uses `search_regex()` across a generational-politics corpus to show what well-constructed regex actually buys you — age range constructions, turnout language, numeric change expressions — and how the results come back in a KWIC format ready for close reading or downstream aggregation.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+`search_regex()` matches patterns against a sentence-split corpus and returns results in KWIC format with inline highlighting. This vignette applies it to a generational-politics corpus with three patterns -- age ranges, numeric change expressions, and voter-mobilization language -- each match returned at the sentence level, ready for close reading or aggregation.
 
 ## Search terms and web URLs
 
@@ -38,6 +46,8 @@ web_urls <- lapply(search_terms, function(x)
 
 ## Web text and sentence split
 
+`read_urls()` scrapes and parses the article text; `nlp_split_sentences()` segments each document into analysis-ready sentence rows.
+
 ```{r web-text}
 web_text_list <- web_urls |>
   filter(path_depth > 0) |>
@@ -59,6 +69,8 @@ web_ss <- web_text |>
 
 ## Regex patterns
 
+Three patterns: `age_range` matches explicit age constructions; `from_to` captures numeric change expressions; `energized` catches voter-mobilization language.
+
 ```{r patterns}
 patterns <- list(
   energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
@@ -77,6 +89,8 @@ age_range = paste(
 ## Search results
 
 ### Search ~ `age_range`
+
+Sentences containing explicit age ranges or constructions (e.g. *"adults aged 18 to 29"*, *"under 30"*, *"65+"*).
 
 ```{r out-age-range}
 fs <- web_ss |> 
@@ -97,6 +111,8 @@ if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape =
 
 ### Search ~ `from_to`
 
+Sentences with numeric change expressions (e.g. *"from 42 to 51 percent"*) -- useful for tracking shifts in polling or support figures.
+
 ```{r out-from-to}
 fs1 <- web_ss |> 
   
@@ -111,3 +127,26 @@ fs1 <- web_ss |>
 
 if (!is.null(fs1) && nrow(fs1) > 0) fs1 |> DT::datatable(rownames = FALSE, escape = FALSE)
 ```
+
+### Search ~ `energized`
+
+Sentences with voter-mobilization language -- terms like *"energized"*, *"motivated"*, *"mobilized"*, *"disillusioned"*, *"apathetic"*.
+
+```{r out-energized}
+fs2 <- web_ss |>
+
+  textpress::search_regex(
+    query = patterns$energized,
+    by = c('doc_id', 'node_id'),
+    highlight = c('<span style="background:#c8e6c9;">', '</span>')
+    ) |>
+
+  distinct(text, .keep_all = TRUE) |>
+  select(doc_id, node_id, pattern, text)
+
+if (!is.null(fs2) && nrow(fs2) > 0) fs2 |> DT::datatable(rownames = FALSE, escape = FALSE)
+```
+
+## Summary
+
+`search_regex()` is best for precise, expressive patterns -- age ranges, numeric constructions, multi-word sequences -- where you control the match exactly. Results come back sentence-level with inline highlighting. For broader vocabulary coverage without hand-crafting every variant, see the dictionary search vignette.
