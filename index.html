@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A Lightweight and Versatile NLP Toolkit">
-<meta property="og:description" content="A toolkit for web scraping, modular NLP pipelines, and text preparation for large language models. Organized around four core actions: fetching, reading, processing, and searching. Covers the full pipeline from raw web data acquisition to structural text processing and BM25 indexing. Supports multiple retrieval strategies including regex, dictionary matching, and ranked keyword search. Pipe-friendly with no heavy dependencies; all outputs are plain data frames or data.tables.">
+<meta property="og:description" content="An R toolkit for building text corpora and searching them. No custom object classes, just plain data frames from start to finish. Covers the full arc from URL to retrieved passage through a consistent four-step API: Fetch, Read, Process, Search. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (|&gt;).">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -96,7 +96,7 @@
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
 <p><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="https://www.r-pkg.org/badges/version/textpress" alt="CRAN version"></a> <a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/textpress" alt="CRAN downloads"></a></p>
-<p><code>textpress</code> is an R toolkit for building text corpora and searching them – no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong>. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all composing cleanly with <code>|&gt;</code>.</p>
+<p><code>textpress</code> is an R toolkit for building text corpora and searching them – no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong>. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (<code>|&gt;</code>).</p>
 <hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -274,7 +274,6 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://cloud.r-project.org/package=textpress" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/jaytimm/textpress/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/jaytimm/textpress/issues" class="external-link">Report a bug</a></li>
 </ul>
