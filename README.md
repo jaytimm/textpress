@@ -1,9 +1,34 @@
-[![](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
-[![](http://cranlogs.r-pkg.org/badges/last-month/textpress)](https://cran.r-project.org/package=textpress)
-
 # textpress
 
-`textpress` is a lightweight, local-first **NLP toolkit for R** that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent **Fetch**, **Read**, **Process**, **Search** API. Whether you're a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.
+[![CRAN version](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
+[![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/textpress)](https://cran.r-project.org/package=textpress)
+
+`textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), and the pipeline composes cleanly with the pipe.
+
+```r
+library(textpress)
+library(dplyr)
+
+# Fetch candidate URLs, scrape text, split into sentences
+web_urls <- fetch_urls("US generational politics 2026", n_pages = 2, date_filter = "m")
+
+corpus <- web_urls |>
+  filter(path_depth > 0) |>
+  pull(url) |>
+  read_urls()
+
+web_ss <- corpus$text |> nlp_split_sentences(by = c("doc_id", "node_id"))
+
+# Build a BM25 index and fetch embeddings for semantic search
+index  <- web_ss |> nlp_tokenize_text(by = "doc_id") |> nlp_index_tokens()
+embeds <- util_fetch_embeddings(web_ss, by = "doc_id", api_token = Sys.getenv("HUGGINGFACE_API_TOKEN"))
+
+# Search: regex, dictionary, BM25, semantic -- same corpus, same pipe
+search_regex(web_ss,  query = "\\bGen Z\\b")
+search_dict(web_ss,   terms = dict_generations$variant)
+search_index(index,   query = "generational party alignment")
+search_vector(embeds, query = util_fetch_embeddings("generational party alignment", api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")))
+```
 
 ---
 
@@ -23,73 +48,82 @@ remotes::install_github("jaytimm/textpress")
 
 ---
 
-## The `textpress` API map
+## The `textpress` API
 
-**Conventions:** Corpus is a data frame with a `text` column plus identifier column(s) in `by` (default `doc_id`; use e.g. `c("url", "node_id")` after `read_urls()`). Outputs are plain data frames or data.tables; pipe-friendly.
+**Conventions:** corpus is a data frame with a `text` column plus identifier column(s) passed to `by` (default `doc_id`). All outputs are plain data frames or data.tables; pipe-friendly.
 
-### 1. Data acquisition (`fetch_*`)
+### 1. Fetch (`fetch_*`)
 
-These functions find **locations** of information (URLs or metadata), not full text. Use `read_urls()` to get content.
+Find URLs and metadata -- not full text. Pass results to `read_urls()` to get content.
 
-- **`fetch_urls()`** — Web (general). Search engine for a list of relevant links.
-- **`fetch_wiki_urls()`** — Wikipedia. Article URLs matching a search phrase.
-- **`fetch_wiki_refs(url, n)`** — Wikipedia. External citation URLs from an article’s References section; returns a data.table with `source_url` and `ref_url`.
+- **`fetch_urls(query, n_pages, date_filter)`** -- Search engine query; returns candidate URLs with metadata.
+- **`fetch_wiki_urls(query, limit)`** -- Wikipedia article URLs matching a search phrase.
+- **`fetch_wiki_refs(url, n)`** -- External citation URLs from a Wikipedia article's References section.
 
-### 2. Ingestion (`read_*`)
+### 2. Read (`read_*`)
 
-Bring data into R from URLs.
+Scrape and parse URLs into a structured corpus.
 
-- **`read_urls()`** — Character vector of URLs → data frame (one row per node: headings, paragraphs, lists). For Wikipedia, use `exclude_wiki_refs = TRUE` to drop References / See also / Bibliography / Sources sections.
+- **`read_urls(urls, ...)`** -- Character vector of URLs → `list(text, meta)`. `text` is one row per node (headings, paragraphs, lists); `meta` is one row per URL. For Wikipedia, `exclude_wiki_refs = TRUE` drops References / See also / Bibliography sections.
 
-### 3. Processing (`nlp_*`)
+### 3. Process (`nlp_*`)
 
-Prepare raw text for analysis or indexing. Designed to be used with the pipe `|>`.
+Prepare text for search or indexing.
 
-- **`nlp_split_paragraphs()`** — Break large documents into structural blocks.
-- **`nlp_split_sentences()`** — Refine blocks into individual sentences.
-- **`nlp_tokenize_text()`** — Normalize text into a clean token stream.
-- **`nlp_index_tokens()`** — Build a weighted BM25 index for ranked search.
-- **`nlp_roll_chunks()`** — Roll units (e.g. sentences) into fixed-size chunks with optional context (RAG-style).
+- **`nlp_split_paragraphs()`** -- Break documents into structural blocks.
+- **`nlp_split_sentences()`** -- Segment blocks into individual sentences.
+- **`nlp_tokenize_text()`** -- Normalize text into a clean token stream.
+- **`nlp_index_tokens()`** -- Build a weighted BM25 index for ranked retrieval.
+- **`nlp_roll_chunks()`** -- Roll sentences into fixed-size chunks with surrounding context (RAG-style).
 
-### 4. Retrieval (`search_*`)
+### 4. Search (`search_*`)
 
-Four ways to query your data. Subject-first: data (corpus, index, or embeddings) then query. Pipe-friendly.
+Four retrieval modes over the same corpus. Data-first, pipe-friendly.
 
-| Function | Primary input (needle) | Use case |
-|----------|------------------------|----------|
-| **search_regex(corpus, query, ...)** | Character (pattern) | Specific strings/patterns, KWIC. |
-| **search_dict(corpus, terms, ...)** | Character (vector of terms) | Exact phrases/MWEs; no partial-match risk. N-gram range is set from word counts in `terms`. Built-in dicts: `dict_generations`, `dict_political`. |
-| **search_index(index, query, ...)** | Character (keywords) | BM25 ranked retrieval. |
-| **search_vector(embeddings, query, ...)** | Numeric (vector/matrix) | Semantic neighbors (use `util_fetch_embeddings()` for embeddings). |
-
-**Wikipedia:** `fetch_wiki_urls("topic")` → `read_urls(urls, exclude_wiki_refs = TRUE)`. For citation URLs from an article’s References section: `fetch_wiki_refs(wiki_url, n = 10)` → `read_urls(refs$ref_url)`.
+| Function                              | Query type    | Use case                                                                    |
+|---------------------------------------|---------------|-----------------------------------------------------------------------------|
+| **`search_regex(corpus, query)`**     | Regex pattern | Specific strings, KWIC with inline highlighting.                            |
+| **`search_dict(corpus, terms)`**      | Term vector   | Exact phrases and MWEs; built-in `dict_generations`, `dict_political`.      |
+| **`search_index(index, query)`**      | Keywords      | BM25 ranked retrieval over a token index.                                   |
+| **`search_vector(embeddings, query)`**| Numeric vector| Semantic nearest-neighbor search; use `util_fetch_embeddings()` to embed.   |
 
 ---
 
-## Extension: LLMs & Agents
+## RAG & LLM pipelines
 
-`textpress` is designed to function as a clean toolset for LLM pipelines and autonomous agents.
+`textpress` is designed to compose cleanly into retrieval-augmented generation pipelines.
 
-**RAG** — Chunk with `nlp_roll_chunks()`, retrieve with `search_index()` + `search_vector()` in combination, then pre-filter with `search_dict()` to keep the context window focused.
+**Hybrid retrieval** -- run `search_index()` and `search_vector()` over the same chunks, then merge with reciprocal rank fusion (RRF). Chunks that rank well under both term frequency and meaning rise to the top.
 
-**Agents** — The consistent API and plain data-frame outputs map naturally to tool-calling. A few example mappings:
+**Context assembly** -- `nlp_roll_chunks()` with `context_size > 0` gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.
 
-| Capability | Tool | Example |
-|------------|------|---------|
-| Search | `fetch_urls()` | "Find recent articles on X" |
-| Browse | `read_urls()` | "Scrape these pages" |
-| Extract | `search_dict()` | "Find all mentions of these entities" |
-| Follow citations | `fetch_wiki_refs()` | "Dig deeper into this Wikipedia article" |
+**Agent tool-calling** -- the consistent API and plain data-frame outputs map naturally to tool use:
+
+| Agent task                                     | Function             |
+|------------------------------------------------|----------------------|
+| "Find recent articles on X"                    | `fetch_urls()`       |
+| "Scrape these pages"                           | `read_urls()`        |
+| "Find all mentions of these entities"          | `search_dict()`      |
+| "Follow citations from this Wikipedia article" | `fetch_wiki_refs()`  |
+
+---
+
+## Vignettes
+
+- [Web data](https://jaytimm.github.io/textpress/articles/web-data.html) -- `fetch_urls()` + `read_urls()`
+- [Basic NLP](https://jaytimm.github.io/textpress/articles/basic-nlp.html) -- sentence splitting, tokenization, span-aware casting
+- [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
+- [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC
+- [Dictionary search](https://jaytimm.github.io/textpress/articles/dict-search.html) -- `search_dict()`, PMI co-occurrence
+- [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- embeddings, BM25, RRF, LLM extraction
 
 ---
 
 ## License
 
-MIT © [Jason Timm, MA, PhD](https://github.com/jaytimm)
+MIT © [Jason Timm](https://github.com/jaytimm)
 
 ## Citation
-
-If you use this package in your research, please cite:
 
 ```r
 citation("textpress")
@@ -97,8 +131,4 @@ citation("textpress")
 
 ## Issues
 
-Report bugs or request features at [https://github.com/jaytimm/textpress/issues](https://github.com/jaytimm/textpress/issues)
-
-## Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
+Report bugs or request features at <https://github.com/jaytimm/textpress/issues>

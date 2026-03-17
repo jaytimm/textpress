@@ -86,7 +86,7 @@ chunks <- textpress::nlp_roll_chunks(
 
 Embed the chunk text (with context) via a Hugging Face inference endpoint. The result is a numeric matrix with one row per chunk; use it with `search_vector()` for semantic search.
 
-```{r embeddings}
+```{r embeddings, eval=FALSE}
 embeddings <- textpress::util_fetch_embeddings(
   chunks,
   by = "uid",
@@ -102,7 +102,7 @@ head(rownames(embeddings))
 
 Build a BM25 index over the same chunk text for keyword search. Tokenize by chunk, then index.
 
-```{r index}
+```{r index, eval=FALSE}
 index <- textpress::nlp_tokenize_text(
   chunks,
   by = c("uid"),
@@ -117,7 +117,7 @@ index <- textpress::nlp_tokenize_text(
 
 A single query string is used for both BM25 and semantic search, enabling a direct comparison of the two methods on the same input.
 
-```{r}
+```{r eval=FALSE}
 query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"
 ```
 
@@ -126,7 +126,7 @@ query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment
 
 Search the index with a short query relevant to the corpus (e.g. generations and voter turnout).
 
-```{r search-bm25, message=FALSE, warning=FALSE}
+```{r search-bm25, eval=FALSE, message=FALSE, warning=FALSE}
 bm25_hits <- search_index(index,
                           query_text,
                           n = 25,
@@ -143,7 +143,7 @@ bm25_hits |>
 
 Embed a query phrase that matches the corpus theme (generational politics, voter behavior), then run `search_vector()` and join back to chunks to show the retrieved text.
 
-```{r search-semantic}
+```{r search-semantic, eval=FALSE}
 query_embed <- textpress::util_fetch_embeddings(
   query_text,
   api_token = HUGGINGFACE_API_TOKEN
@@ -164,7 +164,7 @@ semantic_hits |>
 
 Merge the two ranked lists by *uid* and score each hit with `1 / (k + rank)`. *k* is a smoothing constant (here 60); larger *k* flattens the curve so lower ranks contribute more. Sum scores per *uid*, then sort descending. Chunks that appear in both lists get a higher fused score.
 
-```{r rrf, message=FALSE, warning=FALSE}
+```{r rrf, eval=FALSE, message=FALSE, warning=FALSE}
 k <- 60
 both <- bind_rows(bm25_hits, semantic_hits) |>
   group_by(query, method) |>
