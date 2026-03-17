@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`search_regex()` matches patterns against a sentence-split corpus and returns results in KWIC format with inline highlighting. This vignette applies it to a generational-politics corpus with three patterns -- age ranges, numeric change expressions, and voter-mobilization language -- each match returned at the sentence level, ready for close reading or aggregation.
+`search_regex()` matches patterns against a text corpus and returns results in KWIC format with inline highlighting. This vignette applies it to a generational-politics corpus with three patterns -- age ranges, numeric change expressions, and voter-mobilization language -- each match returned at the sentence level, ready for close reading or aggregation.
 
 ## Search terms and web URLs
 
