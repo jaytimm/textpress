@@ -19,31 +19,21 @@ Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences(
 
 ```{r libs}
 library(textpress)
-library(puremoe)
 library(dplyr)
 library(DT)
 ```
 
 ## Corpus
 
-Search PubMed for abstracts on political ideology and fetch the records.
+Fetch Wikipedia articles on the Strauss-Howe generational theory and scrape the article bodies.
 
 ```{r corpus}
-pmids <- puremoe::search_pubmed(
-  '"political ideology"[TiAb]',
-  retmax = 100
-)
+wiki_urls <- textpress::fetch_wiki_urls("Strauss Howe generational theory", limit = 5)
 
-abstracts <- puremoe::get_records(
-  pmids     = pmids,
-  endpoint  = "pubmed_abstracts",
-  cores     = 3
-) |>
-  filter(!is.na(abstract)) |>
-  rename(doc_id = pmid, text = abstract) |>
-  select(doc_id, year, journal, articletitle, text)
+wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
 
-nrow(abstracts)
+corpus <- wiki_text_list$text
+nrow(corpus)
 ```
 
 
@@ -53,8 +43,8 @@ nrow(abstracts)
 `nlp_split_sentences()` segments each abstract into individual sentences. The output adds `sentence_id` and carries `start`/`end` character offsets for each sentence within the source text.
 
 ```{r split-sentences}
-web_ss <- abstracts |>
-  textpress::nlp_split_sentences(by = "doc_id")
+web_ss <- corpus |>
+  textpress::nlp_split_sentences(by = c("doc_id", "node_id"))
 
 web_ss |>
   slice(1:10) |>
@@ -75,7 +65,7 @@ textpress::abbreviations
 # Extend with domain-specific abbreviations
 nlp_split_sentences(
   corpus,
-  by            = "doc_id",
+  by            = c("doc_id", "node_id"),
   abbreviations = c(textpress::abbreviations, "approx.", "dept.", "est.")
 )
 ```
@@ -89,7 +79,7 @@ nlp_split_sentences(
 ```{r tokenize}
 tokens <- web_ss |>
   textpress::nlp_tokenize_text(
-    by            = c("doc_id", "sentence_id"),
+    by            = c("doc_id", "node_id", "sentence_id"),
     include_spans = TRUE
   )
 
@@ -121,10 +111,10 @@ token_df |>
 All three steps as a single pipe from the abstract corpus.
 
 ```{r pipeline}
-abstracts |>
-  textpress::nlp_split_sentences(by = "doc_id") |>
+corpus |>
+  textpress::nlp_split_sentences(by = c("doc_id", "node_id")) |>
   textpress::nlp_tokenize_text(
-    by            = c("doc_id", "sentence_id"),
+    by            = c("doc_id", "node_id", "sentence_id"),
     include_spans = TRUE
   ) |>
   textpress::nlp_cast_tokens()

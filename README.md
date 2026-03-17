@@ -5,31 +5,6 @@
 
 `textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), and the pipeline composes cleanly with the pipe.
 
-```r
-library(textpress)
-library(dplyr)
-
-# Fetch candidate URLs, scrape text, split into sentences
-web_urls <- fetch_urls("US generational politics 2026", n_pages = 2, date_filter = "m")
-
-corpus <- web_urls |>
-  filter(path_depth > 0) |>
-  pull(url) |>
-  read_urls()
-
-web_ss <- corpus$text |> nlp_split_sentences(by = c("doc_id", "node_id"))
-
-# Build a BM25 index and fetch embeddings for semantic search
-index  <- web_ss |> nlp_tokenize_text(by = "doc_id") |> nlp_index_tokens()
-embeds <- util_fetch_embeddings(web_ss, by = "doc_id", api_token = Sys.getenv("HUGGINGFACE_API_TOKEN"))
-
-# Search: regex, dictionary, BM25, semantic -- same corpus, same pipe
-search_regex(web_ss,  query = "\\bGen Z\\b")
-search_dict(web_ss,   terms = dict_generations$variant)
-search_index(index,   query = "generational party alignment")
-search_vector(embeds, query = util_fetch_embeddings("generational party alignment", api_token = Sys.getenv("HUGGINGFACE_API_TOKEN")))
-```
-
 ---
 
 ## Installation
@@ -115,7 +90,7 @@ Four retrieval modes over the same corpus. Data-first, pipe-friendly.
 - [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
 - [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC
 - [Dictionary search](https://jaytimm.github.io/textpress/articles/dict-search.html) -- `search_dict()`, PMI co-occurrence
-- [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- embeddings, BM25, RRF, LLM extraction
+- [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- RAG pipeline: embeddings, BM25, hybrid RRF retrieval, LLM extraction
 
 ---
 

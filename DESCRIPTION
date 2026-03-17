@@ -34,7 +34,6 @@ Suggests:
     SnowballC (>= 0.7.0),
     DT,
     dplyr,
-    ellmer,
     knitr,
     rmarkdown
 RoxygenNote: 7.3.3

@@ -22,7 +22,6 @@ This vignette completes the search side of the textpress pipeline. Where regex a
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
-library(ellmer)
 ```
 
 
@@ -193,6 +192,7 @@ ff <- fused |>
 Format the top-ranked chunks as labeled source blocks and concatenate into a single context string for the LLM. Initialize the chat client.
 
 ```{r llm-setup, eval=FALSE}
+library(ellmer)
 meta <- web_text_list$meta |> select(doc_id, date)
 ff_meta <- ff |> left_join(meta, by = "doc_id") |>
   mutate(
