@@ -1,19 +1,16 @@
 Package: textpress
 Type: Package
 Title: A Lightweight and Versatile NLP Toolkit
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A rugged, practical toolkit for web scraping, stepwise NLP
-    pipelines, and lightweight LLM context engineering. The API follows a
-    consistent, predictable flow organized around four core actions:
-    fetching, reading, processing, and searching. Functions cover the full
+Description: A toolkit for web scraping, modular NLP pipelines, and text
+    preparation for large language models. Organized around four core
+    actions: fetching, reading, processing, and searching. Covers the full
     pipeline from raw web data acquisition to structural text processing and
-    BM25 indexing. Multiple retrieval strategies are supported, including
-    regex, dictionary matching, and ranked keyword search. Designed to be
-    transparent and unobtrusive: pipe-friendly, no heavy dependencies, and
-    all outputs are plain data frames or data.tables rather than complex
-    object classes.
+    BM25 indexing. Supports multiple retrieval strategies including regex,
+    dictionary matching, and ranked keyword search. Pipe-friendly with no
+    heavy dependencies; all outputs are plain data frames or data.tables.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false

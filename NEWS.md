@@ -2,13 +2,14 @@
 
 ## Documentation
 
-- Five vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, and semantic search (RAG).
-- New Basic NLP vignette demonstrating `nlp_split_sentences()`, `nlp_tokenize_text()` (word and Biber methods), and `nlp_cast_tokens()` stepwise and as a single pipe.
+- Six vignettes added covering the full pipeline: web data, Wikipedia data, regex search, dictionary search, semantic search (RAG), and basic NLP processing.
+- Basic NLP vignette walks through `nlp_split_sentences()`, `nlp_tokenize_text()` (word and Biber methods), and `nlp_cast_tokens()` stepwise and as a single pipe.
 - README revamped: tighter intro, API map, RAG/agent positioning, vignette links.
 
 ## Changes
 
 - `util_fetch_embeddings()` re-added for embedding generation via Hugging Face inference endpoints (reversed 1.1.0 removal; now calls the HF inference API rather than loading models locally).
+- `nlp_cast_tokens()` documented and surfaced -- flattens the token list from `nlp_tokenize_text()` into a long-format data frame with optional character spans.
 - Suggests trimmed: `ellmer` and unused packages removed.
 
 ---
