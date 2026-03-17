@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans; `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a PubMed abstract corpus, then collapses them into a single pipe.
+Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans (two methods: standard word-boundary and Biber-style); `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a Wikipedia corpus, then collapses them into a single pipe.
 
 ```{r libs}
 library(textpress)
@@ -47,7 +47,11 @@ web_ss <- corpus |>
   textpress::nlp_split_sentences(by = c("doc_id", "node_id"))
 
 web_ss |>
-  slice(1:10) |>
+  slice(1:5) |>
+  mutate(text = {
+    words <- strsplit(text, "\\s+")
+    sapply(words, function(w) paste(paste(w[seq_len(min(25, length(w)))], collapse = " "), "..."))
+  }) |>
   DT::datatable(rownames = FALSE)
 ```
 
@@ -74,7 +78,7 @@ nlp_split_sentences(
 
 ## Step 2 -- tokenize
 
-`nlp_tokenize_text()` tokenizes each sentence into a named list. With `include_spans = TRUE` the result carries two parallel lists -- `tokens` and `spans` -- keyed by a composite `uid` built from the `by` columns.
+`nlp_tokenize_text()` tokenizes each sentence into a named list. With `include_spans = TRUE` the result carries two parallel lists -- `tokens` and `spans` -- keyed by a composite `uid` built from the `by` columns. Two tokenization methods are available via `method`: `"word"` (default) splits on word boundaries; `"biber"` applies a linguistically motivated scheme that splits contractions, handles hyphenated compounds, and follows Biber-style corpus tokenization conventions.
 
 ```{r tokenize}
 tokens <- web_ss |>
@@ -88,6 +92,21 @@ head(tokens$tokens[[1]])
 
 # spans matrix: matching start/end positions
 head(tokens$spans[[1]])
+```
+
+### Biber method
+
+The key difference is contraction handling. `"word"` treats *"they've"* as a single token; `"biber"` splits it into *"they"* + *"'ve"* -- and does the same for all common English contractions. Hyphenated compounds are also handled differently: hyphens within words are temporarily masked so *"well-known"* tokenizes as one unit rather than three.
+
+```{r tokenize-biber}
+tokens_biber <- web_ss |>
+  textpress::nlp_tokenize_text(
+    by            = c("doc_id", "node_id", "sentence_id"),
+    include_spans = TRUE,
+    method        = "biber"
+  )
+
+head(tokens_biber$tokens[[1]])
 ```
 
 

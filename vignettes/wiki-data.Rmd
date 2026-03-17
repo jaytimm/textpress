@@ -48,7 +48,7 @@ wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
 wiki_text_list$text |>
   select(-url) |>
   slice(1:5) |>
-  mutate(snippet = {
+  mutate(text = {
     words <- strsplit(text, "\\s+")
     sapply(words, function(w) paste(paste(w[seq_len(min(25, length(w)))], collapse = " "), "..."))
   }) |>

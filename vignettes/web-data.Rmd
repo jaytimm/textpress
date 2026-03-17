@@ -37,7 +37,7 @@ web_text_list <- web_urls |>
 ```{r}
 snippets <- web_text_list$text |>
   group_by(doc_id) |>
-  summarise(snippet = {
+  summarise(text = {
     words <- unlist(strsplit(paste(text, collapse = " "), "\\s+"))
     paste(paste(words[seq_len(min(25, length(words)))], collapse = " "), "...")
   }, .groups = "drop")
@@ -53,7 +53,7 @@ metas_dt <- web_text_list$meta |>
   )
 
 DT::datatable(
-  metas_dt |> select(date, source, title_link, snippet),
+  metas_dt |> select(date, source, title_link, text),
   options = list(columnDefs = list(
     list(targets = 2, orderable = FALSE)
   )),
