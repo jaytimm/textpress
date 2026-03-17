@@ -50,6 +50,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/basic-nlp.html">Basic NLP</a>
+    </li>
+    <li>
       <a href="articles/dict-search.html">Dictionary search</a>
     </li>
     <li>
@@ -89,12 +92,11 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-
 <div class="section level1">
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
-<p><code>textpress</code> is a lightweight, local-first <strong>NLP toolkit for R</strong> toolkit that takes you from a search query to a structured data frame with minimal overhead and no custom object classes — just plain tables. It brings traditional NLP tools like KWIC and BM25 together with modern capabilities like semantic search and LLM-ready chunking, all through a consistent <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong> API. Whether you’re a corpus linguist, data journalist, RAG developer, or student, it offers a transparent, stepwise pipeline that keeps your data simple, inspectable, and bloat-free.</p>
+<p><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="https://www.r-pkg.org/badges/version/textpress" alt="CRAN version"></a> <a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/textpress" alt="CRAN downloads"></a></p>
+<p><code>textpress</code> is an R toolkit for building text corpora and searching them – no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong>. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), and the pipeline composes cleanly with the pipe.</p>
 <hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -108,156 +110,164 @@
 <hr>
 </div>
 <div class="section level2">
-<h2 id="the-textpress-api-map">The <code>textpress</code> API map<a class="anchor" aria-label="anchor" href="#the-textpress-api-map"></a>
+<h2 id="the-textpress-api">The <code>textpress</code> API<a class="anchor" aria-label="anchor" href="#the-textpress-api"></a>
 </h2>
-<p><strong>Conventions:</strong> Corpus is a data frame with a <code>text</code> column plus identifier column(s) in <code>by</code> (default <code>doc_id</code>; use e.g. <code>c("url", "node_id")</code> after <code><a href="reference/read_urls.html">read_urls()</a></code>). Outputs are plain data frames or data.tables; pipe-friendly.</p>
+<p><strong>Conventions:</strong> corpus is a data frame with a <code>text</code> column plus identifier column(s) passed to <code>by</code> (default <code>doc_id</code>). All outputs are plain data frames or data.tables; pipe-friendly.</p>
 <div class="section level3">
-<h3 id="id_1-data-acquisition-fetch_">1. Data acquisition (<code>fetch_*</code>)<a class="anchor" aria-label="anchor" href="#id_1-data-acquisition-fetch_"></a>
+<h3 id="id_1-fetch-fetch_">1. Fetch (<code>fetch_*</code>)<a class="anchor" aria-label="anchor" href="#id_1-fetch-fetch_"></a>
 </h3>
-<p>These functions find <strong>locations</strong> of information (URLs or metadata), not full text. Use <code><a href="reference/read_urls.html">read_urls()</a></code> to get content.</p>
+<p>Find URLs and metadata – not full text. Pass results to <code><a href="reference/read_urls.html">read_urls()</a></code> to get content.</p>
 <ul>
 <li>
-<strong><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></strong> — Web (general). Search engine for a list of relevant links.</li>
+<strong><code>fetch_urls(query, n_pages, date_filter)</code></strong> – Search engine query; returns candidate URLs with metadata.</li>
 <li>
-<strong><code><a href="reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code></strong> — Wikipedia. Article URLs matching a search phrase.</li>
+<strong><code>fetch_wiki_urls(query, limit)</code></strong> – Wikipedia article URLs matching a search phrase.</li>
 <li>
-<strong><code>fetch_wiki_refs(url, n)</code></strong> — Wikipedia. External citation URLs from an article’s References section; returns a data.table with <code>source_url</code> and <code>ref_url</code>.</li>
+<strong><code>fetch_wiki_refs(url, n)</code></strong> – External citation URLs from a Wikipedia article’s References section.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="id_2-ingestion-read_">2. Ingestion (<code>read_*</code>)<a class="anchor" aria-label="anchor" href="#id_2-ingestion-read_"></a>
+<h3 id="id_2-read-read_">2. Read (<code>read_*</code>)<a class="anchor" aria-label="anchor" href="#id_2-read-read_"></a>
 </h3>
-<p>Bring data into R from URLs.</p>
+<p>Scrape and parse URLs into a structured corpus.</p>
 <ul>
 <li>
-<strong><code><a href="reference/read_urls.html">read_urls()</a></code></strong> — Character vector of URLs → data frame (one row per node: headings, paragraphs, lists). For Wikipedia, use <code>exclude_wiki_refs = TRUE</code> to drop References / See also / Bibliography / Sources sections.</li>
+<strong><code>read_urls(urls, ...)</code></strong> – Character vector of URLs → <code>list(text, meta)</code>. <code>text</code> is one row per node (headings, paragraphs, lists); <code>meta</code> is one row per URL. For Wikipedia, <code>exclude_wiki_refs = TRUE</code> drops References / See also / Bibliography sections.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="id_3-processing-nlp_">3. Processing (<code>nlp_*</code>)<a class="anchor" aria-label="anchor" href="#id_3-processing-nlp_"></a>
+<h3 id="id_3-process-nlp_">3. Process (<code>nlp_*</code>)<a class="anchor" aria-label="anchor" href="#id_3-process-nlp_"></a>
 </h3>
-<p>Prepare raw text for analysis or indexing. Designed to be used with the pipe <code>|&gt;</code>.</p>
+<p>Prepare text for search or indexing.</p>
 <ul>
 <li>
-<strong><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code></strong> — Break large documents into structural blocks.</li>
+<strong><code><a href="reference/nlp_split_paragraphs.html">nlp_split_paragraphs()</a></code></strong> – Break documents into structural blocks.</li>
 <li>
-<strong><code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code></strong> — Refine blocks into individual sentences.</li>
+<strong><code><a href="reference/nlp_split_sentences.html">nlp_split_sentences()</a></code></strong> – Segment blocks into individual sentences.</li>
 <li>
-<strong><code><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code></strong> — Normalize text into a clean token stream.</li>
+<strong><code><a href="reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code></strong> – Normalize text into a clean token stream.</li>
 <li>
-<strong><code><a href="reference/nlp_index_tokens.html">nlp_index_tokens()</a></code></strong> — Build a weighted BM25 index for ranked search.</li>
+<strong><code><a href="reference/nlp_index_tokens.html">nlp_index_tokens()</a></code></strong> – Build a weighted BM25 index for ranked retrieval.</li>
 <li>
-<strong><code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code></strong> — Roll units (e.g. sentences) into fixed-size chunks with optional context (RAG-style).</li>
+<strong><code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code></strong> – Roll sentences into fixed-size chunks with surrounding context (RAG-style).</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="id_4-retrieval-search_">4. Retrieval (<code>search_*</code>)<a class="anchor" aria-label="anchor" href="#id_4-retrieval-search_"></a>
+<h3 id="id_4-search-search_">4. Search (<code>search_*</code>)<a class="anchor" aria-label="anchor" href="#id_4-search-search_"></a>
 </h3>
-<p>Four ways to query your data. Subject-first: data (corpus, index, or embeddings) then query. Pipe-friendly.</p>
+<p>Four retrieval modes over the same corpus. Data-first, pipe-friendly.</p>
 <table class="table">
 <colgroup>
-<col width="22%">
-<col width="54%">
-<col width="22%">
+<col width="29%">
+<col width="11%">
+<col width="58%">
 </colgroup>
 <thead><tr class="header">
 <th>Function</th>
-<th>Primary input (needle)</th>
+<th>Query type</th>
 <th>Use case</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><strong>search_regex(corpus, query, …)</strong></td>
-<td>Character (pattern)</td>
-<td>Specific strings/patterns, KWIC.</td>
+<td><strong><code>search_regex(corpus, query)</code></strong></td>
+<td>Regex pattern</td>
+<td>Specific strings, KWIC with inline highlighting.</td>
 </tr>
 <tr class="even">
-<td><strong>search_dict(corpus, terms, …)</strong></td>
-<td>Character (vector of terms)</td>
-<td>Exact phrases/MWEs; no partial-match risk. N-gram range is set from word counts in <code>terms</code>. Built-in dicts: <code>dict_generations</code>, <code>dict_political</code>.</td>
+<td><strong><code>search_dict(corpus, terms)</code></strong></td>
+<td>Term vector</td>
+<td>Exact phrases and MWEs; built-in <code>dict_generations</code>, <code>dict_political</code>.</td>
 </tr>
 <tr class="odd">
-<td><strong>search_index(index, query, …)</strong></td>
-<td>Character (keywords)</td>
-<td>BM25 ranked retrieval.</td>
+<td><strong><code>search_index(index, query)</code></strong></td>
+<td>Keywords</td>
+<td>BM25 ranked retrieval over a token index.</td>
 </tr>
 <tr class="even">
-<td><strong>search_vector(embeddings, query, …)</strong></td>
-<td>Numeric (vector/matrix)</td>
-<td>Semantic neighbors (use <code><a href="reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> for embeddings).</td>
+<td><strong><code>search_vector(embeddings, query)</code></strong></td>
+<td>Numeric vector</td>
+<td>Semantic nearest-neighbor search; use <code><a href="reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> to embed.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Wikipedia:</strong> <code>fetch_wiki_urls("topic")</code> → <code>read_urls(urls, exclude_wiki_refs = TRUE)</code>. For citation URLs from an article’s References section: <code>fetch_wiki_refs(wiki_url, n = 10)</code> → <code>read_urls(refs$ref_url)</code>.</p>
 <hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="extension-llms--agents">Extension: LLMs &amp; Agents<a class="anchor" aria-label="anchor" href="#extension-llms--agents"></a>
+<h2 id="rag--llm-pipelines">RAG &amp; LLM pipelines<a class="anchor" aria-label="anchor" href="#rag--llm-pipelines"></a>
 </h2>
-<p><code>textpress</code> is designed to function as a clean toolset for LLM pipelines and autonomous agents.</p>
-<p><strong>RAG</strong> — Chunk with <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code>, retrieve with <code><a href="reference/search_index.html">search_index()</a></code> + <code><a href="reference/search_vector.html">search_vector()</a></code> in combination, then pre-filter with <code><a href="reference/search_dict.html">search_dict()</a></code> to keep the context window focused.</p>
-<p><strong>Agents</strong> — The consistent API and plain data-frame outputs map naturally to tool-calling. A few example mappings:</p>
+<p><code>textpress</code> is designed to compose cleanly into retrieval-augmented generation pipelines.</p>
+<p><strong>Hybrid retrieval</strong> – run <code><a href="reference/search_index.html">search_index()</a></code> and <code><a href="reference/search_vector.html">search_vector()</a></code> over the same chunks, then merge with reciprocal rank fusion (RRF). Chunks that rank well under both term frequency and meaning rise to the top.</p>
+<p><strong>Context assembly</strong> – <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> with <code>context_size &gt; 0</code> gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.</p>
+<p><strong>Agent tool-calling</strong> – the consistent API and plain data-frame outputs map naturally to tool use:</p>
 <table class="table">
 <colgroup>
-<col width="44%">
-<col width="22%">
-<col width="33%">
+<col width="68%">
+<col width="31%">
 </colgroup>
 <thead><tr class="header">
-<th>Capability</th>
-<th>Tool</th>
-<th>Example</th>
+<th>Agent task</th>
+<th>Function</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Search</td>
-<td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
 <td>“Find recent articles on X”</td>
+<td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
 </tr>
 <tr class="even">
-<td>Browse</td>
-<td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
 <td>“Scrape these pages”</td>
+<td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
 </tr>
 <tr class="odd">
-<td>Extract</td>
-<td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
 <td>“Find all mentions of these entities”</td>
+<td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
 </tr>
 <tr class="even">
-<td>Follow citations</td>
+<td>“Follow citations from this Wikipedia article”</td>
 <td><code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code></td>
-<td>“Dig deeper into this Wikipedia article”</td>
 </tr>
 </tbody>
 </table>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<ul>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/web-data.html">Web data</a> – <code><a href="reference/fetch_urls.html">fetch_urls()</a></code> + <code><a href="reference/read_urls.html">read_urls()</a></code>
+</li>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/basic-nlp.html">Basic NLP</a> – sentence splitting, tokenization, span-aware casting</li>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/wiki-data.html">Wikipedia data</a> – <code><a href="reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code> + <code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code>
+</li>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/regex-search.html">Regex search</a> – <code><a href="reference/search_regex.html">search_regex()</a></code>, KWIC</li>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/dict-search.html">Dictionary search</a> – <code><a href="reference/search_dict.html">search_dict()</a></code>, PMI co-occurrence</li>
+<li>
+<a href="https://jaytimm.github.io/textpress/articles/semantic-search.html">Semantic search</a> – RAG pipeline: embeddings, BM25, hybrid RRF retrieval, LLM extraction</li>
+</ul>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>MIT © <a href="https://github.com/jaytimm" class="external-link">Jason Timm, MA, PhD</a></p>
+<p>MIT © <a href="https://github.com/jaytimm" class="external-link">Jason Timm</a></p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>If you use this package in your research, please cite:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
 </h2>
-<p>Report bugs or request features at <a href="https://github.com/jaytimm/textpress/issues" class="external-link">https://github.com/jaytimm/textpress/issues</a></p>
-</div>
-<div class="section level2">
-<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
-</h2>
-<p>Contributions welcome! Please open an issue or submit a pull request.</p>
+<p>Report bugs or request features at <a href="https://github.com/jaytimm/textpress/issues" class="external-link uri">https://github.com/jaytimm/textpress/issues</a></p>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -294,13 +304,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="https://www.r-pkg.org/badges/version/textpress"></a></li>
-<li><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/textpress"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>

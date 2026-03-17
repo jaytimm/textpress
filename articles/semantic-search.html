@@ -49,6 +49,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/basic-nlp.html">Basic NLP</a>
+    </li>
+    <li>
       <a href="../articles/dict-search.html">Dictionary search</a>
     </li>
     <li>
@@ -86,12 +89,7 @@
 
 
 
-      </header><link href="semantic-search_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
-<script src="semantic-search_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="semantic-search_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="semantic-search_files/datatables-binding-0.34.0/datatables.js"></script><link href="semantic-search_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="semantic-search_files/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="semantic-search_files/dt-core-1.13.6/js/jquery.dataTables.min.js"></script><link href="semantic-search_files/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
-<script src="semantic-search_files/crosstalk-1.2.2/js/crosstalk.min.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Semantic search</h1>
@@ -106,7 +104,7 @@
     
 <p>This vignette completes the search side of the textpress pipeline.
 Where regex and dictionary search match on form, and BM25 matches on
-term frequency, embedding-based search matches on meaning — useful when
+term frequency, embedding-based search matches on meaning – useful when
 the query and the relevant passage share little surface vocabulary. Here
 all three are run on the same generational-politics corpus, BM25 via
 <code><a href="../reference/search_index.html">search_index()</a></code> and semantic via
@@ -116,8 +114,7 @@ structured extraction, showing the full arc from raw URLs to generated
 output.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ellmer.tidyverse.org" class="external-link">ellmer</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="search-terms-and-web-urls">Search terms and web URLs<a class="anchor" aria-label="anchor" href="#search-terms-and-web-urls"></a>
 </h2>
@@ -175,13 +172,12 @@ focal sentence plus surrounding context in
 </h2>
 <p>Embed the chunk text (with context) via a Hugging Face inference
 endpoint. The result is a numeric matrix with one row per chunk; use it
-with <code><a href="../reference/search_vector.html">search_vector()</a></code> for semantic search. Set
-<code>HUGGINGFACE_API_TOKEN</code> so the API call can run.</p>
+with <code><a href="../reference/search_vector.html">search_vector()</a></code> for semantic search.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings</a></span><span class="op">(</span></span>
 <span>  <span class="va">chunks</span>,</span>
 <span>  by <span class="op">=</span> <span class="st">"uid"</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"HUGGINGFACE_API_TOKEN"</span><span class="op">)</span></span>
+<span>  api_token <span class="op">=</span> <span class="va">HUGGINGFACE_API_TOKEN</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -202,6 +198,8 @@ Tokenize by chunk, then index.</p>
 <div class="section level2">
 <h2 id="search">Search<a class="anchor" aria-label="anchor" href="#search"></a>
 </h2>
+<p>A single query string is used for both BM25 and semantic search,
+enabling a direct comparison of the two methods on the same input.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">query_text</span> <span class="op">&lt;-</span> <span class="st">"Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"</span></span></code></pre></div>
 <div class="section level3">
@@ -220,8 +218,6 @@ Tokenize by chunk, then index.</p>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>dom <span class="op">=</span> <span class="st">"lrtip"</span>,</span>
 <span>                   pageLength <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[["Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"],["bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25"],[17.5,15.7,15.5,15.4,15.2,15,14.6,13.3,12.9,10.9,9.93,9.93,9.41,9.25,8.9,8.779999999999999,8.359999999999999,8.359999999999999,8.35,8.300000000000001,8.289999999999999,8.15,8.07,8.029999999999999,8.029999999999999],["17_2_1","18_5_1","18_5_2","17_7_3","18_6_3","17_7_2","18_5_3","18_6_2","8_17_1","17_8_1","17_8_2","20_5_1","2_8_1","17_7_1","18_6_1","20_5_2","1_1_1","3_1_1","19_15_3","20_2_3","8_19_1","24_2_1","17_9_3","19_24_3","28_6_1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>query<\/th>\n      <th>method<\/th>\n      <th>score<\/th>\n      <th>uid<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"lrtip","pageLength":5,"columnDefs":[{"className":"dt-right","targets":2},{"name":"query","targets":0},{"name":"method","targets":1},{"name":"score","targets":2},{"name":"uid","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level3">
 <h3 id="semantic">Semantic<a class="anchor" aria-label="anchor" href="#semantic"></a>
@@ -232,9 +228,8 @@ join back to chunks to show the retrieved text.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">query_embed</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings</a></span><span class="op">(</span></span>
 <span>  <span class="va">query_text</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"HUGGINGFACE_API_TOKEN"</span><span class="op">)</span></span>
+<span>  api_token <span class="op">=</span> <span class="va">HUGGINGFACE_API_TOKEN</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">semantic_hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_vector.html">search_vector</a></span><span class="op">(</span><span class="va">embeddings</span>, <span class="va">query_embed</span>, n <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">semantic_hits</span> <span class="op">|&gt;</span></span>
@@ -275,10 +270,12 @@ appear in both lists get a higher fused score.</p>
 <div class="section level2">
 <h2 id="llm-calls-over-retrieved-chunks">LLM calls over retrieved chunks<a class="anchor" aria-label="anchor" href="#llm-calls-over-retrieved-chunks"></a>
 </h2>
-<p>Context and chat are set once; each example below uses them. Requires
-<code>ellmer</code> and <code>OPENAI_API_KEY</code>.</p>
+<p>Format the top-ranked chunks as labeled source blocks and concatenate
+into a single context string for the LLM. Initialize the chat
+client.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">web_text_list</span><span class="op">$</span><span class="va">meta</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">date</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ellmer.tidyverse.org" class="external-link">ellmer</a></span><span class="op">)</span></span>
+<span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">web_text_list</span><span class="op">$</span><span class="va">meta</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">date</span><span class="op">)</span></span>
 <span><span class="va">ff_meta</span> <span class="op">&lt;-</span> <span class="va">ff</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">meta</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    header <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -290,78 +287,11 @@ appear in both lists get a higher fused score.</p>
 <span><span class="va">context</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">ff_meta</span><span class="op">$</span><span class="va">block</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
 <span><span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_openai.html" class="external-link">chat_openai</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gpt-4o-mini"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="narrative-synthesis-free-form">Narrative synthesis (free-form)<a class="anchor" aria-label="anchor" href="#narrative-synthesis-free-form"></a>
-</h3>
-<p>Single open-ended prompt; model returns prose.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">synthesis</span> <span class="op">&lt;-</span> <span class="va">chat</span><span class="op">$</span><span class="fu">chat</span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span></span>
-<span>  <span class="st">"You are a political analyst covering the 2026 US electoral landscape.</span></span>
-<span><span class="st">   Using ONLY the passages below, write a 3–4 paragraph synthesis that:</span></span>
-<span><span class="st">   1. Opens with the single most striking finding about how any generation —</span></span>
-<span><span class="st">      Gen Z, Millennials, Gen X, or Boomers — is aligning with or shifting</span></span>
-<span><span class="st">      away from the Republican or Democratic party heading into 2026.</span></span>
-<span><span class="st">   2. Explains what is driving those alignments — economic anxiety, cultural</span></span>
-<span><span class="st">      identity, candidate appeal, institutional trust, or other factors</span></span>
-<span><span class="st">      mentioned in the passages.</span></span>
-<span><span class="st">   3. Notes any tensions or surprises: where generational behavior defies</span></span>
-<span><span class="st">      expectations or where generations are splitting internally.</span></span>
-<span><span class="st">   4. Closes with what remains uncertain or contested about how generational</span></span>
-<span><span class="st">      politics will shape the 2026 elections.</span></span>
-<span><span class="st">   5. Where a finding is specific enough to warrant it, cite the source inline</span></span>
-<span><span class="st">   as (Source N, YYYY-MM-DD) immediately after the claim.</span></span>
-<span><span class="st">   </span></span>
-<span><span class="st">   Tone: sharp and analytical. Do NOT add information not in the passages.</span></span>
-<span><span class="st"></span></span>
-<span><span class="st">   PASSAGES:\n{context}"</span></span>
-<span><span class="op">)</span>, echo <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">'&lt;div style="background:#f7f7f7; padding:1em; border-left:3px solid #ccc; font-size:0.95em;"&gt;'</span>,</span>
-<span>    <span class="va">synthesis</span>,</span>
-<span>    <span class="st">'&lt;/div&gt;'</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="causal-mechanism-map-structured">Causal mechanism map (structured)<a class="anchor" aria-label="anchor" href="#causal-mechanism-map-structured"></a>
-</h3>
-<p>Structured extraction of cause–effect pathways with labels and
-passage support.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mechanism_schema</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Causal mechanisms driving generational party alignment in 2026."</span>,</span>
-<span>  mechanisms <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_array</a></span><span class="op">(</span></span>
-<span>    <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object</a></span><span class="op">(</span></span>
-<span>      <span class="st">"One causal pathway."</span>,</span>
-<span>      mechanism_name  <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Short label, e.g. 'Economic anxiety driving Millennial GOP shift'."</span><span class="op">)</span>,</span>
-<span>      cause           <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"The generational, cultural, or political factor."</span><span class="op">)</span>,</span>
-<span>      effect          <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"The party alignment or electoral behavior outcome."</span><span class="op">)</span>,</span>
-<span>      mediators       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Any intervening variables mentioned."</span><span class="op">)</span>,</span>
-<span>      passage_support <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Brief quote or paraphrase from the passages."</span><span class="op">)</span>,</span>
-<span>      source <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Source ID and date, e.g. 'Source 13, 2026-02-10'. Use 'Multiple' if drawn from more than one passage."</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span>  </span>
-<span><span class="va">mechanisms_out</span> <span class="op">&lt;-</span> <span class="va">chat</span><span class="op">$</span><span class="fu">chat_structured</span><span class="op">(</span></span>
-<span>  <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Identify every causal mechanism the passages invoke to explain why</span></span>
-<span><span class="st">     Gen Z, Millennials, Gen X, or Boomers are aligning with Republicans</span></span>
-<span><span class="st">     or Democrats in 2026. Consider economic, cultural, institutional,</span></span>
-<span><span class="st">     and candidate-driven explanations.</span></span>
-<span><span class="st">     </span></span>
-<span><span class="st">     For each mechanism, note the Source ID and date from the passage header.</span></span>
-<span><span class="st"></span></span>
-<span><span class="st">     PASSAGES:\n{context}"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  type <span class="op">=</span> <span class="va">mechanism_schema</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">mechanisms_out</span><span class="op">$</span><span class="va">mechanisms</span> <span class="op">|&gt;</span> <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="generational-portrait-structured">Generational portrait (structured)<a class="anchor" aria-label="anchor" href="#generational-portrait-structured"></a>
+<h3 id="generational-portrait">Generational portrait<a class="anchor" aria-label="anchor" href="#generational-portrait"></a>
 </h3>
 <p>Comparative structured portrait per generation (alignment, drivers,
 divisions).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">portrait_schema</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Comparative political portraits of each generation in 2026."</span>,</span>
 <span>  portraits <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_array</a></span><span class="op">(</span></span>
@@ -372,24 +302,34 @@ divisions).</p>
 <span>      key_drivers              <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"What is driving their alignment or behavior."</span><span class="op">)</span>,</span>
 <span>      internal_divisions       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Any splits within the generation mentioned."</span><span class="op">)</span>,</span>
 <span>      contrast_with_prior      <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"How they differ from the prior generation."</span><span class="op">)</span>,</span>
-<span>      most_recent_source <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Date of the most recent passage informing this portrait, as YYYY-MM-DD."</span><span class="op">)</span></span>
+<span>      most_recent_source       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Date of the most recent passage informing this portrait, as YYYY-MM-DD."</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">portraits_out</span> <span class="op">&lt;-</span> <span class="va">chat</span><span class="op">$</span><span class="fu">chat_structured</span><span class="op">(</span></span>
 <span>  <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Write a comparative political portrait of each generation — Gen Z,</span></span>
-<span><span class="st">     Millennials, Gen X, Boomers — based solely on the passages.</span></span>
-<span><span class="st">     Focus on party alignment, key drivers, and internal divisions in 2026.</span></span>
-<span><span class="st">     </span></span>
-<span><span class="st">     Note the date of the most recent passage you draw on for each generation.</span></span>
+<span>    <span class="st">"Write a comparative political portrait of each generation -- Gen Z,</span></span>
+<span><span class="st">   Millennials, Gen X, Boomers -- based solely on the passages.</span></span>
+<span><span class="st">   Focus on party alignment, key drivers, and internal divisions in 2026.</span></span>
 <span><span class="st"></span></span>
-<span><span class="st">     PASSAGES:\n{context}"</span></span>
+<span><span class="st">   Note the date of the most recent passage you draw on for each generation.</span></span>
+<span><span class="st"></span></span>
+<span><span class="st">   PASSAGES:\n{context}"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="va">portrait_schema</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">portraits_out</span><span class="op">$</span><span class="va">portraits</span> <span class="op">|&gt;</span> <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 </div>
+</div>
+<div class="section level2">
+<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<p><code><a href="../reference/search_vector.html">search_vector()</a></code> and <code><a href="../reference/search_index.html">search_index()</a></code> cover
+complementary retrieval modes – meaning vs. term frequency. Combining
+them with reciprocal rank fusion consistently outperforms either alone:
+chunks that rank well in both lists rise to the top regardless of
+surface vocabulary overlap. Passing the fused top chunks to an LLM
+closes the loop from raw URLs to structured output.</p>
 </div>
   </div>
 
