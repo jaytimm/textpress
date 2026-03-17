@@ -19,6 +19,8 @@ HUGGINGFACE_API_TOKEN <- Sys.getenv("HUGGINGFACE_API_TOKEN")
 
 This vignette completes the search side of the `textpress` pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here all three are run on the same generational-politics corpus, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
 
+Load packages.
+
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
@@ -27,6 +29,8 @@ library(dplyr)
 
 
 ## Search terms and web URLs
+
+Four queries covering each generation's political alignment in 2026.
 
 ```{r search-terms}
 search_terms <- c(
@@ -39,6 +43,8 @@ search_terms <- c(
 
 
 
+Fetch candidate URLs for each query and deduplicate.
+
 ```{r web-urls}
 web_urls <- lapply(search_terms, function(x)
   textpress::fetch_urls(query = x,
@@ -48,7 +54,7 @@ web_urls <- lapply(search_terms, function(x)
   unique()
 ```
 
-> 
+
 
 ## Web text and sentence split
 

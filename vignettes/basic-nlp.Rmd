@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 
 Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans (two methods: standard word-boundary and Biber-style); `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a Wikipedia corpus, then collapses them into a single pipe.
 
+Load packages.
+
 ```{r libs}
 library(textpress)
 library(dplyr)
@@ -50,7 +52,7 @@ web_ss |>
   slice(1:5) |>
   mutate(text = {
     words <- strsplit(text, "\\s+")
-    sapply(words, function(w) paste(paste(w[seq_len(min(25, length(w)))], collapse = " "), "..."))
+    sapply(words, function(w) paste(paste(w[seq_len(min(15, length(w)))], collapse = " "), "..."))
   }) |>
   DT::datatable(rownames = FALSE)
 ```

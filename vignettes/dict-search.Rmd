@@ -21,6 +21,8 @@ knitr::opts_chunk$set(
 
 `search_dict()` matches a vocabulary list against a sentence corpus and returns hits with standardized term names. This vignette uses `textpress`'s built-in `dict_generations` and `dict_political` -- surface variants like *"Zoomers"* or *"MAGA"* mapped to canonical labels -- across the same generational-politics corpus, then computes PMI-weighted co-occurrence to see which generation and political terms travel together in the text.
 
+Load packages.
+
 ```{r message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
@@ -32,6 +34,8 @@ library(DT)
 
 ## Search terms and web URLs
 
+Four queries covering each generation's political alignment in 2026.
+
 ```{r search-terms}
 search_terms <- c(
   "US Gen Z voters 2026",
@@ -41,10 +45,12 @@ search_terms <- c(
 )
 ```
 
+Fetch candidate URLs for each query and deduplicate.
+
 ```{r web-urls}
 web_urls <- lapply(search_terms, function(x)
-  textpress::fetch_urls(query = x, 
-                        n_pages = 3, 
+  textpress::fetch_urls(query = x,
+                        n_pages = 3,
                         date_filter = "m")) |>
   bind_rows() |>
   unique()

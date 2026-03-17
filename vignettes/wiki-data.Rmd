@@ -50,7 +50,7 @@ wiki_text_list$text |>
   slice(1:5) |>
   mutate(text = {
     words <- strsplit(text, "\\s+")
-    sapply(words, function(w) paste(paste(w[seq_len(min(25, length(w)))], collapse = " "), "..."))
+    sapply(words, function(w) paste(paste(w[seq_len(min(15, length(w)))], collapse = " "), "..."))
   }) |>
   DT::datatable(rownames = F)
 ```

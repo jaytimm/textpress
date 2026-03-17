@@ -19,6 +19,8 @@ knitr::opts_chunk$set(
 
 ## Search terms and web URLs
 
+Four queries covering each generation's political alignment in 2026.
+
 ```{r search-terms}
 search_terms <- c(
   "US Gen Z voters 2026",
@@ -28,6 +30,8 @@ search_terms <- c(
 )
 ```
 
+
+Fetch candidate URLs for each query and deduplicate.
 
 ```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
@@ -59,6 +63,8 @@ web_text <- web_text_list$text |>
   relocate(doc_id, .before = 1)
 ```
 
+
+Segment each document into sentence rows.
 
 ```{r web-ss}
 web_ss <- web_text |>

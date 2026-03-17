@@ -4,13 +4,12 @@ Title: A Lightweight and Versatile NLP Toolkit
 Version: 1.1.1
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: A toolkit for web scraping, modular NLP pipelines, and text
-    preparation for large language models. Organized around four core
-    actions: fetching, reading, processing, and searching. Covers the full
-    pipeline from raw web data acquisition to structural text processing and
-    BM25 indexing. Supports multiple retrieval strategies including regex,
-    dictionary matching, and ranked keyword search. Pipe-friendly with no
-    heavy dependencies; all outputs are plain data frames or data.tables.
+Description: An R toolkit for building text corpora and searching them.
+    No custom object classes, just plain data frames from start to finish.
+    Covers the full arc from URL to retrieved passage through a consistent
+    four-step API: Fetch, Read, Process, Search. Traditional tools (KWIC,
+    BM25, dictionary matching) sit alongside modern ones (semantic search,
+    LLM-ready chunking), all compatible with the native R pipe ('|>').
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
@@ -30,10 +29,7 @@ Imports:
 Suggests:
     SnowballC (>= 0.7.0),
     DT,
-    dplyr,
-    knitr,
-    rmarkdown
-VignetteBuilder: knitr
+    dplyr
 RoxygenNote: 7.3.3
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
 BugReports: https://github.com/jaytimm/textpress/issues
