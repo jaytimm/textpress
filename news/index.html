@@ -25,31 +25,6 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/basic-nlp.html">Basic NLP</a>
-    </li>
-    <li>
-      <a href="../articles/dict-search.html">Dictionary search</a>
-    </li>
-    <li>
-      <a href="../articles/regex-search.html">Regex search</a>
-    </li>
-    <li>
-      <a href="../articles/semantic-search.html">Semantic search</a>
-    </li>
-    <li>
-      <a href="../articles/web-data.html">Web data</a>
-    </li>
-    <li>
-      <a href="../articles/wiki-data.html">Wikipedia data</a>
-    </li>
-  </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
@@ -83,9 +58,7 @@
 <div class="section level3">
 <h3 id="changes-1-1-1">Changes<a class="anchor" aria-label="anchor" href="#changes-1-1-1"></a></h3>
 <ul><li>
-<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> re-added for embedding generation via Hugging Face inference endpoints.</li>
-<li>
-<code>VignetteBuilder: knitr</code> added to DESCRIPTION.</li>
+<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> re-added for embedding generation via Hugging Face inference endpoints (reversed 1.1.0 removal; now calls the HF inference API rather than loading models locally).</li>
 <li>Suggests trimmed: <code>ellmer</code> and unused packages removed.</li>
 </ul><hr></div>
 </div>

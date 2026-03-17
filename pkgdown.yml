@@ -1,14 +1,8 @@
 pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
-articles:
-  basic-nlp: basic-nlp.html
-  dict-search: dict-search.html
-  regex-search: regex-search.html
-  semantic-search: semantic-search.html
-  web-data: web-data.html
-  wiki-data: wiki-data.html
-last_built: 2026-03-17T20:52Z
+articles: {}
+last_built: 2026-03-17T21:03Z
 urls:
   reference: https://jaytimm.github.io/textpress/reference
   article: https://jaytimm.github.io/textpress/articles
