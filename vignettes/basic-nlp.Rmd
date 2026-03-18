@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans (two methods: standard word-boundary and Biber-style); `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a Wikipedia corpus, then collapses them into a single pipe.
+Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans; `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a Wikipedia corpus, then collapses them into a single pipe.
 
 Load packages.
 
@@ -40,9 +40,9 @@ nrow(corpus)
 
 
 
-## Step 1 -- sentence split
+## Sentence split
 
-`nlp_split_sentences()` segments each abstract into individual sentences. The output adds `sentence_id` and carries `start`/`end` character offsets for each sentence within the source text.
+`nlp_split_sentences()` segments each text into individual sentences, adding `sentence_id` and `start`/`end` character offsets. Known abbreviations (*Mr., U.S., vs.*) and single-letter initials are protected from false boundary detection via a built-in `abbreviations` vector, which can be extended as needed.
 
 ```{r split-sentences}
 web_ss <- corpus |>
@@ -52,40 +52,21 @@ web_ss |>
   slice(1:5) |>
   mutate(text = {
     words <- strsplit(text, "\\s+")
-    sapply(words, function(w) paste(paste(w[seq_len(min(15, length(w)))], collapse = " "), "..."))
+    sapply(words, function(w) paste(paste(w[seq_len(min(15, length(w)))], 
+                                          collapse = " "), "..."))
   }) |>
   DT::datatable(rownames = FALSE)
 ```
 
-### Abbreviation handling
+## Tokenize
 
-Sentence splitting fails at abbreviations -- a period after *"Sen."* or *"U.S."* looks like a sentence boundary to a naive splitter. `nlp_split_sentences()` handles this with a mask-then-restore approach: before splitting, dots in known abbreviations are swapped to underscores so stringi never sees them as boundaries; after splitting, they are restored. Single uppercase initials (`\b[A-Z]\.`) are protected the same way, covering constructions like *"George W. Bush"* without needing them in the list.
-
-The built-in `abbreviations` vector covers titles (*Mr., Dr., Sen., Gov., Rep., Prof.*), months (*Jan. -- Dec.*), and common forms (*U.S., D.C., vs., i.e.*). It is short by design -- the regex for single-letter initials handles the long tail. The `abbreviations` parameter accepts any character vector, so domain-specific forms can be appended or the list replaced entirely.
-
-```{r abbrevs}
-textpress::abbreviations
-```
-
-```{r abbrevs-custom, eval=FALSE}
-# Extend with domain-specific abbreviations
-nlp_split_sentences(
-  corpus,
-  by            = c("doc_id", "node_id"),
-  abbreviations = c(textpress::abbreviations, "approx.", "dept.", "est.")
-)
-```
-
-
-
-## Step 2 -- tokenize
-
-`nlp_tokenize_text()` tokenizes each sentence into a named list. With `include_spans = TRUE` the result carries two parallel lists -- `tokens` and `spans` -- keyed by a composite `uid` built from the `by` columns. Two tokenization methods are available via `method`: `"word"` (default) splits on word boundaries; `"biber"` applies a linguistically motivated scheme that splits contractions, handles hyphenated compounds, and follows Biber-style corpus tokenization conventions.
+`nlp_tokenize_text()` tokenizes each sentence into a named list. With `include_spans = TRUE` the result carries two parallel lists -- `tokens` and `spans` -- keyed by a composite `uid` built from the `by` columns.
 
 ```{r tokenize}
 tokens <- web_ss |>
   textpress::nlp_tokenize_text(
-    by            = c("doc_id", "node_id", "sentence_id"),
+    by = c("doc_id", "node_id", "sentence_id"),
+    method = 'biber',
     include_spans = TRUE
   )
 
@@ -96,24 +77,7 @@ head(tokens$tokens[[1]])
 head(tokens$spans[[1]])
 ```
 
-### Biber method
-
-The key difference is contraction handling. `"word"` treats *"they've"* as a single token; `"biber"` splits it into *"they"* + *"'ve"* -- and does the same for all common English contractions. Hyphenated compounds are also handled differently: hyphens within words are temporarily masked so *"well-known"* tokenizes as one unit rather than three.
-
-```{r tokenize-biber}
-tokens_biber <- web_ss |>
-  textpress::nlp_tokenize_text(
-    by            = c("doc_id", "node_id", "sentence_id"),
-    include_spans = TRUE,
-    method        = "biber"
-  )
-
-head(tokens_biber$tokens[[1]])
-```
-
-
-
-## Step 3 -- cast to data frame
+## Cast to data frame
 
 `nlp_cast_tokens()` flattens the token list into a long-format data table: one row per token, with `id`, `token`, `start`, and `end`.
 
