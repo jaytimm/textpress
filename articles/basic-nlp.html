@@ -110,11 +110,10 @@
 <p>Three <code>nlp_*</code> functions form the core processing pipeline:
 <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> segments text into sentence rows;
 <code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> tokenizes each sentence into a named
-list with optional character spans (two methods: standard word-boundary
-and Biber-style); <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens that list into
-a long-format data frame ready for counting, filtering, or indexing.
-This vignette walks through each step on a Wikipedia corpus, then
-collapses them into a single pipe.</p>
+list with optional character spans; <code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code>
+flattens that list into a long-format data frame ready for counting,
+filtering, or indexing. This vignette walks through each step on a
+Wikipedia corpus, then collapses them into a single pipe.</p>
 <p>Load packages.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
@@ -135,12 +134,14 @@ scrape the article bodies.</p>
 <pre><code><span><span class="co">#&gt; [1] 144</span></span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="step-1-sentence-split">Step 1 – sentence split<a class="anchor" aria-label="anchor" href="#step-1-sentence-split"></a>
+<h2 id="sentence-split">Sentence split<a class="anchor" aria-label="anchor" href="#sentence-split"></a>
 </h2>
-<p><code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> segments each abstract into
-individual sentences. The output adds <code>sentence_id</code> and
-carries <code>start</code>/<code>end</code> character offsets for each
-sentence within the source text.</p>
+<p><code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> segments each text into individual
+sentences, adding <code>sentence_id</code> and
+<code>start</code>/<code>end</code> character offsets. Known
+abbreviations (<em>Mr., U.S., vs.</em>) and single-letter initials are
+protected from false boundary detection via a built-in
+<code>abbreviations</code> vector, which can be extended as needed.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_ss</span> <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span></span>
@@ -149,63 +150,25 @@ sentence within the source text.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>text <span class="op">=</span> <span class="op">{</span></span>
 <span>    <span class="va">words</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">text</span>, <span class="st">"\\s+"</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">words</span>, <span class="kw">function</span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">w</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span>, <span class="st">"..."</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">words</span>, <span class="kw">function</span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">w</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>, </span>
+<span>                                          collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span>, <span class="st">"..."</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[[1,1,1,1,1],[1,1,1,2,2],["1","2","3","1","2"],["The Strauss–Howe generational theory, devised by William Strauss and Neil Howe, describes a theorized recurring ...","Each generational persona unleashes a new era (called a \"turning\") lasting around 21 years, in ...","They are part of a larger cyclical \"saeculum\", a long human life, which usually spans ...","The theory states that a crisis recurs in American history after every saeculum, which is ...","During this recovery, institutions and communitarian values are strong. ..."],[1,260,424,1,124],[259,423,567,123,195]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>sentence_id<\/th>\n      <th>text<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1,4,5]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"sentence_id","targets":2},{"name":"text","targets":3},{"name":"start","targets":4},{"name":"end","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><div class="section level3">
-<h3 id="abbreviation-handling">Abbreviation handling<a class="anchor" aria-label="anchor" href="#abbreviation-handling"></a>
-</h3>
-<p>Sentence splitting fails at abbreviations – a period after
-<em>“Sen.”</em> or <em>“U.S.”</em> looks like a sentence boundary to a
-naive splitter. <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> handles this with a
-mask-then-restore approach: before splitting, dots in known
-abbreviations are swapped to underscores so stringi never sees them as
-boundaries; after splitting, they are restored. Single uppercase
-initials (<code>\b[A-Z]\.</code>) are protected the same way, covering
-constructions like <em>“George W. Bush”</em> without needing them in the
-list.</p>
-<p>The built-in <code>abbreviations</code> vector covers titles
-(<em>Mr., Dr., Sen., Gov., Rep., Prof.</em>), months (<em>Jan. –
-Dec.</em>), and common forms (<em>U.S., D.C., vs., i.e.</em>). It is
-short by design – the regex for single-letter initials handles the long
-tail. The <code>abbreviations</code> parameter accepts any character
-vector, so domain-specific forms can be appended or the list replaced
-entirely.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/abbreviations.html">abbreviations</a></span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;  [1] "\\b[A-Z]\\." "i.e."        "D.C."        "vs."         "Fig."       </span></span>
-<span><span class="co">#&gt;  [6] "No."         "Inc."        "St."         "U.S.A."      "Mr."        </span></span>
-<span><span class="co">#&gt; [11] "Mrs."        "Ms."         "Dr."         "Prof."       "Sr."        </span></span>
-<span><span class="co">#&gt; [16] "Jr."         "Sen."        "U.S."        "Rep."        "Sen."       </span></span>
-<span><span class="co">#&gt; [21] "Gov."        "Jan."        "Feb."        "Mar."        "Apr."       </span></span>
-<span><span class="co">#&gt; [26] "Aug."        "Sep."        "Oct."        "Nov."        "Dec."       </span></span>
-<span><span class="co">#&gt; [31] "Reps."</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extend with domain-specific abbreviations</span></span>
-<span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span></span>
-<span>  <span class="va">corpus</span>,</span>
-<span>  by            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span>,</span>
-<span>  abbreviations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/abbreviations.html">abbreviations</a></span>, <span class="st">"approx."</span>, <span class="st">"dept."</span>, <span class="st">"est."</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[[1,1,1,1,1],[1,1,1,2,2],["1","2","3","1","2"],["The Strauss–Howe generational theory, devised by William Strauss and Neil Howe, describes a theorized recurring ...","Each generational persona unleashes a new era (called a \"turning\") lasting around 21 years, in ...","They are part of a larger cyclical \"saeculum\", a long human life, which usually spans ...","The theory states that a crisis recurs in American history after every saeculum, which is ...","During this recovery, institutions and communitarian values are strong. ..."],[1,260,424,1,124],[259,423,567,123,195]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>sentence_id<\/th>\n      <th>text<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1,4,5]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"sentence_id","targets":2},{"name":"text","targets":3},{"name":"start","targets":4},{"name":"end","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
-<h2 id="step-2-tokenize">Step 2 – tokenize<a class="anchor" aria-label="anchor" href="#step-2-tokenize"></a>
+<h2 id="tokenize">Tokenize<a class="anchor" aria-label="anchor" href="#tokenize"></a>
 </h2>
 <p><code><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text()</a></code> tokenizes each sentence into a named
 list. With <code>include_spans = TRUE</code> the result carries two
 parallel lists – <code>tokens</code> and <code>spans</code> – keyed by a
-composite <code>uid</code> built from the <code>by</code> columns. Two
-tokenization methods are available via <code>method</code>:
-<code>"word"</code> (default) splits on word boundaries;
-<code>"biber"</code> applies a linguistically motivated scheme that
-splits contractions, handles hyphenated compounds, and follows
-Biber-style corpus tokenization conventions.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+composite <code>uid</code> built from the <code>by</code> columns.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
-<span>    by            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span>, <span class="st">"sentence_id"</span><span class="op">)</span>,</span>
+<span>    by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span>, <span class="st">"sentence_id"</span><span class="op">)</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">'biber'</span>,</span>
 <span>    include_spans <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
@@ -213,7 +176,7 @@ Biber-style corpus tokenization conventions.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">$</span><span class="va">tokens</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] "The"          "Strauss"      "–"            "Howe"         "generational"</span></span>
 <span><span class="co">#&gt; [6] "theory"</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># spans matrix: matching start/end positions</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">$</span><span class="va">spans</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;      start end</span></span>
@@ -223,35 +186,14 @@ Biber-style corpus tokenization conventions.</p>
 <span><span class="co">#&gt; [4,]    13  16</span></span>
 <span><span class="co">#&gt; [5,]    18  29</span></span>
 <span><span class="co">#&gt; [6,]    31  36</span></span></code></pre>
-<div class="section level3">
-<h3 id="biber-method">Biber method<a class="anchor" aria-label="anchor" href="#biber-method"></a>
-</h3>
-<p>The key difference is contraction handling. <code>"word"</code>
-treats <em>“they’ve”</em> as a single token; <code>"biber"</code> splits
-it into <em>“they”</em> + <em>“’ve”</em> – and does the same for all
-common English contractions. Hyphenated compounds are also handled
-differently: hyphens within words are temporarily masked so
-<em>“well-known”</em> tokenizes as one unit rather than three.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tokens_biber</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
-<span>    by            <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span>, <span class="st">"sentence_id"</span><span class="op">)</span>,</span>
-<span>    include_spans <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    method        <span class="op">=</span> <span class="st">"biber"</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens_biber</span><span class="op">$</span><span class="va">tokens</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [1] "The"          "Strauss"      "–"            "Howe"         "generational"</span></span>
-<span><span class="co">#&gt; [6] "theory"</span></span></code></pre>
-</div>
 </div>
 <div class="section level2">
-<h2 id="step-3-cast-to-data-frame">Step 3 – cast to data frame<a class="anchor" aria-label="anchor" href="#step-3-cast-to-data-frame"></a>
+<h2 id="cast-to-data-frame">Cast to data frame<a class="anchor" aria-label="anchor" href="#cast-to-data-frame"></a>
 </h2>
 <p><code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens the token list into a
 long-format data table: one row per token, with <code>id</code>,
 <code>token</code>, <code>start</code>, and <code>end</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">token_df</span> <span class="op">&lt;-</span> <span class="va">tokens</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">token_df</span> <span class="op">|&gt;</span></span>
@@ -264,7 +206,7 @@ long-format data table: one row per token, with <code>id</code>,
 <h2 id="full-pipeline">Full pipeline<a class="anchor" aria-label="anchor" href="#full-pipeline"></a>
 </h2>
 <p>All three steps as a single pipe from the abstract corpus.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
@@ -280,11 +222,11 @@ long-format data table: one row per token, with <code>id</code>,
 <span><span class="co">#&gt;     4:  1.1.1         Howe    13    16</span></span>
 <span><span class="co">#&gt;     5:  1.1.1 generational    18    29</span></span>
 <span><span class="co">#&gt;    ---                                </span></span>
-<span><span class="co">#&gt; 11605:  5.2.5            .   155   155</span></span>
-<span><span class="co">#&gt; 11606:  5.2.5            "   156   156</span></span>
-<span><span class="co">#&gt; 11607:  5.2.5            [   157   157</span></span>
-<span><span class="co">#&gt; 11608:  5.2.5            3   158   158</span></span>
-<span><span class="co">#&gt; 11609:  5.2.5            ]   159   159</span></span></code></pre>
+<span><span class="co">#&gt; 11605:  5.2.4       Bannon    57    62</span></span>
+<span><span class="co">#&gt; 11606:  5.2.4            .    63    63</span></span>
+<span><span class="co">#&gt; 11607:  5.2.4            [    64    64</span></span>
+<span><span class="co">#&gt; 11608:  5.2.4            4    65    65</span></span>
+<span><span class="co">#&gt; 11609:  5.2.4            ]    66    66</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
