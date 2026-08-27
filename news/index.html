@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -73,6 +73,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.2" id="textpress-112">textpress 1.1.2<a class="anchor" aria-label="anchor" href="#textpress-112"></a></h2>
+<div class="section level3">
+<h3 id="fetch-1-1-2">Fetch<a class="anchor" aria-label="anchor" href="#fetch-1-1-2"></a></h3>
+<ul><li>
+<code>fetch_urls()</code> and its DuckDuckGo scraping implementation have been removed.</li>
+<li>
+<code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> adds publisher-supported RSS and Atom discovery. It returns a flat table of article URLs and feed-supplied metadata that can be filtered before the selected URLs are passed to <code><a href="../reference/read_urls.html">read_urls()</a></code>.</li>
+<li>
+<code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> assigns stable <code>doc_id</code> values. Passing its result table directly to <code><a href="../reference/read_urls.html">read_urls()</a></code> preserves discovery metadata in the returned <code>meta</code> table.</li>
+<li>
+<code>rss_politics</code> adds a verified collection of 67 active, non-government US politics feeds from 61 sources. The exported catalog and its canonical CSV cover general political news, Congress, elections, polling, public opinion, and state politics; it is available directly as <code><a href="../reference/rss_politics.html">textpress::rss_politics</a></code>.</li>
+<li>
+<code>rss_local_rags</code> adds a pinned Local Rags RSS snapshot with the shared feed schema plus Census region, state, county, and FIPS geography. Detailed discovery and 3DLNews provenance remain in the source repository.</li>
+<li>
+<code><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code> now always returns one flat table for single or multiple Wikipedia URLs, allowing its results to pass directly to <code><a href="../reference/read_urls.html">read_urls()</a></code>.</li>
+<li>Wikipedia requests now identify textpress with a package User-Agent.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.1" id="textpress-111">textpress 1.1.1<small>2026-03-17</small><a class="anchor" aria-label="anchor" href="#textpress-111"></a></h2>
 <div class="section level3">
 <h3 id="documentation-1-1-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-1"></a></h3>
@@ -95,7 +114,7 @@
 <h3 id="api-and-naming-1-1-0">API and naming<a class="anchor" aria-label="anchor" href="#api-and-naming-1-1-0"></a></h3>
 <ul><li>Package is now organized around a <strong>four-stage pipeline</strong>: Fetch → Read → Process → Search. All functions use a consistent verb_noun pattern.</li>
 <li>
-<strong>Acquire:</strong> <code><a href="../reference/fetch_urls.html">fetch_urls()</a></code> (from web search), <code><a href="../reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code>, <code><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code> — return URLs or metadata, not full text.</li>
+<strong>Acquire:</strong> <code>fetch_urls()</code> (from web search), <code><a href="../reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code>, <code><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code> — return URLs or metadata, not full text.</li>
 <li>
 <strong>Ingest:</strong> <code><a href="../reference/read_urls.html">read_urls()</a></code> — read content from URLs into R (replaces <code>web_scrape_urls</code>).</li>
 <li>
@@ -133,7 +152,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -117,25 +117,27 @@ output.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="search-terms-and-web-urls">Search terms and web URLs<a class="anchor" aria-label="anchor" href="#search-terms-and-web-urls"></a>
+<h2 id="terms-and-rss-entries">Terms and RSS entries<a class="anchor" aria-label="anchor" href="#terms-and-rss-entries"></a>
 </h2>
-<p>Four queries covering each generation’s political alignment in
-2026.</p>
+<p>Terms used to select relevant entries from political RSS feeds.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"US Gen Z voters 2026"</span>,</span>
-<span>  <span class="st">"US Millennial political party 2026"</span>,</span>
-<span>  <span class="st">"US Gen X politics 2026"</span>,</span>
-<span>  <span class="st">"US Baby Boomer Republican Democrat 2026"</span></span>
+<span>  <span class="st">"Gen Z"</span>, <span class="st">"Millennial"</span>, <span class="st">"Gen X"</span>, <span class="st">"Baby Boomer"</span>,</span>
+<span>  <span class="st">"young voters"</span>, <span class="st">"older voters"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Fetch candidate URLs for each query and deduplicate.</p>
+<p>Fetch recent entries from the selected feeds, filter their title and
+description locally, and deduplicate the resulting URLs.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">web_urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">search_terms</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span>query <span class="op">=</span> <span class="va">x</span>,</span>
-<span>                        n_pages <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                        date_filter <span class="op">=</span> <span class="st">"m"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">politics_feeds</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/rss_politics.html">rss_politics</a></span></span>
+<span></span>
+<span><span class="va">web_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_rss.html">fetch_rss</a></span><span class="op">(</span><span class="va">politics_feeds</span><span class="op">$</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">search_terms</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">title</span>, <span class="va">description</span><span class="op">)</span>,</span>
+<span>    ignore.case <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">doc_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">url</span>, .keep_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="web-text-and-sentence-split">Web text and sentence split<a class="anchor" aria-label="anchor" href="#web-text-and-sentence-split"></a>
@@ -145,8 +147,6 @@ output.</p>
 analysis-ready sentence rows.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_text_list</span> <span class="op">&lt;-</span> <span class="va">web_urls</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">path_depth</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">web_ss</span> <span class="op">&lt;-</span> <span class="va">web_text_list</span><span class="op">$</span><span class="va">text</span> <span class="op">|&gt;</span></span>
@@ -286,24 +286,24 @@ client.</p>
 <span>    block <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">header</span>, <span class="va">text</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="va">context</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">ff_meta</span><span class="op">$</span><span class="va">block</span>, collapse <span class="op">=</span> <span class="st">"\n\n---\n\n"</span><span class="op">)</span></span>
-<span><span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/chat_openai.html" class="external-link">chat_openai</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gpt-4o-mini"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">chat</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">chat_openai</span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gpt-4o-mini"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="generational-portrait">Generational portrait<a class="anchor" aria-label="anchor" href="#generational-portrait"></a>
 </h3>
 <p>Comparative structured portrait per generation (alignment, drivers,
 divisions).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">portrait_schema</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">portrait_schema</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_object</span><span class="op">(</span></span>
 <span>  <span class="st">"Comparative political portraits of each generation in 2026."</span>,</span>
-<span>  portraits <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_array</a></span><span class="op">(</span></span>
-<span>    <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object</a></span><span class="op">(</span></span>
+<span>  portraits <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_array</span><span class="op">(</span></span>
+<span>    <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_object</span><span class="op">(</span></span>
 <span>      <span class="st">"Portrait of one generation."</span>,</span>
-<span>      generation               <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Gen Z / Millennial / Gen X / Boomer."</span><span class="op">)</span>,</span>
-<span>      party_alignment          <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Current lean or alignment per the passages."</span><span class="op">)</span>,</span>
-<span>      key_drivers              <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"What is driving their alignment or behavior."</span><span class="op">)</span>,</span>
-<span>      internal_divisions       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Any splits within the generation mentioned."</span><span class="op">)</span>,</span>
-<span>      contrast_with_prior      <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"How they differ from the prior generation."</span><span class="op">)</span>,</span>
-<span>      most_recent_source       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu"><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_string</a></span><span class="op">(</span><span class="st">"Date of the most recent passage informing this portrait, as YYYY-MM-DD."</span><span class="op">)</span></span>
+<span>      generation               <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"Gen Z / Millennial / Gen X / Boomer."</span><span class="op">)</span>,</span>
+<span>      party_alignment          <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"Current lean or alignment per the passages."</span><span class="op">)</span>,</span>
+<span>      key_drivers              <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"What is driving their alignment or behavior."</span><span class="op">)</span>,</span>
+<span>      internal_divisions       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"Any splits within the generation mentioned."</span><span class="op">)</span>,</span>
+<span>      contrast_with_prior      <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"How they differ from the prior generation."</span><span class="op">)</span>,</span>
+<span>      most_recent_source       <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_string</span><span class="op">(</span><span class="st">"Date of the most recent passage informing this portrait, as YYYY-MM-DD."</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -349,7 +349,7 @@ closes the loop from raw URLs to structured output.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

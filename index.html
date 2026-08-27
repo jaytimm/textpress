@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="A Lightweight and Versatile NLP Toolkit">
-<meta property="og:description" content="An R toolkit for building text corpora and searching them. No custom object classes, just plain data frames from start to finish. Covers the full arc from URL to retrieved passage through a consistent four-step API: Fetch, Read, Process, Search. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (|&gt;).">
+<meta property="og:description" content="An R toolkit for building text corpora and searching them. Collect URLs and provenance from RSS and Atom feeds, Wikipedia and its citations, or supply existing URLs. No custom object classes, just plain data frames from start to finish. Covers the full arc from URL to retrieved passage through a consistent four-step API: Fetch, Read, Process, Search. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (|&gt;).">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
 <div class="page-header"><h1 id="textpress">textpress<a class="anchor" aria-label="anchor" href="#textpress"></a>
 </h1></div>
 <p><a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="https://www.r-pkg.org/badges/version/textpress" alt="CRAN version"></a> <a href="https://cran.r-project.org/package=textpress" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/textpress" alt="CRAN downloads"></a></p>
-<p><code>textpress</code> is an R toolkit for building text corpora and searching them – no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong>. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (<code>|&gt;</code>).</p>
+<p><code>textpress</code> is an R toolkit for building text corpora and searching them – no custom object classes, just plain data frames from start to finish. It collects URLs from durable sources – RSS and Atom feeds, Wikipedia and its citations, or URLs you already have – then reads, processes, and searches the resulting text through a consistent four-step API: <strong>Fetch</strong>, <strong>Read</strong>, <strong>Process</strong>, <strong>Search</strong>.</p>
 <hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -110,16 +110,68 @@
 <hr>
 </div>
 <div class="section level2">
+<h2 id="a-source-to-corpus-example">A source-to-corpus example<a class="anchor" aria-label="anchor" href="#a-source-to-corpus-example"></a>
+</h2>
+<p>Select a small set of known publishers, retrieve their recent feed entries, then read the linked pages. <code><a href="reference/read_urls.html">read_urls()</a></code> retains the RSS discovery metadata.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">feeds</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="reference/rss_local_rags.html">rss_local_rags</a></span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">state_abbr</span> <span class="op">==</span> <span class="st">"NM"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/fetch_rss.html">fetch_rss</a></span><span class="op">(</span><span class="va">feeds</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span>
+<span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">articles</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">corpus</span><span class="op">$</span><span class="va">text</span></span>
+<span><span class="va">corpus</span><span class="op">$</span><span class="va">meta</span></span></code></pre></div>
+<p>There are three ways into the same pipeline:</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th>Starting point</th>
+<th>Entry point</th>
+<th>Best for</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Known publishers</td>
+<td>
+<code>rss_politics</code> or <code>rss_local_rags</code> -&gt; <code><a href="reference/fetch_rss.html">fetch_rss()</a></code>
+</td>
+<td>Recent, source-led collections</td>
+</tr>
+<tr>
+<td>A topic</td>
+<td>
+<code><a href="reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code> -&gt; <code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code>
+</td>
+<td>Topic- and citation-led discovery</td>
+</tr>
+<tr>
+<td>Existing URLs</td>
+<td>
+<code><a href="reference/read_urls.html">read_urls()</a></code> directly</td>
+<td>Curated or externally collected corpora</td>
+</tr>
+</tbody>
+</table>
+<p>Each route converges on <code><a href="reference/read_urls.html">read_urls()</a></code> -&gt; <code>nlp_*()</code> -&gt; <code>search_*()</code>.</p>
+<hr>
+</div>
+<div class="section level2">
 <h2 id="the-textpress-api">The <code>textpress</code> API<a class="anchor" aria-label="anchor" href="#the-textpress-api"></a>
 </h2>
 <p><strong>Conventions:</strong> corpus is a data frame with a <code>text</code> column plus identifier column(s) passed to <code>by</code> (default <code>doc_id</code>). All outputs are plain data frames or data.tables; pipe-friendly.</p>
 <div class="section level3">
 <h3 id="id_1-fetch-fetch_">1. Fetch (<code>fetch_*</code>)<a class="anchor" aria-label="anchor" href="#id_1-fetch-fetch_"></a>
 </h3>
-<p>Find URLs and metadata – not full text. Pass results to <code><a href="reference/read_urls.html">read_urls()</a></code> to get content.</p>
+<p>Collect URLs and provenance from stable sources – not full article text. <code>textpress</code> does not provide general-purpose live web search. Pass fetch results to <code><a href="reference/read_urls.html">read_urls()</a></code> to retrieve their content.</p>
 <ul>
 <li>
-<strong><code>fetch_urls(query, n_pages, date_filter)</code></strong> – Search engine query; returns candidate URLs with metadata.</li>
+<strong><code>fetch_rss(feed_url)</code></strong> – Retrieve recent entries from RSS and Atom feeds; bundled catalogs are available as <code>rss_politics</code> and <code>rss_local_rags</code>.</li>
 <li>
 <strong><code>fetch_wiki_urls(query, limit)</code></strong> – Wikipedia article URLs matching a search phrase.</li>
 <li>
@@ -132,7 +184,7 @@
 <p>Scrape and parse URLs into a structured corpus.</p>
 <ul>
 <li>
-<strong><code>read_urls(urls, ...)</code></strong> – Character vector of URLs → <code>list(text, meta)</code>. <code>text</code> is one row per node (headings, paragraphs, lists); <code>meta</code> is one row per URL. For Wikipedia, <code>exclude_wiki_refs = TRUE</code> drops References / See also / Bibliography sections.</li>
+<strong><code>read_urls(x, ...)</code></strong> – URL vector or fetch-result table → <code>list(text, meta)</code>. Passing a table preserves its discovery metadata and <code>doc_id</code>. <code>text</code> is one row per node; <code>meta</code> is one row per URL.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -162,28 +214,28 @@
 <col width="11%">
 <col width="58%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Query type</th>
 <th>Use case</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong><code>search_regex(corpus, query)</code></strong></td>
 <td>Regex pattern</td>
 <td>Specific strings, KWIC with inline highlighting.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong><code>search_dict(corpus, terms)</code></strong></td>
 <td>Term vector</td>
 <td>Exact phrases and MWEs; built-in <code>dict_generations</code>, <code>dict_political</code>.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong><code>search_index(index, query)</code></strong></td>
 <td>Keywords</td>
 <td>BM25 ranked retrieval over a token index.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong><code>search_vector(embeddings, query)</code></strong></td>
 <td>Numeric vector</td>
 <td>Semantic nearest-neighbor search; use <code><a href="reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> to embed.</td>
@@ -199,35 +251,7 @@
 <p><code>textpress</code> is designed to compose cleanly into retrieval-augmented generation pipelines.</p>
 <p><strong>Hybrid retrieval</strong> – run <code><a href="reference/search_index.html">search_index()</a></code> and <code><a href="reference/search_vector.html">search_vector()</a></code> over the same chunks, then merge with reciprocal rank fusion (RRF). Chunks that rank well under both term frequency and meaning rise to the top.</p>
 <p><strong>Context assembly</strong> – <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> with <code>context_size &gt; 0</code> gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.</p>
-<p><strong>Agent tool-calling</strong> – the consistent API and plain data-frame outputs map naturally to tool use:</p>
-<table class="table">
-<colgroup>
-<col width="68%">
-<col width="31%">
-</colgroup>
-<thead><tr class="header">
-<th>Agent task</th>
-<th>Function</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>“Find recent articles on X”</td>
-<td><code><a href="reference/fetch_urls.html">fetch_urls()</a></code></td>
-</tr>
-<tr class="even">
-<td>“Scrape these pages”</td>
-<td><code><a href="reference/read_urls.html">read_urls()</a></code></td>
-</tr>
-<tr class="odd">
-<td>“Find all mentions of these entities”</td>
-<td><code><a href="reference/search_dict.html">search_dict()</a></code></td>
-</tr>
-<tr class="even">
-<td>“Follow citations from this Wikipedia article”</td>
-<td><code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code></td>
-</tr>
-</tbody>
-</table>
+<p>Because the stages exchange plain data frames, their outputs can also be inspected, filtered, saved, or passed to an LLM without conversion to a custom corpus class.</p>
 <hr>
 </div>
 <div class="section level2">
@@ -235,7 +259,7 @@
 </h2>
 <ul>
 <li>
-<a href="https://jaytimm.github.io/textpress/articles/web-data.html">Web data</a> – <code><a href="reference/fetch_urls.html">fetch_urls()</a></code> + <code><a href="reference/read_urls.html">read_urls()</a></code>
+<a href="https://jaytimm.github.io/textpress/articles/web-data.html">Web data</a> – <code><a href="reference/fetch_rss.html">fetch_rss()</a></code> + <code><a href="reference/read_urls.html">read_urls()</a></code>
 </li>
 <li>
 <a href="https://jaytimm.github.io/textpress/articles/basic-nlp.html">Basic NLP</a> – sentence splitting, tokenization, span-aware casting</li>
@@ -259,7 +283,7 @@
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"textpress"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -317,7 +341,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

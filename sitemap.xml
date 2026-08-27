@@ -14,7 +14,7 @@
 <url><loc>https://jaytimm.github.io/textpress/reference/abbreviations.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/dict_generations.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/dict_political.html</loc></url>
-<url><loc>https://jaytimm.github.io/textpress/reference/fetch_urls.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/reference/fetch_rss.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/fetch_wiki_refs.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/fetch_wiki_urls.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/index.html</loc></url>
@@ -25,6 +25,8 @@
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_split_sentences.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_tokenize_text.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/read_urls.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/reference/rss_local_rags.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/reference/rss_politics.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/search_dict.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/search_index.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/search_regex.html</loc></url>

@@ -19,7 +19,7 @@ from those URLs."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -99,15 +99,14 @@ from those URLs.</p>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For one URL, a <code>data.table</code> with columns <code>source_url</code>, <code>ref_id</code>, and <code>ref_url</code>. For multiple URLs, a named list of such data.tables (names are the Wikipedia article titles); elements are <code>NULL</code> for pages with no refs.</p>
+    <p>A <code>data.table</code> with columns <code>source_url</code>, <code>ref_id</code>, and <code>ref_url</code>, one row per citation across all input URLs. Use <code>split(x, x$source_url)</code> to group by article.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">wiki_urls</span> <span class="op">&lt;-</span> <span class="fu"><a href="fetch_wiki_urls.html">fetch_wiki_urls</a></span><span class="op">(</span><span class="st">"January 6 Capitol attack"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">refs_dt</span> <span class="op">&lt;-</span> <span class="fu">fetch_wiki_refs</span><span class="op">(</span><span class="va">wiki_urls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>           <span class="co"># single URL: data.table</span></span></span>
-<span class="r-in"><span><span class="va">refs_list</span> <span class="op">&lt;-</span> <span class="fu">fetch_wiki_refs</span><span class="op">(</span><span class="va">wiki_urls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>      <span class="co"># multiple: named list</span></span></span>
+<span class="r-in"><span><span class="va">refs_dt</span> <span class="op">&lt;-</span> <span class="fu">fetch_wiki_refs</span><span class="op">(</span><span class="va">wiki_urls</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">articles</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">refs_dt</span><span class="op">$</span><span class="va">ref_url</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
@@ -124,7 +123,7 @@ from those URLs.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">textpress</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -89,12 +89,7 @@
 
 
 
-      </header><link href="web-data_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
-<script src="web-data_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="web-data_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="web-data_files/datatables-binding-0.34.0/datatables.js"></script><link href="web-data_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="web-data_files/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="web-data_files/dt-core-1.13.6/js/jquery.dataTables.min.js"></script><link href="web-data_files/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
-<script src="web-data_files/crosstalk-1.2.2/js/crosstalk.min.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Web data</h1>
@@ -109,34 +104,38 @@
     
 <p><code>textpress</code> is organized around four actions – fetch,
 read, process, search. This vignette covers the first two.
-<code><a href="../reference/fetch_urls.html">fetch_urls()</a></code> runs a search query and returns candidate URLs
-with metadata; <code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes their content into a
-node-level data frame. Together they turn a search term into an
-analysis-ready corpus in a few lines, which the remaining vignettes
-build on.</p>
+<code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> retrieves recent entries from
+publisher-supported RSS and Atom feeds; <code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes
+their content into a node-level data frame while retaining that
+provenance. Together they turn selected news sources into an
+analysis-ready corpus in a few lines.</p>
 <div class="section level2">
-<h2 id="search-and-read">Search and read<a class="anchor" aria-label="anchor" href="#search-and-read"></a>
+<h2 id="select-fetch-and-read">Select, fetch, and read<a class="anchor" aria-label="anchor" href="#select-fetch-and-read"></a>
 </h2>
-<p><code><a href="../reference/fetch_urls.html">fetch_urls()</a></code> retrieves candidate URLs for a query;
-<code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes and parses them. Build a snippet from
-the first 15 words of each article, then display metadata alongside the
-text preview.</p>
+<p>Filter the bundled <code>rss_politics</code> catalog directly, use
+<code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> to retrieve recent entries from those
+publishers, then filter the returned metadata locally before
+<code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes and parses the selected articles. The
+filtering below is ordinary R filtering, not a query sent to a search
+service.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">web_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_urls.html">fetch_urls</a></span><span class="op">(</span></span>
-<span>  query       <span class="op">=</span> <span class="st">"us polling on immigration"</span>,</span>
-<span>  n_pages     <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  date_filter <span class="op">=</span> <span class="st">"m"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">feeds</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/rss_politics.html">rss_politics</a></span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">category</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"polling"</span>, <span class="st">"public_opinion"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">web_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_rss.html">fetch_rss</a></span><span class="op">(</span><span class="va">feeds</span><span class="op">$</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
+<span>    <span class="st">"immigration|poll|survey"</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">title</span>, <span class="va">description</span><span class="op">)</span>,</span>
+<span>    ignore.case <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Scrape and parse the URLs returned above into a node-level data frame
 with <code>$text</code> and <code>$meta</code> components.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_text_list</span> <span class="op">&lt;-</span> <span class="va">web_urls</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">path_depth</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p>Build a text snippet from the first 15 words of each article, join to
 metadata, and display as an interactive table.</p>
@@ -166,19 +165,16 @@ metadata, and display as an interactive table.</p>
 <span>  escape   <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  rownames <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[["2026-03-18","2026-03-18","2026-03-17","2026-03-17","2026-03-16","2026-03-11","2026-03-11","2026-03-11","2026-03-11","2026-03-09","2026-03-08","2026-03-08","2026-03-05","2026-03-04","2026-02-28","2026-02-25","2026-02-25","2026-02-24","2026-02-20","2026-02-20","2026-02-19","2026-02-19","2026-02-18","2026-02-18","2026-02-18","2026-02-06","2026-01-15","2013-08-10",null,null,null,null],["www.ipsos.com","www.dailymail.co.uk","www.foxnews.com","canadaimmigration.news","www.cnn.com","capitalisminstitute.org","www.kob.com","news.northeastern.edu","leger360.com","www.nytimes.com","www.nbcnews.com","www.wral.com","www.independent.co.uk","www.theguardian.com","www.usatoday.com","www.prnewswire.com","www.cnn.com","abcnews.com","www.upi.com","www.newsweek.com","www.nbcnews.com","townhall.com","www.newsweek.com","www.usatoday.com","www.newsmax.com","www.forbes.com","www.forbes.com","libguides.princeton.edu","www.smdailyjournal.com","yougov.com","www.tnonline.com","www.realclearpolling.com"],["<a href=\"https://www.ipsos.com/en-us/latest-us-opinion-polls\" target=\"_blank\">Latest U.S. opinion polls<\/a>","<a href=\"https://www.dailymail.co.uk/news/article-15656897/Poll-Keir-Starmer-Donald-Trump-immigration-energy-policies-disaster.html\" target=\"_blank\">POLL OF THE DAY: Are Starmer's immigration and energy policies a 'disaster', as Trump claims?<\/a>","<a href=\"https://www.foxnews.com/politics/dhs-hits-back-illinois-county-clerk-who-told-ice-stay-away-from-primary-polling-places\" target=\"_blank\">DHS hits back at Illinois county clerk who told ICE to stay away from primary polling places<\/a>","<a href=\"https://canadaimmigration.news/alberta-immigration-services-debate-grows-after-new-public-opinion-poll/\" target=\"_blank\">Alberta Immigration Services Debate Grows After New Public Opinion Poll<\/a>","<a href=\"https://www.cnn.com/2026/03/16/politics/illinois-senate-primary-pritzker-crypto-immigration\" target=\"_blank\">A Democratic fight for an Illinois Senate seat is testing the sway of JB Pritzker, pro-crypto forces and anti-ICE messaging<\/a>","<a href=\"https://capitalisminstitute.org/democrats-block-dhs-funding-then-demand-ice-be-banned-from-polling-sites/\" target=\"_blank\">Newsletter<\/a>","<a href=\"https://www.kob.com/ap-top-news/ap-top-news-us-headlines/federal-distrust-prompts-some-democratic-states-to-protect-polling-places-election-records/\" target=\"_blank\">Federal distrust prompts some Democratic states to protect polling places, election records<\/a>","<a href=\"https://news.northeastern.edu/2026/03/11/trump-immigration-policy-poll-partisan-gap/\" target=\"_blank\">National survey finds massive ‘partisan chasm’ on immigration<\/a>","<a href=\"https://leger360.com/in-the-news-canada-politics-canadians-back-stricter-immigration-measures-and-spending-restraint/\" target=\"_blank\">Canadians Back Stricter Immigration Measures and Spending Restraint, Leger Poll Finds<\/a>","<a href=\"https://www.nytimes.com/interactive/polls/illinois-us-house-7-polls-2026.html\" target=\"_blank\">Illinois Seventh Congressional District 2026: Latest Polls<\/a>","<a href=\"https://www.nbcnews.com/politics/2026-election/poll-trump-struggles-immigration-prices-iran-democrats-midterm-edge-rcna261861\" target=\"_blank\">Poll: Trump struggles on immigration, prices and Iran as Democrats hold a midterm edge<\/a>","<a href=\"https://www.wral.com/news/ap/nbc-national-poll-majority-disapprove-trump-iran-inflation-march-2026/\" target=\"_blank\">Poll: Trump struggles on immigration, prices and Iran as Democrats hold a midterm edge<\/a>","<a href=\"https://www.independent.co.uk/news/world/americas/us-politics/donald-trump-approval-ratings-poll-fox-b2932708.html\" target=\"_blank\">Fox News poll shows 57% of Americans disapprove of the job Donald Trump is doing as president<\/a>","<a href=\"https://www.theguardian.com/us-news/2026/mar/04/ice-trump-immigration-poll\" target=\"_blank\">Half of Americans back abolishing ICE amid Trump crackdown, poll finds<\/a>","<a href=\"https://www.usatoday.com/story/news/politics/2026/02/28/midterm-elections-2026-trump-immigration-ice/88867451007/\" target=\"_blank\">Trump puts immigration front and center. How will it impact 2026 elections?<\/a>","<a href=\"https://www.prnewswire.com/news-releases/new-national-poll-shows-immigration-enforcement-is-driving-voters-away-from-republicans-ahead-of-2026-midterms-302696392.html\" target=\"_blank\">New National Poll Shows Immigration Enforcement Is Driving Voters Away from Republicans Ahead of 2026 Midterms<\/a>","<a href=\"https://www.cnn.com/2026/02/25/politics/trump-state-of-the-union-cnn-poll-cost-of-living\" target=\"_blank\">Trump’s State of the Union left some viewers unconvinced that he’ll lower cost of living, CNN poll finds<\/a>","<a href=\"https://abcnews.com/Politics/immigration-trumps-best-worst-issue-abc-newswashington-postipsos/story?id=130453377\" target=\"_blank\">Immigration is Trump's best and worst issue: ABC News/Washington Post/Ipsos poll<\/a>","<a href=\"https://www.upi.com/Top_News/US/2026/02/20/poll-63-trump-too-far-immigration-efforts/3471771619797/\" target=\"_blank\">Poll: 62% oppose ICE's tactics in immigration efforts<\/a>","<a href=\"https://www.newsweek.com/donald-trumps-immigration-approval-rating-reaches-new-low-poll-11556932\" target=\"_blank\">Donald Trump’s Immigration Approval Rating Reaches New Low—Poll<\/a>","<a href=\"https://www.nbcnews.com/news/us-news/former-prince-andrew-arrested-minnesotans-poll-immigration-morning-run-rcna259684\" target=\"_blank\">Former Prince Andrew arrested and how Minnesotans poll on immigration: Morning Rundown<\/a>","<a href=\"https://townhall.com/columnists/larryelder/2026/02/19/nbc-poll-finds-declining-support-for-trumps-immigration-agenda-blame-nbc-n2671530\" target=\"_blank\">NBC Poll Finds Declining Support for Trump's Immigration Agenda — Blame NBC<\/a>","<a href=\"https://www.newsweek.com/trump-california-millennials-immigration-policy-polls-11544679\" target=\"_blank\">Trump Gets Good News From California Millennials on His Immigration Policy<\/a>","<a href=\"https://www.usatoday.com/story/news/politics/2026/02/18/donald-trump-approval-rating/88737134007/\" target=\"_blank\">Trump is losing support on immigration. What is his approval rating?<\/a>","<a href=\"https://www.newsmax.com/politics/poll-immigration-trump/2026/02/18/id/1246507/\" target=\"_blank\">Reuters/Ipsos Poll: Trump's Immigration Approval Hits New Low<\/a>","<a href=\"https://www.forbes.com/sites/saradorn/2026/02/06/trump-approval-rating-remains-historically-low-amid-negative-immigration-polling/\" target=\"_blank\">Trump Approval Rating: Still Low, But Mostly Unchanged, Despite Unpopular Iran Strikes<\/a>","<a href=\"https://www.forbes.com/sites/saradorn/2026/01/15/trumps-approval-rating-largely-unchanged-in-first-year-but-immigration-ratings-have-plummeted/\" target=\"_blank\">Trump Approval Rating: Still Low, But Mostly Unchanged, Despite Unpopular Iran Strikes<\/a>","<a href=\"https://libguides.princeton.edu/politics/opinion\" target=\"_blank\">Political Opinion & Survey Data Sources<\/a>","<a href=\"https://www.smdailyjournal.com/news/national/federal-distrust-prompts-some-democratic-states-to-protect-polling-places-election-records/article_209c043c-bb68-5fae-925e-6878891535bd.html\" target=\"_blank\">Federal distrust prompts some Democratic states to protect polling places, election records<\/a>","<a href=\"https://yougov.com/en-us/articles/54222-iran-record-low-donald-trump-job-approval-ice-immigration-february-27-march-2-2026-economist-yougov-poll\" target=\"_blank\">Iran, record-low Trump approval, ICE, and more: February 27 - March 2, 2026 Economist/YouGov Poll<\/a>","<a href=\"https://www.tnonline.com/20240329/poll-americans-see-pros-cons-of-immigration/\" target=\"_blank\">Poll: Americans see pros/cons of immigration<\/a>","<a href=\"https://www.realclearpolling.com/stories/analysis/new-poll-shows-pa-voters-balance-on-ice-immigration\" target=\"_blank\">New Poll Shows PA Voters’ Balance on ICE, Immigration<\/a>"],["Updated on March 18, 2026 at 8:50 AM ET. Washington, DC, March 17, 2026 –  ...","POLL OF THE DAY: Are Starmer's immigration and energy policies a 'disaster', as Trump claims? ...","The Ingraham Angle panelists Ben Domenech and Mark Penn discuss the cost of energy and ...","A recent public opinion survey suggests strong support among residents for changes to government services ...","The retirement of Illinois Sen. Dick Durbin after nearly 30 years in office sparked an ...","The Department of Homeland Security is operating under a government shutdown because Democrats refuse to ...","SANTA FE, N.M. (AP) — Democratic-led states alarmed by the prospect of federal immigration officers ...","SAVE Act: Will you need a photo ID to vote in the 2026 midterms? Can ...","As debates intensify in Ottawa and across the provinces, new data show that public opinion ...","This primary is being held on March 17. Get live results. Danny Davis’s retirement has ...","Majorities of registered voters disapprove of how President Donald Trump has handled the issues that ...","Majorities of registered voters disapprove of President Donald Trump’s handling of the issues that defined ...","Notifications can be managed in browser preferences. From reproductive rights to climate change to Big ...","Half of Americans support the abolition of the Immigration and Customs Enforcement (ICE) agency, a ...","Trump puts immigration front and center. How will it impact 2026 elections? Trump twice rode ...","WASHINGTON, Feb. 24, 2026 /PRNewswire/ -- UNITE HERE today released a new national survey showing ...","President Donald Trump’s State of the Union address drew largely positive marks from a heavily ...","We asked Trump approvers and disapprovers what his best and worst moves were. Depending on ...","Feb. 20 (UPI) -- Most Americans disapprove of President Donald Trump's handling of deporting undocumented ...","President Donald Trump’s approval rating on immigration dropped to a new low for his second ...","In today’s newsletter: Former Prince Andrew is arrested. NBC News polls indicate Minnesotans are even ...","NBC News says public support for President Donald Trump's immigration agenda is collapsing. Maybe NBC ...","Residents narrowly preferred former President Joe Biden’s immigration policies to those of President Donald Trump, ...","Trump is losing support on immigration. What is his approval rating? A new poll out ...","U.S. public approval of President Donald Trump's immigration policies fell to the lowest level since ...","Forbes Staff. Widely unpopular U.S. military strikes on Iran haven’t shifted President Donald Trump’s low ...","Forbes Staff. Widely unpopular U.S. military strikes on Iran haven’t shifted President Donald Trump’s low ...","You can find many topical public opinion surveys from our Data and Statistical Services (DSS) site. ...","Sunny. Near record high temperatures. High 86F. Winds N at 5 to 10 mph.. Clear ...","We'll email you back within 24 hours. For member enquiries, public data requests, or general ...","WASHINGTON - Americans are more worried about legal immigrants committing crimes in the U.S. than ...","The latest joint polling effort between RealClear Opinion Research and Emerson Polling explores attitudes toward ..."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>date<\/th>\n      <th>source<\/th>\n      <th>title_link<\/th>\n      <th>text<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"targets":2,"orderable":false},{"name":"date","targets":0},{"name":"source","targets":1},{"name":"title_link","targets":2},{"name":"text","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p><code><a href="../reference/fetch_urls.html">fetch_urls()</a></code> and <code><a href="../reference/read_urls.html">read_urls()</a></code> are the entry
-points for any <code>textpress</code> pipeline – from search query to
-node-level corpus in a few lines. <code><a href="../reference/fetch_urls.html">fetch_urls()</a></code> returns
-candidate URLs with metadata; <code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes and
-parses them into <code>$text</code> (one row per node) and
-<code>$meta</code> (one row per URL). The remaining vignettes take this
-output as their starting point.</p>
+<p><code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> and <code><a href="../reference/read_urls.html">read_urls()</a></code> are
+source-to-corpus entry points for a <code>textpress</code> pipeline.
+<code><a href="../reference/fetch_rss.html">fetch_rss()</a></code> returns publisher-provided article URLs with
+feed metadata; <code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes and parses them into
+<code>$text</code> (one row per node) and <code>$meta</code> (one row
+per URL, including discovery provenance).</p>
 </div>
   </div>
 
@@ -197,7 +193,7 @@ output as their starting point.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>
