@@ -9,6 +9,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
   message = FALSE,
   warning = FALSE,
   comment = "#>"
@@ -28,30 +29,32 @@ library(dplyr)
 
 
 
-## Search terms and web URLs
+## Terms and RSS entries
 
-Four queries covering each generation's political alignment in 2026.
+Terms used to select relevant entries from political RSS feeds.
 
 ```{r search-terms}
 search_terms <- c(
-  "US Gen Z voters 2026",
-  "US Millennial political party 2026",
-  "US Gen X politics 2026",
-  "US Baby Boomer Republican Democrat 2026"
+  "Gen Z", "Millennial", "Gen X", "Baby Boomer",
+  "young voters", "older voters"
 )
 ```
 
 
 
-Fetch candidate URLs for each query and deduplicate.
+Fetch recent entries from the selected feeds, filter their title and description locally, and deduplicate the resulting URLs.
 
 ```{r web-urls}
-web_urls <- lapply(search_terms, function(x)
-  textpress::fetch_urls(query = x,
-                        n_pages = 1,
-                        date_filter = "m")) |>
-  bind_rows() |>
-  unique()
+politics_feeds <- textpress::rss_politics
+
+web_urls <- textpress::fetch_rss(politics_feeds$url) |>
+  filter(grepl(
+    paste(search_terms, collapse = "|"),
+    paste(title, description),
+    ignore.case = TRUE
+  )) |>
+  select(-doc_id) |>
+  distinct(url, .keep_all = TRUE)
 ```
 
 
@@ -62,8 +65,6 @@ web_urls <- lapply(search_terms, function(x)
 
 ```{r web-text}
 web_text_list <- web_urls |>
-  filter(path_depth > 0) |>
-  pull(url) |>
   textpress::read_urls(cores = 4)
 
 web_ss <- web_text_list$text |>
@@ -252,10 +253,6 @@ portraits_out$portraits |> DT::datatable(rownames = F)
 ## Summary
 
 `search_vector()` and `search_index()` cover complementary retrieval modes -- meaning vs. term frequency. Combining them with reciprocal rank fusion consistently outperforms either alone: chunks that rank well in both lists rise to the top regardless of surface vocabulary overlap. Passing the fused top chunks to an LLM closes the loop from raw URLs to structured output.
-
-
-
-
 
 
 

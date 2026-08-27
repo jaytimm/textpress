@@ -1,0 +1,68 @@
+source,feed,category,source_type,url,verified_at,latest_item_at
+POLITICO,Congress,congress,news,https://rss.politico.com/congress.xml,2026-08-26 03:06:19 UTC,2026-08-25 11:57:34 UTC
+Punchbowl News,All,congress,news,https://punchbowl.news/feed/,2026-08-26 03:06:19 UTC,2026-08-23 20:30:00 UTC
+Roll Call,All news,congress,news,https://rollcall.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 16:58:47 UTC
+The Hill,House,congress,news,https://thehill.com/homenews/house/feed/,2026-08-26 03:06:19 UTC,2026-08-26 00:42:43 UTC
+The Hill,Senate,congress,news,https://thehill.com/homenews/senate/feed/,2026-08-26 03:06:19 UTC,2026-08-26 03:14:22 UTC
+Ballotpedia News,All,elections,nonprofit_news,https://news.ballotpedia.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 20:00:00 UTC
+Bolts,All,elections,nonprofit_news,https://boltsmag.org/feed/,2026-08-26 03:06:19 UTC,2026-08-20 17:34:50 UTC
+CNalysis,All,elections,forecasting,https://cnalysis.com/feed/,2026-08-26 03:06:19 UTC,2026-08-13 17:47:49 UTC
+Campaign Legal Center,All,elections,advocacy,https://campaignlegal.org/rss.xml,2026-08-26 03:06:19 UTC,2026-08-25 21:27:41 UTC
+Election Law Blog,All,elections,analysis,https://electionlawblog.org/?feed=rss2,2026-08-26 03:06:19 UTC,2026-08-26 00:39:58 UTC
+FairVote,All,elections,advocacy,https://fairvote.org/feed/,2026-08-26 03:06:19 UTC,2026-08-24 13:13:43 UTC
+Protect Democracy,All,elections,advocacy,https://protectdemocracy.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 20:11:35 UTC
+Sabato's Crystal Ball,All,elections,forecasting,https://sabatoscrystalball.substack.com/feed,2026-08-26 03:06:19 UTC,2026-08-20 10:15:19 UTC
+The Hill,Campaign,elections,news,https://thehill.com/homenews/campaign/feed/,2026-08-26 03:06:19 UTC,2026-08-26 03:14:22 UTC
+Verified Voting,All,elections,advocacy,https://verifiedvoting.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 18:17:43 UTC
+Voting Rights Lab,All,elections,advocacy,https://votingrightslab.org/feed/,2026-08-26 03:06:19 UTC,2026-08-24 14:53:06 UTC
+electionline,All,elections,news,https://electionline.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 12:46:48 UTC
+BBC News,US and Canada,general_us_politics,news,https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml,2026-08-26 03:06:19 UTC,2026-08-25 21:23:41 UTC
+CBS News,Politics,general_us_politics,news,https://www.cbsnews.com/latest/rss/politics,2026-08-26 03:06:19 UTC,2026-08-26 02:24:26 UTC
+Fox News,Politics,general_us_politics,news,https://moxie.foxnews.com/google-publisher/politics.xml,2026-08-26 03:06:19 UTC,2026-08-26 03:05:27 UTC
+Los Angeles Times,Politics,general_us_politics,news,https://www.latimes.com/politics/rss2.0.xml,2026-08-26 03:06:19 UTC,2026-08-25 21:20:17 UTC
+Mother Jones,Politics,general_us_politics,news,https://www.motherjones.com/politics/feed/,2026-08-26 03:06:19 UTC,2026-08-25 18:42:46 UTC
+NPR,Politics,general_us_politics,news,https://feeds.npr.org/1014/rss.xml,2026-08-26 03:06:19 UTC,2026-08-25 20:47:54 UTC
+National Review,All,general_us_politics,news,https://www.nationalreview.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 10:30:41 UTC
+PBS News,Politics,general_us_politics,news,https://www.pbs.org/newshour/feeds/rss/politics,2026-08-26 03:06:19 UTC,2026-08-25 22:55:27 UTC
+POLITICO,Politics,general_us_politics,news,https://rss.politico.com/politics-news.xml,2026-08-26 03:06:19 UTC,2026-08-25 22:04:10 UTC
+POLITICO,White House,general_us_politics,news,https://rss.politico.com/whitehouse.xml,2026-08-26 03:06:19 UTC,2026-08-25 15:51:18 UTC
+Reason,All,general_us_politics,news,https://reason.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 20:56:27 UTC
+Semafor,All,general_us_politics,news,https://www.semafor.com/rss.xml,2026-08-26 03:06:19 UTC,2026-08-26 03:12:35 UTC
+Slate,News and politics,general_us_politics,news,https://slate.com/feeds/news-and-politics.rss,2026-08-26 03:06:19 UTC,2026-08-25 21:49:16 UTC
+Talking Points Memo,All,general_us_politics,news,https://talkingpointsmemo.com/feed,2026-08-26 03:06:19 UTC,2026-08-26 01:06:29 UTC
+The 19th,All,general_us_politics,nonprofit_news,https://19thnews.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 19:33:07 UTC
+The American Conservative,All,general_us_politics,news,https://www.theamericanconservative.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 23:19:22 UTC
+The Bulwark,All,general_us_politics,news,https://www.thebulwark.com/feed,2026-08-26 03:06:19 UTC,2026-08-26 02:52:11 UTC
+The Dispatch,All,general_us_politics,news,https://thedispatch.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 21:16:58 UTC
+The Federalist,All,general_us_politics,news,https://thefederalist.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 21:05:57 UTC
+The Free Press,All,general_us_politics,news,https://www.thefp.com/feed,2026-08-26 03:06:19 UTC,2026-08-26 02:51:18 UTC
+The Guardian,US politics,general_us_politics,news,https://www.theguardian.com/us-news/us-politics/rss,2026-08-26 03:06:19 UTC,2026-08-26 01:16:18 UTC
+The Hill,Just In,general_us_politics,news,https://thehill.com/news/feed/,2026-08-26 03:06:19 UTC,2026-08-26 03:08:14 UTC
+The Nation,Articles,general_us_politics,news,https://www.thenation.com/feed/?post_type=article,2026-08-26 03:06:19 UTC,2026-08-25 13:38:34 UTC
+The New Republic,All,general_us_politics,news,https://newrepublic.com/rss.xml,2026-08-26 03:06:19 UTC,2026-08-25 21:53:20 UTC
+The New York Times,Politics,general_us_politics,news,https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml,2026-08-26 03:06:19 UTC,2026-08-26 03:10:18 UTC
+The Washington Times,Politics,general_us_politics,news,https://www.washingtontimes.com/rss/headlines/news/politics/,2026-08-26 03:06:19 UTC,2026-08-26 01:22:26 UTC
+Vox,Politics,general_us_politics,news,https://www.vox.com/rss/politics/index.xml,2026-08-26 03:06:19 UTC,2026-08-25 22:55:09 UTC
+Washington Examiner,Politics,general_us_politics,news,https://www.washingtonexaminer.com/tag/politics.rss,2026-08-26 03:06:19 UTC,2026-08-25 18:23:07 UTC
+Washington Monthly,All,general_us_politics,news,https://washingtonmonthly.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 16:19:36 UTC
+Data for Progress,Blog,polling,pollster,https://www.dataforprogress.org/blog?format=rss,2026-08-26 03:06:19 UTC,2026-08-19 19:42:06 UTC
+Emerson College Polling,All,polling,pollster,https://emersoncollegepolling.com/feed/,2026-08-26 03:06:19 UTC,2026-08-20 10:04:04 UTC
+KFF,Poll findings,polling,research,https://www.kff.org/content-type/poll-finding/feed/,2026-08-26 03:06:19 UTC,2026-07-30 11:35:29 UTC
+Marist Poll,All,polling,pollster,https://maristpoll.marist.edu/feed/,2026-08-26 03:06:19 UTC,2026-08-10 10:45:00 UTC
+Navigator Research,All,polling,pollster,https://navigatorresearch.org/feed/,2026-08-26 03:06:19 UTC,2026-08-25 08:45:00 UTC
+SSRS,All,polling,pollster,https://ssrs.com/feed/,2026-08-26 03:06:19 UTC,2026-08-21 17:44:15 UTC
+Siena College Research Institute,All,polling,pollster,https://scri.siena.edu/feed/,2026-08-26 03:06:19 UTC,2026-08-25 13:00:52 UTC
+Silver Bulletin,All,polling,forecasting,https://www.natesilver.net/feed,2026-08-26 03:06:19 UTC,2026-08-25 18:43:00 UTC
+KFF,Public opinion,public_opinion,research,https://www.kff.org/topic/public-opinion/feed/,2026-08-26 03:06:19 UTC,2026-08-07 17:19:48 UTC
+Pew Research Center,Politics and policy,public_opinion,research,https://www.pewresearch.org/topic/politics-policy/feed/,2026-08-26 03:06:19 UTC,2026-08-25 13:59:17 UTC
+Alaska Beacon,All,state_politics,nonprofit_news,https://alaskabeacon.com/feed/,2026-08-26 03:06:19 UTC,2026-08-26 01:08:54 UTC
+Arizona Mirror,All,state_politics,nonprofit_news,https://azmirror.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 21:34:39 UTC
+Florida Phoenix,All,state_politics,nonprofit_news,https://floridaphoenix.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 22:17:29 UTC
+Iowa Capital Dispatch,All,state_politics,nonprofit_news,https://iowacapitaldispatch.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 22:00:10 UTC
+NC Newsline,All,state_politics,nonprofit_news,https://ncnewsline.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 19:52:15 UTC
+Nevada Current,All,state_politics,nonprofit_news,https://nevadacurrent.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 23:54:43 UTC
+Oregon Capital Chronicle,All,state_politics,nonprofit_news,https://oregoncapitalchronicle.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 22:31:43 UTC
+Pennsylvania Capital-Star,All,state_politics,nonprofit_news,https://penncapital-star.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 22:12:03 UTC
+The Colorado Sun,Politics,state_politics,nonprofit_news,https://coloradosun.com/category/politics/feed/,2026-08-26 03:06:19 UTC,2026-08-24 10:01:00 UTC
+The Texas Tribune,Main,state_politics,nonprofit_news,https://www.texastribune.org/feeds/main/,2026-08-26 03:06:19 UTC,2026-08-25 22:52:27 UTC
+Virginia Mercury,All,state_politics,nonprofit_news,https://virginiamercury.com/feed/,2026-08-26 03:06:19 UTC,2026-08-25 20:15:04 UTC

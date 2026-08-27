@@ -1,18 +1,20 @@
 Package: textpress
 Type: Package
 Title: A Lightweight and Versatile NLP Toolkit
-Version: 1.1.1
+Version: 1.1.2
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: An R toolkit for building text corpora and searching them.
-    No custom object classes, just plain data frames from start to finish.
-    Covers the full arc from URL to retrieved passage through a consistent
-    four-step API: Fetch, Read, Process, Search. Traditional tools (KWIC,
-    BM25, dictionary matching) sit alongside modern ones (semantic search,
-    LLM-ready chunking), all compatible with the native R pipe ('|>').
+    Collect URLs and provenance from RSS and Atom feeds, Wikipedia and its
+    citations, or supply existing URLs. No custom object classes, just plain
+    data frames from start to finish. Covers the full arc from URL to retrieved
+    passage through a consistent four-step API: Fetch, Read, Process, Search.
+    Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern
+    ones (semantic search, LLM-ready chunking), all compatible with the native
+    R pipe ('|>').
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 Depends: 
     R (>= 3.5)
 Imports: 
@@ -29,7 +31,12 @@ Imports:
 Suggests:
     SnowballC (>= 0.7.0),
     DT,
-    dplyr
-RoxygenNote: 7.3.3
+    dplyr,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
 BugReports: https://github.com/jaytimm/textpress/issues
+Config/roxygen2/version: 8.0.0

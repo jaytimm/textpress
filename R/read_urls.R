@@ -2,25 +2,34 @@
 #'
 #' Input: character vector of URLs. Output: structured data frame (one row per
 #' node: headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}:
-#' bring an external resource into R. Follows \code{\link{fetch_urls}} or
-#' \code{\link{fetch_wiki_urls}} in the pipeline—fetch gets locations, read gets
-#' text. Wikipedia uses high-fidelity selectors; use \code{parent_heading} to see
+#' bring an external resource into R. Follows \code{\link{fetch_rss}} or
+#' \code{\link{fetch_wiki_urls}} in the
+#' pipeline—fetch gets locations, read gets text. Wikipedia uses high-fidelity
+#' selectors; use \code{parent_heading} to see
 #' which section each node belongs to. External links and empty text rows are
 #' omitted; optionally exclude References/See also/Bibliography/Sources sections for
 #' wiki URLs.
 #'
-#' @param x Character vector of URLs.
+#' @param x Character vector of URLs, or a data frame containing a \code{url}
+#'   column. Data-frame metadata is preserved in the returned \code{meta}
+#'   table; an existing \code{doc_id} is honored.
 #' @param cores Number of cores for parallel requests (default 1).
 #' @param detect_boilerplate Logical. Detect boilerplate (e.g. sign-up, related links).
 #' @param remove_boilerplate Logical. If \code{detect_boilerplate} is \code{TRUE}, remove boilerplate rows; if \code{FALSE}, keep them and add \code{is_boilerplate}.
 #' @param exclude_wiki_refs Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.
 #'
-#' @return A list with \code{text} (node-level data: \code{doc_id}, \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{doc_id}, \code{url}, \code{h1_title}, \code{date}, \code{source}). \code{doc_id} is an integer key (1 to number of distinct URLs) in first-appearance order of the input vector.
+#' @return A list with \code{text} (node-level data: \code{doc_id}, \code{url},
+#'   \code{node_id}, \code{parent_heading}, \code{text}, and optionally
+#'   \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL with
+#'   \code{doc_id}, \code{url}, scraped fields, and any metadata supplied in
+#'   \code{x}). For character input, \code{doc_id} is an integer key in
+#'   first-appearance order.
 #' @export
 #' @examples
 #' \dontrun{
-#' urls <- fetch_urls("R programming", n_pages = 1)$url
-#' out <- read_urls(urls[1:3], cores = 1)
+#' feeds <- subset(rss_politics, category == "polling")
+#' articles <- fetch_rss(feeds$url)
+#' out <- read_urls(articles, cores = 1)
 #' nodes <- out$text
 #' meta <- out$meta
 #' }
@@ -29,8 +38,50 @@ read_urls <- function(x,
                      detect_boilerplate = TRUE,
                      remove_boilerplate = TRUE,
                      exclude_wiki_refs = TRUE) {
-  mm1 <- data.frame(url = x)
-  batches <- split(mm1$url, ceiling(seq_along(mm1$url) / 20))
+  input_is_table <- is.data.frame(x)
+  if (!input_is_table && !is.character(x)) {
+    stop("`x` must be a character vector or a data frame with a `url` column.", call. = FALSE)
+  }
+
+  if (input_is_table) {
+    if (!"url" %in% names(x)) {
+      stop("Data-frame `x` must contain a `url` column.", call. = FALSE)
+    }
+    discovery <- data.table::as.data.table(x)
+    discovery <- data.table::copy(discovery)
+    if (!is.character(discovery$url) ||
+        anyNA(discovery$url) ||
+        any(!nzchar(trimws(discovery$url)))) {
+      stop("`x$url` must contain non-missing, non-empty character URLs.", call. = FALSE)
+    }
+    discovery <- discovery[!duplicated(url)]
+    if ("doc_id" %in% names(discovery)) {
+      if (anyNA(discovery$doc_id) || anyDuplicated(discovery$doc_id)) {
+        stop("`x$doc_id` must be non-missing and unique by URL.", call. = FALSE)
+      }
+    } else {
+      discovery[, doc_id := seq_len(.N)]
+    }
+  } else {
+    discovery <- data.table::data.table(url = unique(x))
+    discovery[, doc_id := seq_len(.N)]
+  }
+
+  urls <- discovery$url
+  if (!length(urls)) {
+    empty_text <- data.table::data.table(doc_id = integer(), url = character())
+    empty_meta <- data.table::copy(discovery)
+    for (column in c("h1_title", "date", "source")) {
+      if (!column %in% names(empty_meta)) empty_meta[, (column) := character()]
+    }
+    data.table::setcolorder(
+      empty_meta,
+      c("doc_id", "url", "h1_title", "date", "source",
+        setdiff(names(empty_meta), c("doc_id", "url", "h1_title", "date", "source")))
+    )
+    return(list(text = empty_text, meta = empty_meta))
+  }
+  batches <- split(urls, ceiling(seq_along(urls) / 20))
 
   if (cores == 1) {
     results <- lapply(
@@ -39,9 +90,10 @@ read_urls <- function(x,
     )
   } else {
     clust <- parallel::makeCluster(cores)
+    on.exit(parallel::stopCluster(clust), add = TRUE)
     parallel::clusterExport(
       cl = clust,
-      varlist = c(".article_extract", ".detect_boilerplate", ".get_site", ".extract_date", ".standardize_date", ".junk_phrases", ".cta_words"),
+      varlist = c(".article_extract", ".detect_boilerplate", ".get_site", ".extract_date", ".standardize_date", ".junk_phrases", ".cta_words", ".tp_user_agent"),
       envir = environment()
     )
     results <- pbapply::pblapply(
@@ -50,26 +102,73 @@ read_urls <- function(x,
       cl = clust
     )
     parallel::stopCluster(clust)
+    on.exit(NULL, add = FALSE)
   }
 
   full <- data.table::rbindlist(results)
-  url_order <- unique(x)
-  full[, doc_id := match(url, url_order)]
+  full[, doc_id := discovery$doc_id[match(url, discovery$url)]]
 
-  # meta: one row per url (url, doc_id, h1_title, date, source)
-  meta <- full[, .(h1_title = h1_title[1L], doc_id = doc_id[1L]), by = url]
+  scraped <- full[, .(scraped_h1_title = h1_title[1L]), by = url]
   if ("date" %in% names(full)) {
-    meta[, date := full[, .(date = date[1L]), by = url]$date]
+    scraped[, scraped_date := full[, .(date = date[1L]), by = url]$date]
   } else {
-    meta[, date := NA_character_]
+    scraped[, scraped_date := NA_character_]
   }
-  url_for_source <- meta$url
+  url_for_source <- scraped$url
   arch <- grepl("^https?://web\\.archive\\.org/web/\\d{14}(?:id_)?/", url_for_source, ignore.case = TRUE)
   if (any(arch)) {
     url_for_source[arch] <- sub("^https?://web\\.archive\\.org/web/\\d{14}(?:id_)?/(.+)$", "\\1", url_for_source[arch], ignore.case = TRUE)
   }
-  meta[, source := sub("^https?://([^/]+).*", "\\1", url_for_source)]
-  data.table::setcolorder(meta, c("doc_id", "url", "h1_title", "date", "source"))
+  scraped[, scraped_source := sub("^https?://([^/]+).*", "\\1", url_for_source)]
+
+  meta <- merge(discovery, scraped, by = "url", all.x = TRUE, sort = FALSE)
+  meta <- meta[match(discovery$url, url)]
+  if ("h1_title" %in% names(meta)) {
+    meta[
+      is.na(h1_title) | !nzchar(h1_title),
+      h1_title := scraped_h1_title
+    ]
+  } else {
+    meta[, h1_title := scraped_h1_title]
+  }
+  if ("published_at" %in% names(meta)) {
+    published_date <- substr(meta$published_at, 1L, 10L)
+    published_date[is.na(meta$published_at) | !nzchar(meta$published_at)] <- NA_character_
+  } else {
+    published_date <- rep(NA_character_, nrow(meta))
+  }
+  if ("date" %in% names(meta)) {
+    supplied_date <- as.character(meta$date)
+    meta[, date := data.table::fifelse(
+      !is.na(published_date) & nzchar(published_date),
+      published_date,
+      data.table::fifelse(
+        !is.na(supplied_date) & nzchar(supplied_date),
+        supplied_date,
+        scraped_date
+      )
+    )]
+  } else {
+    meta[, date := data.table::fifelse(
+      !is.na(published_date) & nzchar(published_date),
+      published_date,
+      scraped_date
+    )]
+  }
+  if ("source" %in% names(meta)) {
+    meta[
+      is.na(source) | !nzchar(source),
+      source := scraped_source
+    ]
+  } else {
+    meta[, source := scraped_source]
+  }
+  meta[, c("scraped_h1_title", "scraped_date", "scraped_source") := NULL]
+  data.table::setcolorder(
+    meta,
+    c("doc_id", "url", "h1_title", "date", "source",
+      setdiff(names(meta), c("doc_id", "url", "h1_title", "date", "source")))
+  )
 
   # text: node-level only (drop h1_title, date), ordered by date descending
   drop_cols <- c("h1_title", "date")
@@ -140,7 +239,7 @@ read_urls <- function(x,
 #' @importFrom rvest html_nodes html_node html_text html_name
 .get_site <- function(x) {
   site <- tryCatch(
-    xml2::read_html(httr::GET(x, httr::timeout(60))),
+    xml2::read_html(httr::GET(x, httr::timeout(60), httr::user_agent(.tp_user_agent))),
     error = function(e) "Error"
   )
 

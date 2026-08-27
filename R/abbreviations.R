@@ -41,5 +41,8 @@ abbreviations = c(
   "Oct.",
   "Nov.",
   "Dec.",
-  "Reps."
+  "Reps.",
+  "et al.",
+  "e.g.",
+  "approx."
 )

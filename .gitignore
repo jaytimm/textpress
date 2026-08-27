@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*.Rcheck/
 README.Rmd
 Help for package textpress.html
 Help for package textpress_files/

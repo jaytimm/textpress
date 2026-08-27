@@ -13,9 +13,12 @@ utils::globalVariables(c(
   "variant_lc", "variant", "TermName", "ngram", "ngram_lc", "term",
   "match_type", "group", "n",
   "stopwords_en", "idf", "dl", "..final_cols", "..by",
-  "source_url", "ref_url", "citation",
+  "source_url", "ref_url", "ref_id", "citation",
   "text_processed", "raw_text", "..output_cols",
-  "sentence_raw"
+  "sentence_raw",
+  "source", "feed", "category", "source_type", "url", "pub_date",
+  "language", "country",
+  "scraped_h1_title", "scraped_date", "scraped_source"
 ))
 
 
@@ -23,6 +26,8 @@ utils::globalVariables(c("dummy", "text", "."))
 
 
 .hollrEnv <- new.env(parent = emptyenv())
+
+.tp_user_agent <- "textpress R package (https://github.com/jaytimm/textpress)"
 
 .onLoad <- function(libname, pkgname) {
   # Package initialization code (if any)

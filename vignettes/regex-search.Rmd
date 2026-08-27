@@ -9,6 +9,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
   message = FALSE,
   warning = FALSE,
   comment = "#>"
@@ -17,33 +18,35 @@ knitr::opts_chunk$set(
 
 `search_regex()` matches patterns against a text corpus and returns results in KWIC format with inline highlighting. This vignette applies it to a generational-politics corpus with three patterns -- age ranges, numeric change expressions, and voter-mobilization language -- each match returned at the sentence level, ready for close reading or aggregation.
 
-## Search terms and web URLs
+## Terms and RSS entries
 
-Four queries covering each generation's political alignment in 2026.
+Terms used to select relevant entries from political RSS feeds.
 
 ```{r search-terms}
 search_terms <- c(
-  "US Gen Z voters 2026",
-  "US Millennial political party 2026",
-  "US Gen X politics forgotten generation 2026",
-  "US Baby Boomer Republican Democrat 2026"
+  "Gen Z", "Millennial", "Gen X", "Baby Boomer",
+  "young voters", "older voters"
 )
 ```
 
 
-Fetch candidate URLs for each query and deduplicate.
+Fetch recent entries from the selected feeds, filter their title and description locally, and deduplicate the resulting URLs.
 
 ```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
 library(DT)
 
-web_urls <- lapply(search_terms, function(x)
-  textpress::fetch_urls(query = x, 
-                        n_pages = 3, 
-                        date_filter = 'm')) |>
-  bind_rows() |>
-  unique()
+politics_feeds <- textpress::rss_politics
+
+web_urls <- textpress::fetch_rss(politics_feeds$url) |>
+  filter(grepl(
+    paste(search_terms, collapse = "|"),
+    paste(title, description),
+    ignore.case = TRUE
+  )) |>
+  select(-doc_id) |>
+  distinct(url, .keep_all = TRUE)
 ```
 
 
@@ -54,8 +57,6 @@ web_urls <- lapply(search_terms, function(x)
 
 ```{r web-text}
 web_text_list <- web_urls |>
-  filter(path_depth > 0) |>
-  pull(url) |>
   textpress::read_urls(cores = 6) 
 
 web_text <- web_text_list$text |>

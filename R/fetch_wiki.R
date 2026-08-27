@@ -7,7 +7,7 @@
 #' @return A data.table with \code{ref_id} and \code{citation} (URL).
 #' @noRd
 .extract_wiki_references <- function(url) {
-  page <- xml2::read_html(url)
+  page <- xml2::read_html(httr::GET(url, httr::user_agent(.tp_user_agent)))
 
   refs <- rvest::html_nodes(page, "li[id^='cite_note']")
   if (!length(refs)) {
@@ -43,19 +43,19 @@
 #'
 #' @param url Character vector of full Wikipedia article URLs (e.g. from \code{\link{fetch_wiki_urls}}).
 #' @param n Maximum number of citation URLs to return per source page. Default \code{NULL} returns all; use a number (e.g. \code{10}) to limit.
-#' @return For one URL, a \code{data.table} with columns \code{source_url}, \code{ref_id}, and \code{ref_url}. For multiple URLs, a named list of such data.tables (names are the Wikipedia article titles); elements are \code{NULL} for pages with no refs.
+#' @return A \code{data.table} with columns \code{source_url}, \code{ref_id}, and \code{ref_url}, one row per citation across all input URLs. Use \code{split(x, x$source_url)} to group by article.
 #' @export
 #' @examples
 #' \dontrun{
 #' wiki_urls <- fetch_wiki_urls("January 6 Capitol attack")
-#' refs_dt <- fetch_wiki_refs(wiki_urls[1])           # single URL: data.table
-#' refs_list <- fetch_wiki_refs(wiki_urls[1:3])      # multiple: named list
+#' refs_dt <- fetch_wiki_refs(wiki_urls)
 #' articles <- read_urls(refs_dt$ref_url)
 #' }
 fetch_wiki_refs <- function(url, n = NULL) {
   url <- unique(url)
+  empty_dt <- data.table::data.table(source_url = character(), ref_id = character(), ref_url = character())
   if (!length(url)) {
-    return(data.table::data.table(source_url = character(), ref_id = character(), ref_url = character()))
+    return(empty_dt)
   }
 
   take_all <- is.null(n) || is.infinite(n)
@@ -70,20 +70,14 @@ fetch_wiki_refs <- function(url, n = NULL) {
     refs[, ref_url := citation][, citation := NULL]
     refs
   })
-  names(out) <- gsub("_", " ", sub("[#?].*$", "", sub("^.*/wiki/", "", url)))
+  out <- Filter(Negate(is.null), out)
 
-  if (length(url) == 1L) {
-    if (is.null(out[[1L]])) {
-      warning("No external citations found in Wikipedia page: ", url)
-      return(data.table::data.table(source_url = character(), ref_id = character(), ref_url = character()))
-    }
-    return(out[[1L]])
+  if (!length(out)) {
+    warning("No external citations found in the given Wikipedia page(s).")
+    return(empty_dt)
   }
 
-  if (all(vapply(out, is.null, logical(1L)))) {
-    warning("No external citations found in any of the given Wikipedia page(s).")
-  }
-  out
+  data.table::rbindlist(out, fill = TRUE)[, .(source_url, ref_id, ref_url)]
 }
 
 
@@ -105,14 +99,18 @@ fetch_wiki_refs <- function(url, n = NULL) {
 fetch_wiki_urls <- function(query, limit = 10) {
   base_url <- "https://en.wikipedia.org/w/api.php"
 
-  res <- httr::GET(url = base_url, query = list(
-    action   = "query",
-    list     = "search",
-    srsearch = query,
-    srlimit  = limit,
-    format   = "json",
-    utf8     = 1
-  ))
+  res <- httr::GET(
+    url = base_url,
+    query = list(
+      action   = "query",
+      list     = "search",
+      srsearch = query,
+      srlimit  = limit,
+      format   = "json",
+      utf8     = 1
+    ),
+    httr::user_agent(.tp_user_agent)
+  )
 
   if (httr::status_code(res) != 200L) {
     warning("Wikipedia API request failed.")

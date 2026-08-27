@@ -7,22 +7,35 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-`textpress` is organized around four actions -- fetch, read, process, search. This vignette covers the first two. `fetch_urls()` runs a search query and returns candidate URLs with metadata; `read_urls()` scrapes their content into a node-level data frame. Together they turn a search term into an analysis-ready corpus in a few lines, which the remaining vignettes build on.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
 
-## Search and read
+`textpress` is organized around four actions -- fetch, read, process, search. This vignette covers the first two. `fetch_rss()` retrieves recent entries from publisher-supported RSS and Atom feeds; `read_urls()` scrapes their content into a node-level data frame while retaining that provenance. Together they turn selected news sources into an analysis-ready corpus in a few lines.
 
-`fetch_urls()` retrieves candidate URLs for a query; `read_urls()` scrapes and parses them. Build a snippet from the first 15 words of each article, then display metadata alongside the text preview.
+## Select, fetch, and read
+
+Filter the bundled `rss_politics` catalog directly, use `fetch_rss()` to retrieve recent entries from those publishers, then filter the returned metadata locally before `read_urls()` scrapes and parses the selected articles. The filtering below is ordinary R filtering, not a query sent to a search service.
 
 ```{r web-urls, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
 library(DT)
 
-web_urls <- textpress::fetch_urls(
-  query       = "us polling on immigration",
-  n_pages     = 4,
-  date_filter = "m"
-)
+feeds <- textpress::rss_politics |>
+  filter(category %in% c("polling", "public_opinion"))
+
+web_urls <- textpress::fetch_rss(feeds$url) |>
+  filter(grepl(
+    "immigration|poll|survey",
+    paste(title, description),
+    ignore.case = TRUE
+  ))
 ```
 
 
@@ -31,8 +44,6 @@ Scrape and parse the URLs returned above into a node-level data frame with `$tex
 
 ```{r web-text}
 web_text_list <- web_urls |>
-  filter(path_depth > 0) |>
-  pull(url) |>
   textpress::read_urls(cores = 4)
 ```
 
@@ -68,4 +79,4 @@ DT::datatable(
 
 ## Summary
 
-`fetch_urls()` and `read_urls()` are the entry points for any `textpress` pipeline -- from search query to node-level corpus in a few lines. `fetch_urls()` returns candidate URLs with metadata; `read_urls()` scrapes and parses them into `$text` (one row per node) and `$meta` (one row per URL). The remaining vignettes take this output as their starting point.
+`fetch_rss()` and `read_urls()` are source-to-corpus entry points for a `textpress` pipeline. `fetch_rss()` returns publisher-provided article URLs with feed metadata; `read_urls()` scrapes and parses them into `$text` (one row per node) and `$meta` (one row per URL, including discovery provenance).

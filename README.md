@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/textpress)](https://cran.r-project.org/package=textpress)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/textpress)](https://cran.r-project.org/package=textpress)
 
-`textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It covers the full arc from URL to retrieved passage through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**. Traditional tools (KWIC, BM25, dictionary matching) sit alongside modern ones (semantic search, LLM-ready chunking), all compatible with the native R pipe (`|>`).
+`textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It collects URLs from durable sources -- RSS and Atom feeds, Wikipedia and its citations, or URLs you already have -- then reads, processes, and searches the resulting text through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**.
 
 ---
 
@@ -23,15 +23,46 @@ remotes::install_github("jaytimm/textpress")
 
 ---
 
+## A source-to-corpus example
+
+Select a small set of known publishers, retrieve their recent feed entries,
+then read the linked pages. `read_urls()` retains the RSS discovery metadata.
+
+```r
+feeds <- textpress::rss_local_rags |>
+  subset(state_abbr == "NM") |>
+  head(2)
+
+articles <- textpress::fetch_rss(feeds$url)
+corpus <- textpress::read_urls(articles)
+
+corpus$text
+corpus$meta
+```
+
+There are three ways into the same pipeline:
+
+| Starting point | Entry point | Best for |
+|---|---|---|
+| Known publishers | `rss_politics` or `rss_local_rags` -> `fetch_rss()` | Recent, source-led collections |
+| A topic | `fetch_wiki_urls()` -> `fetch_wiki_refs()` | Topic- and citation-led discovery |
+| Existing URLs | `read_urls()` directly | Curated or externally collected corpora |
+
+Each route converges on `read_urls()` -> `nlp_*()` -> `search_*()`.
+
+---
+
 ## The `textpress` API
 
 **Conventions:** corpus is a data frame with a `text` column plus identifier column(s) passed to `by` (default `doc_id`). All outputs are plain data frames or data.tables; pipe-friendly.
 
 ### 1. Fetch (`fetch_*`)
 
-Find URLs and metadata -- not full text. Pass results to `read_urls()` to get content.
+Collect URLs and provenance from stable sources -- not full article text. `textpress`
+does not provide general-purpose live web search. Pass fetch results to
+`read_urls()` to retrieve their content.
 
-- **`fetch_urls(query, n_pages, date_filter)`** -- Search engine query; returns candidate URLs with metadata.
+- **`fetch_rss(feed_url)`** -- Retrieve recent entries from RSS and Atom feeds; bundled catalogs are available as `rss_politics` and `rss_local_rags`.
 - **`fetch_wiki_urls(query, limit)`** -- Wikipedia article URLs matching a search phrase.
 - **`fetch_wiki_refs(url, n)`** -- External citation URLs from a Wikipedia article's References section.
 
@@ -39,7 +70,7 @@ Find URLs and metadata -- not full text. Pass results to `read_urls()` to get co
 
 Scrape and parse URLs into a structured corpus.
 
-- **`read_urls(urls, ...)`** -- Character vector of URLs → `list(text, meta)`. `text` is one row per node (headings, paragraphs, lists); `meta` is one row per URL. For Wikipedia, `exclude_wiki_refs = TRUE` drops References / See also / Bibliography sections.
+- **`read_urls(x, ...)`** -- URL vector or fetch-result table → `list(text, meta)`. Passing a table preserves its discovery metadata and `doc_id`. `text` is one row per node; `meta` is one row per URL.
 
 ### 3. Process (`nlp_*`)
 
@@ -72,20 +103,15 @@ Four retrieval modes over the same corpus. Data-first, pipe-friendly.
 
 **Context assembly** -- `nlp_roll_chunks()` with `context_size > 0` gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.
 
-**Agent tool-calling** -- the consistent API and plain data-frame outputs map naturally to tool use:
-
-| Agent task                                     | Function             |
-|------------------------------------------------|----------------------|
-| "Find recent articles on X"                    | `fetch_urls()`       |
-| "Scrape these pages"                           | `read_urls()`        |
-| "Find all mentions of these entities"          | `search_dict()`      |
-| "Follow citations from this Wikipedia article" | `fetch_wiki_refs()`  |
+Because the stages exchange plain data frames, their outputs can also be
+inspected, filtered, saved, or passed to an LLM without conversion to a custom
+corpus class.
 
 ---
 
 ## Vignettes
 
-- [Web data](https://jaytimm.github.io/textpress/articles/web-data.html) -- `fetch_urls()` + `read_urls()`
+- [Web data](https://jaytimm.github.io/textpress/articles/web-data.html) -- `fetch_rss()` + `read_urls()`
 - [Basic NLP](https://jaytimm.github.io/textpress/articles/basic-nlp.html) -- sentence splitting, tokenization, span-aware casting
 - [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
 - [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC

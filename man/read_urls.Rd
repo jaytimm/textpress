@@ -13,7 +13,9 @@ read_urls(
 )
 }
 \arguments{
-\item{x}{Character vector of URLs.}
+\item{x}{Character vector of URLs, or a data frame containing a \code{url}
+column. Data-frame metadata is preserved in the returned \code{meta}
+table; an existing \code{doc_id} is honored.}
 
 \item{cores}{Number of cores for parallel requests (default 1).}
 
@@ -24,22 +26,29 @@ read_urls(
 \item{exclude_wiki_refs}{Logical. For Wikipedia URLs only, drop nodes whose \code{parent_heading} is References, See also, Bibliography, or Sources. Default \code{TRUE}.}
 }
 \value{
-A list with \code{text} (node-level data: \code{doc_id}, \code{url}, \code{node_id}, \code{parent_heading}, \code{text}, and optionally \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL: \code{doc_id}, \code{url}, \code{h1_title}, \code{date}, \code{source}). \code{doc_id} is an integer key (1 to number of distinct URLs) in first-appearance order of the input vector.
+A list with \code{text} (node-level data: \code{doc_id}, \code{url},
+  \code{node_id}, \code{parent_heading}, \code{text}, and optionally
+  \code{type}, \code{is_boilerplate}) and \code{meta} (one row per URL with
+  \code{doc_id}, \code{url}, scraped fields, and any metadata supplied in
+  \code{x}). For character input, \code{doc_id} is an integer key in
+  first-appearance order.
 }
 \description{
 Input: character vector of URLs. Output: structured data frame (one row per
 node: headings, paragraphs, lists). Like \code{read_csv} or \code{read_html}:
-bring an external resource into R. Follows \code{\link{fetch_urls}} or
-\code{\link{fetch_wiki_urls}} in the pipeline—fetch gets locations, read gets
-text. Wikipedia uses high-fidelity selectors; use \code{parent_heading} to see
+bring an external resource into R. Follows \code{\link{fetch_rss}} or
+\code{\link{fetch_wiki_urls}} in the
+pipeline—fetch gets locations, read gets text. Wikipedia uses high-fidelity
+selectors; use \code{parent_heading} to see
 which section each node belongs to. External links and empty text rows are
 omitted; optionally exclude References/See also/Bibliography/Sources sections for
 wiki URLs.
 }
 \examples{
 \dontrun{
-urls <- fetch_urls("R programming", n_pages = 1)$url
-out <- read_urls(urls[1:3], cores = 1)
+feeds <- subset(rss_politics, category == "polling")
+articles <- fetch_rss(feeds$url)
+out <- read_urls(articles, cores = 1)
 nodes <- out$text
 meta <- out$meta
 }

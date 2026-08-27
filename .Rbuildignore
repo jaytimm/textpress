@@ -9,3 +9,5 @@
 ^Package textpress Contents\.txt$
 ^doc$
 ^doc/
+^data-raw$
+^PIVOT\.md$

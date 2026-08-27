@@ -8,12 +8,14 @@
 \description{
 A lightweight toolkit for text retrieval and NLP with a consistent and
 predictable API organized around four actions: fetching, reading, processing,
-and searching. Functions cover the full pipeline from web data acquisition to
-text processing and indexing. Multiple search strategies are supported
+and searching. URLs and provenance can come from RSS and Atom feeds,
+Wikipedia and its citations, or an existing URL collection. Functions cover
+the full pipeline from controlled acquisition to text processing and
+indexing. Multiple search strategies are supported
 including regex, BM25 keyword ranking, cosine similarity, and dictionary
 matching. Pipe-friendly with no heavy dependencies and all outputs are plain
 data frames. Also useful as a building block for retrieval-augmented
-generation pipelines and autonomous agent workflows.
+generation pipelines.
 }
 \seealso{
 Useful links:
@@ -26,6 +28,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Jason Timm \email{JaTimm@salud.unm.edu}
+
+Authors:
+\itemize{
+  \item Jason Timm \email{JaTimm@salud.unm.edu}
+}
 
 }
 \keyword{internal}

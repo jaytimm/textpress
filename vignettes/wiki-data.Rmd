@@ -7,7 +7,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Same fetch-then-read pipeline as the web-data vignette, but starting from Wikipedia rather than a search engine. `fetch_wiki_urls()` finds article URLs by topic; `fetch_wiki_refs()` follows each article's References section to collect cited external URLs -- primary sources, reports, news. The result is a richer seed set than a single search query gives you, and `read_urls()` handles it the same way.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+Same fetch-then-read pipeline as the web-data vignette, but starting from a topic rather than a known set of publishers. `fetch_wiki_urls()` finds Wikipedia article URLs; `fetch_wiki_refs()` follows each article's References section to collect cited external URLs -- primary sources, reports, and news. `read_urls()` handles both kinds of URL in the same way.
 
 ## Expand via Wikipedia
 
@@ -21,13 +30,12 @@ wiki_urls <- textpress::fetch_wiki_urls("January 6 Capitol attack", limit = 5)
 wiki_urls
 ```
 
-**Follow References.** Articles cite external sources; those URLs are often high-value (primary sources, reports, news). `fetch_wiki_refs(url, n)` returns a `data.table` with `source_url` (the Wikipedia page) and `ref_url` (the cited link). Pass one URL for one table, or multiple URLs for a named list of tables. Use `n` to cap refs per page.
+**Follow References.** Articles cite external sources; those URLs are often high-value (primary sources, reports, news). `fetch_wiki_refs(url, n)` returns one flat `data.table` with `source_url` (the Wikipedia page) and `ref_url` (the cited link), whether `url` contains one Wikipedia page or several. Use `n` to cap references per page.
 
 ```{r fetch-wiki-refs}
-refs_list <- textpress::fetch_wiki_refs(wiki_urls[1:3], n = 15) |>
-  bind_rows()
+refs <- textpress::fetch_wiki_refs(wiki_urls[1:3], n = 15)
 
-refs_list |>
+refs |>
   slice(1:5) |>
   select(-source_url) |> 
   DT::datatable(rownames = F)
