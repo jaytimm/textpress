@@ -85,7 +85,7 @@
 <li>
 <code>rss_politics</code> adds a verified collection of 67 active, non-government US politics feeds from 61 sources. The exported catalog and its canonical CSV cover general political news, Congress, elections, polling, public opinion, and state politics; it is available directly as <code><a href="../reference/rss_politics.html">textpress::rss_politics</a></code>.</li>
 <li>
-<code>rss_local_rags</code> adds a pinned Local Rags RSS snapshot with the shared feed schema plus Census region, state, county, and FIPS geography. Detailed discovery and 3DLNews provenance remain in the source repository.</li>
+<code>rss_local_rags</code> adds a pinned Local Rags RSS snapshot with the shared feed fields plus Census division, state, county, five-character FIPS geography, 2023 Rural-Urban Continuum Codes, and metro status. The local catalog omits the politics-specific <code>category</code> and <code>source_type</code> fields. Detailed discovery and 3DLNews provenance remain in the source repository.</li>
 <li>
 <code><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code> now always returns one flat table for single or multiple Wikipedia URLs, allowing its results to pass directly to <code><a href="../reference/read_urls.html">read_urls()</a></code>.</li>
 <li>Wikipedia requests now identify textpress with a package User-Agent.</li>

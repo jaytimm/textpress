@@ -82,7 +82,7 @@ includes feed and article metadata and can be passed directly to
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fetch_rss</span><span class="op">(</span><span class="va">feed_url</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fetch_rss</span><span class="op">(</span><span class="va">feed_url</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -91,6 +91,10 @@ includes feed and article metadata and can be passed directly to
 
 <dl><dt id="arg-feed-url">feed_url<a class="anchor" aria-label="anchor" href="#arg-feed-url"></a></dt>
 <dd><p>Character vector of RSS or Atom feed URLs.</p></dd>
+
+
+<dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
+<dd><p>Number of cores for parallel feed requests (default 1).</p></dd>
 
 </dl></div>
     <div id="value">
@@ -105,7 +109,7 @@ includes feed and article metadata and can be passed directly to
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">feeds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">rss_politics</span>, <span class="va">category</span> <span class="op">==</span> <span class="st">"polling"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">fetch_rss</span><span class="op">(</span><span class="va">feeds</span><span class="op">$</span><span class="va">url</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">items</span> <span class="op">&lt;-</span> <span class="fu">fetch_rss</span><span class="op">(</span><span class="va">feeds</span><span class="op">$</span><span class="va">url</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">items</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

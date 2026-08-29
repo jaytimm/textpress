@@ -249,7 +249,7 @@
 <h2 id="rag--llm-pipelines">RAG &amp; LLM pipelines<a class="anchor" aria-label="anchor" href="#rag--llm-pipelines"></a>
 </h2>
 <p><code>textpress</code> is designed to compose cleanly into retrieval-augmented generation pipelines.</p>
-<p><strong>Hybrid retrieval</strong> – run <code><a href="reference/search_index.html">search_index()</a></code> and <code><a href="reference/search_vector.html">search_vector()</a></code> over the same chunks, then merge with reciprocal rank fusion (RRF). Chunks that rank well under both term frequency and meaning rise to the top.</p>
+<p><strong>Hybrid retrieval</strong> – run <code><a href="reference/search_index.html">search_index()</a></code> and <code><a href="reference/search_vector.html">search_vector()</a></code> over the same chunks, then merge with reciprocal rank fusion (RRF).</p>
 <p><strong>Context assembly</strong> – <code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code> with <code>context_size &gt; 0</code> gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.</p>
 <p>Because the stages exchange plain data frames, their outputs can also be inspected, filtered, saved, or passed to an LLM without conversion to a custom corpus class.</p>
 <hr>
