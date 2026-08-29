@@ -5,6 +5,7 @@
 #' \code{\link{read_urls}} through its \code{url} column.
 #'
 #' @param feed_url Character vector of RSS or Atom feed URLs.
+#' @param cores Number of cores for parallel feed requests (default 1).
 #' @return A data.table with common discovery columns \code{doc_id},
 #'   \code{url}, \code{title}, \code{published_at}, \code{source},
 #'   \code{language}, and \code{country}, followed by RSS-specific feed and
@@ -13,11 +14,11 @@
 #' @examples
 #' \dontrun{
 #' feeds <- subset(rss_politics, category == "polling")
-#' items <- fetch_rss(feeds$url)
+#' items <- fetch_rss(feeds$url, cores = 4)
 #' corpus <- read_urls(items)
 #' }
-fetch_rss <- function(feed_url) {
-  rss_finalize_items(rss_items(feed_url))
+fetch_rss <- function(feed_url, cores = 1) {
+  rss_finalize_items(rss_items(feed_url, cores = cores))
 }
 
 # A dead feed should not stall a batch. This is deliberately transport
@@ -51,7 +52,7 @@ rss_finalize_items <- function(items) {
 }
 
 #' @noRd
-rss_items <- function(feed_url) {
+rss_items <- function(feed_url, cores = 1) {
   if (!is.character(feed_url)) {
     stop("`feed_url` must be a character vector.", call. = FALSE)
   }
@@ -148,7 +149,26 @@ rss_items <- function(feed_url) {
     })
   }
 
-  data.table::rbindlist(lapply(feed_url, fetch_one), fill = TRUE)
+  if (cores == 1) {
+    results <- lapply(feed_url, fetch_one)
+  } else {
+    clust <- parallel::makeCluster(cores)
+    on.exit(parallel::stopCluster(clust), add = TRUE)
+    parallel::clusterExport(
+      cl = clust,
+      varlist = c(
+        "fetch_one", "rss_document", "rss_first_text", "rss_date",
+        "rss_link", "rss_empty_items", ".tp_user_agent",
+        ".rss_timeout_seconds"
+      ),
+      envir = environment()
+    )
+    results <- pbapply::pblapply(feed_url, fetch_one, cl = clust)
+    parallel::stopCluster(clust)
+    on.exit(NULL, add = FALSE)
+  }
+
+  data.table::rbindlist(results, fill = TRUE)
 }
 
 #' @noRd

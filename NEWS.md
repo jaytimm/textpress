@@ -14,8 +14,10 @@
   cover general political news, Congress, elections, polling, public opinion,
   and state politics; it is available directly as `textpress::rss_politics`.
 - `rss_local_rags` adds a pinned Local Rags RSS snapshot with the shared feed
-  schema plus Census region, state, county, and FIPS geography. Detailed
-  discovery and 3DLNews provenance remain in the source repository.
+  fields plus Census division, state, county, five-character FIPS geography,
+  2023 Rural-Urban Continuum Codes, and metro status. The local catalog omits
+  the politics-specific `category` and `source_type` fields. Detailed discovery
+  and 3DLNews provenance remain in the source repository.
 - `fetch_wiki_refs()` now always returns one flat table for single or multiple
   Wikipedia URLs, allowing its results to pass directly to `read_urls()`.
 - Wikipedia requests now identify textpress with a package User-Agent.

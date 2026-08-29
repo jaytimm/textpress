@@ -26,18 +26,16 @@
 #' Curated US local-news RSS feeds
 #'
 #' A pinned snapshot of the canonical Local Rags RSS output. Each row identifies
-#' one unique US local-news feed. The first seven columns follow the same feed
-#' contract as \code{\link{rss_politics}}; four additional columns retain
-#' Census region, state, county, and FIPS geography. Access it directly as
+#' one unique US local-news feed with publisher, feed, verification, Census
+#' division, county, and rural-urban geography. Access it directly as
 #' \code{textpress::rss_local_rags}. Full discovery and 3DLNews provenance
 #' remain in the source project.
 #'
-#' @format A data frame with one row per feed and 11 variables. The common
-#'   columns are \code{source}, \code{feed}, \code{category},
-#'   \code{source_type}, \code{url}, \code{verified_at}, and
-#'   \code{latest_item_at}. The local columns are \code{census_region},
-#'   \code{state_abbr}, \code{county}, and five-character \code{fips} county
-#'   code.
+#' @format A data frame with one row per feed and 11 variables:
+#'   \code{source}, \code{feed}, \code{url}, \code{verified_at},
+#'   \code{latest_item_at}, \code{census_division}, \code{state_abbr},
+#'   \code{county}, five-character \code{fips} county code,
+#'   \code{rucc_2023}, and \code{metro_status}.
 #' @source Local Rags RSS, \url{https://github.com/jaytimm/local-rags-rss},
 #'   derived from 3DLNews, \url{https://github.com/wm-newslab/3DLNews}.
 #' @usage rss_local_rags

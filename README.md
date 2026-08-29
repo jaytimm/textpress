@@ -99,7 +99,7 @@ Four retrieval modes over the same corpus. Data-first, pipe-friendly.
 
 `textpress` is designed to compose cleanly into retrieval-augmented generation pipelines.
 
-**Hybrid retrieval** -- run `search_index()` and `search_vector()` over the same chunks, then merge with reciprocal rank fusion (RRF). Chunks that rank well under both term frequency and meaning rise to the top.
+**Hybrid retrieval** -- run `search_index()` and `search_vector()` over the same chunks, then merge with reciprocal rank fusion (RRF).
 
 **Context assembly** -- `nlp_roll_chunks()` with `context_size > 0` gives each chunk a focal sentence plus surrounding context, so retrieved passages are self-contained when passed to an LLM.
 

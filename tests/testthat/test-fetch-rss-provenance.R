@@ -1,5 +1,5 @@
 test_that("fetch_rss has a minimal public interface", {
-  expect_identical(names(formals(fetch_rss)), "feed_url")
+  expect_identical(names(formals(fetch_rss)), c("feed_url", "cores"))
   expect_identical(textpress:::.rss_timeout_seconds, 15)
   expect_true(is.data.frame(rss_politics))
   expect_gt(nrow(rss_politics), 0L)
@@ -10,11 +10,16 @@ test_that("fetch_rss has a minimal public interface", {
     "verified_at", "latest_item_at"
   )
   expect_identical(names(rss_politics), common)
-  expect_identical(names(rss_local_rags)[seq_along(common)], common)
   expect_identical(
-    names(rss_local_rags)[-(seq_along(common))],
-    c("census_region", "state_abbr", "county", "fips")
+    names(rss_local_rags),
+    c(
+      "source", "feed", "url", "verified_at", "latest_item_at",
+      "census_division", "state_abbr", "county", "fips",
+      "rucc_2023", "metro_status"
+    )
   )
+  expect_true(all(grepl("^[0-9]{5}$", rss_local_rags$fips)))
+  expect_true(all(rss_local_rags$metro_status %in% c("Metro", "Nonmetro")))
 })
 
 test_that("RSS results expose common provenance fields", {
@@ -55,4 +60,13 @@ test_that("empty RSS results retain typed common columns", {
   expect_type(result$source, "character")
   expect_type(result$language, "character")
   expect_type(result$country, "character")
+})
+
+test_that("fetch_rss cores argument dispatches through the parallel path", {
+  unreachable <- "http://127.0.0.1:1/missing"
+  serial <- suppressWarnings(fetch_rss(unreachable, cores = 1))
+  parallel_result <- suppressWarnings(fetch_rss(unreachable, cores = 2))
+  expect_identical(names(serial), names(parallel_result))
+  expect_equal(nrow(serial), 0L)
+  expect_equal(nrow(parallel_result), 0L)
 })

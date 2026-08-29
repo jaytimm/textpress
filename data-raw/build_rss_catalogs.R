@@ -34,14 +34,19 @@ rss_local_rags[character_columns] <- lapply(
 )
 
 local_columns <- c(
-  common_columns,
-  "census_region", "state_abbr", "county", "fips"
+  "source", "feed", "url", "verified_at", "latest_item_at",
+  "census_division", "state_abbr", "county", "fips",
+  "rucc_2023", "metro_status"
 )
 stopifnot(
   nrow(rss_local_rags) > 0L,
   identical(names(rss_local_rags), local_columns),
-  all(is.na(rss_local_rags$fips) |
+  all(!is.na(rss_local_rags$census_division) &
+    nzchar(rss_local_rags$census_division)),
+  all(!is.na(rss_local_rags$fips) &
     grepl("^[0-9]{5}$", rss_local_rags$fips)),
+  all(rss_local_rags$rucc_2023 %in% as.character(1:9)),
+  all(rss_local_rags$metro_status %in% c("Metro", "Nonmetro")),
   !anyDuplicated(rss_local_rags$url),
   !any(grepl("[^ -~]", unlist(rss_local_rags), useBytes = TRUE))
 )

@@ -4,10 +4,12 @@
 \alias{fetch_rss}
 \title{Fetch recent articles from RSS and Atom feeds}
 \usage{
-fetch_rss(feed_url)
+fetch_rss(feed_url, cores = 1)
 }
 \arguments{
 \item{feed_url}{Character vector of RSS or Atom feed URLs.}
+
+\item{cores}{Number of cores for parallel feed requests (default 1).}
 }
 \value{
 A data.table with common discovery columns \code{doc_id},
@@ -23,7 +25,7 @@ includes feed and article metadata and can be passed directly to
 \examples{
 \dontrun{
 feeds <- subset(rss_politics, category == "polling")
-items <- fetch_rss(feeds$url)
+items <- fetch_rss(feeds$url, cores = 4)
 corpus <- read_urls(items)
 }
 }
