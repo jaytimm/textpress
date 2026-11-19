@@ -1,19 +1,45 @@
-#' Fetch embeddings from a Hugging Face inference endpoint
+#' Fetch embeddings from an OpenAI-compatible endpoint
 #'
 #' Builds a numeric matrix of embeddings for each text unit. Row names come from
 #' \code{by} (data frame) or from \code{names(corpus)} / \code{corpus} (character vector).
 #' Use the result with \code{\link{search_vector}} for semantic search.
 #'
+#' By default this calls a local \href{https://ollama.com}{Ollama} server with
+#' the small \code{all-minilm} model, so no account or API key is needed. Install
+#' Ollama, then run \code{ollama pull all-minilm} once. Any service that offers
+#' an OpenAI-compatible \code{/embeddings} endpoint (OpenAI, LM Studio,
+#' llama.cpp, and many hosted providers) works by changing \code{base_url},
+#' \code{model}, and \code{api_key}. Embeddings from any other source can be
+#' passed to \code{\link{search_vector}} directly as a matrix with row names.
+#'
 #' @param corpus A data frame with \code{text} and \code{by} columns, or a character vector of texts. If a named character vector, names become row names; if unnamed, the strings themselves are used as row names.
 #' @param by Character vector of identifier columns; required when \code{corpus} is a data frame (row names), ignored when \code{corpus} is a character vector.
-#' @param api_token Hugging Face API token.
-#' @param api_url Inference endpoint URL (default BAAI/bge-small-en-v1.5).
+#' @param model Embedding model name (default \code{"all-minilm"}).
+#' @param base_url Base URL of an OpenAI-compatible API (default local Ollama, \code{"http://localhost:11434/v1"}).
+#' @param api_key API key, sent as a bearer token. Not needed for local servers.
+#' @param batch_size Number of texts sent per request (default 64).
 #' @return Numeric matrix with row names (unit ids).
+#' @examples
+#' \dontrun{
+#' # Requires a running Ollama server: ollama pull all-minilm
+#' emb <- util_fetch_embeddings(c(a = "Gen Z voters", b = "Baby Boomers"))
+#' search_vector(emb, "a", n = 2)
+#'
+#' # OpenAI instead
+#' emb <- util_fetch_embeddings(
+#'   c(a = "Gen Z voters", b = "Baby Boomers"),
+#'   model = "text-embedding-3-small",
+#'   base_url = "https://api.openai.com/v1",
+#'   api_key = Sys.getenv("OPENAI_API_KEY")
+#' )
+#' }
 #' @export
 util_fetch_embeddings <- function(corpus,
                                   by = NULL,
-                                  api_token,
-                                  api_url = "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5") {
+                                  model = "all-minilm",
+                                  base_url = "http://localhost:11434/v1",
+                                  api_key = NULL,
+                                  batch_size = 64L) {
 
   if (is.character(corpus)) {
     texts <- corpus
@@ -42,41 +68,47 @@ util_fetch_embeddings <- function(corpus,
     texts <- corpus_dt[["text"]]
   }
 
-  resp <- httr::POST(
-    url = api_url,
-    httr::add_headers(Authorization = paste("Bearer", api_token)),
-    body = list(
-      inputs = texts,
-      options = list(wait_for_model = TRUE)
-    ),
-    encode = "json"
-  )
-
-  # 4. Error Handling
-  if (httr::status_code(resp) != 200) {
-    err_msg <- httr::content(resp, "text", encoding = "UTF-8")
-    stop(sprintf("API Error (%s): %s", httr::status_code(resp), err_msg), call. = FALSE)
+  texts <- as.character(texts)
+  url <- paste0(sub("/+$", "", base_url), "/embeddings")
+  headers <- if (!is.null(api_key) && nzchar(api_key)) {
+    httr::add_headers(Authorization = paste("Bearer", api_key))
+  } else {
+    NULL
   }
 
-  # 5. Robust Manual Parsing
-  # We fetch as raw text and use jsonlite directly to avoid "No automatic parser" errors
-  resp_raw <- httr::content(resp, as = "text", encoding = "UTF-8")
-
-  if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    stop("Package 'jsonlite' is required to parse API response.", call. = FALSE)
-  }
-
-  res <- jsonlite::fromJSON(resp_raw)
-
-  # 6. Convert to numeric matrix (API may return vector for single input)
-  m <- as.matrix(res)
-  if (!is.numeric(m)) {
-    stop("API did not return a numeric matrix. Check the model output format.", call. = FALSE)
-  }
-  if (nrow(m) != length(ids)) {
-    if (is.vector(res) && length(ids) == 1L) {
-      m <- t(m)
+  batches <- split(seq_along(texts), ceiling(seq_along(texts) / batch_size))
+  rows <- lapply(batches, function(i) {
+    resp <- tryCatch(
+      httr::POST(url, headers,
+                 body = list(model = model, input = texts[i]),
+                 encode = "json"),
+      error = function(e) {
+        stop(sprintf(paste0(
+          "Could not reach %s.\n",
+          "For the default local setup, install Ollama (https://ollama.com), ",
+          "make sure it is running, and run `ollama pull %s`."), url, model),
+          call. = FALSE)
+      }
+    )
+    status <- httr::status_code(resp)
+    body <- httr::content(resp, as = "text", encoding = "UTF-8")
+    if (status != 200) {
+      hint <- switch(as.character(status),
+        "401" = " Check `api_key`.",
+        "402" = " The provider requires paid credits.",
+        "404" = sprintf(" Is model '%s' available? For Ollama: `ollama pull %s`.", model, model),
+        "")
+      stop(sprintf("Embedding API error (%s).%s\n%s", status, hint, body), call. = FALSE)
     }
+    data <- jsonlite::fromJSON(body, simplifyVector = FALSE)$data
+    idx <- vapply(data, function(d) as.integer(d$index), integer(1))
+    vecs <- lapply(data, function(d) as.numeric(unlist(d$embedding)))
+    do.call(rbind, vecs[order(idx)])
+  })
+
+  m <- do.call(rbind, rows)
+  if (!is.numeric(m) || nrow(m) != length(ids)) {
+    stop("API did not return one embedding per input text.", call. = FALSE)
   }
   rownames(m) <- ids
   id_col_out <- if (is.character(corpus)) "uid" else if (length(by) == 1L) by else "uid"

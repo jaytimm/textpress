@@ -2,13 +2,15 @@
 % Please edit documentation in R/util_fetch_embeddings.R
 \name{util_fetch_embeddings}
 \alias{util_fetch_embeddings}
-\title{Fetch embeddings from a Hugging Face inference endpoint}
+\title{Fetch embeddings from an OpenAI-compatible endpoint}
 \usage{
 util_fetch_embeddings(
   corpus,
   by = NULL,
-  api_token,
-  api_url = "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5"
+  model = "all-minilm",
+  base_url = "http://localhost:11434/v1",
+  api_key = NULL,
+  batch_size = 64L
 )
 }
 \arguments{
@@ -16,9 +18,13 @@ util_fetch_embeddings(
 
 \item{by}{Character vector of identifier columns; required when \code{corpus} is a data frame (row names), ignored when \code{corpus} is a character vector.}
 
-\item{api_token}{Hugging Face API token.}
+\item{model}{Embedding model name (default \code{"all-minilm"}).}
 
-\item{api_url}{Inference endpoint URL (default BAAI/bge-small-en-v1.5).}
+\item{base_url}{Base URL of an OpenAI-compatible API (default local Ollama, \code{"http://localhost:11434/v1"}).}
+
+\item{api_key}{API key, sent as a bearer token. Not needed for local servers.}
+
+\item{batch_size}{Number of texts sent per request (default 64).}
 }
 \value{
 Numeric matrix with row names (unit ids).
@@ -27,4 +33,28 @@ Numeric matrix with row names (unit ids).
 Builds a numeric matrix of embeddings for each text unit. Row names come from
 \code{by} (data frame) or from \code{names(corpus)} / \code{corpus} (character vector).
 Use the result with \code{\link{search_vector}} for semantic search.
+}
+\details{
+By default this calls a local \href{https://ollama.com}{Ollama} server with
+the small \code{all-minilm} model, so no account or API key is needed. Install
+Ollama, then run \code{ollama pull all-minilm} once. Any service that offers
+an OpenAI-compatible \code{/embeddings} endpoint (OpenAI, LM Studio,
+llama.cpp, and many hosted providers) works by changing \code{base_url},
+\code{model}, and \code{api_key}. Embeddings from any other source can be
+passed to \code{\link{search_vector}} directly as a matrix with row names.
+}
+\examples{
+\dontrun{
+# Requires a running Ollama server: ollama pull all-minilm
+emb <- util_fetch_embeddings(c(a = "Gen Z voters", b = "Baby Boomers"))
+search_vector(emb, "a", n = 2)
+
+# OpenAI instead
+emb <- util_fetch_embeddings(
+  c(a = "Gen Z voters", b = "Baby Boomers"),
+  model = "text-embedding-3-small",
+  base_url = "https://api.openai.com/v1",
+  api_key = Sys.getenv("OPENAI_API_KEY")
+)
+}
 }

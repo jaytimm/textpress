@@ -31,6 +31,15 @@
   factor)"); taxonomic abbreviations such as "E. coli" are matched to full
   names in the same document. A new "Abbreviations" vignette walks through it.
 
+## Search
+
+- `util_fetch_embeddings()` now calls any OpenAI-compatible `/embeddings`
+  endpoint and defaults to a local Ollama server with the small `all-minilm`
+  model, so no account or API key is needed. Hugging Face's hosted inference
+  now requires paid credits. **Breaking:** `api_token` and `api_url` are
+  replaced by `model`, `base_url`, and `api_key`. Requests are sent in batches
+  (`batch_size`, default 64).
+
 ---
 
 # textpress 1.1.1
