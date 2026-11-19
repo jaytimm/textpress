@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
+source("cache-hook.R")
 ```
 
 `nlp_find_abbreviations()` finds abbreviations that a text defines for itself and pairs each short form with its long form. Parenthetical definitions -- *"tumor necrosis factor (TNF)"* or *"TNF (tumor necrosis factor)"* -- are found with the Schwartz & Hearst (2003) algorithm; taxonomic abbreviations like *"E. coli"* are matched to *"Escherichia coli"* elsewhere in the same document. This vignette runs it over a set of biomedical Wikipedia articles, looks at short forms shared across documents, and then uses the pairs as a dictionary so that a concept is counted whether it is written out or abbreviated.
@@ -29,7 +30,7 @@ library(DT)
 
 Fetch Wikipedia articles on inflammation and gut bacteria, then scrape the article bodies.
 
-```{r corpus}
+```{r corpus, cache_rds = c("wiki_urls", "wiki_text_list")}
 wiki_urls <- c(
   textpress::fetch_wiki_urls("tumor necrosis factor inflammation", limit = 4),
   textpress::fetch_wiki_urls("Escherichia coli gut microbiota", limit = 4)

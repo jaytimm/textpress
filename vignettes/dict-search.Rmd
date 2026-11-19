@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5
 )
+source("cache-hook.R")
 ```
 
 
@@ -45,7 +46,7 @@ search_terms <- c(
 
 Fetch recent entries from the selected feeds, filter their title and description locally, and deduplicate the resulting URLs.
 
-```{r web-urls}
+```{r web-urls, cache_rds = c("politics_feeds", "web_urls")}
 politics_feeds <- textpress::rss_politics
 
 web_urls <- textpress::fetch_rss(politics_feeds$url) |>
@@ -62,7 +63,7 @@ web_urls <- textpress::fetch_rss(politics_feeds$url) |>
 
 `read_urls()` scrapes and parses the article text; `nlp_split_sentences()` segments each document into analysis-ready sentence rows.
 
-```{r web-text}
+```{r web-text, cache_rds = c("web_text_list", "web_ss")}
 web_text_list <- web_urls |>
   textpress::read_urls(cores = 4)
 

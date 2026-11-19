@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
+source("cache-hook.R")
 ```
 
 `textpress` is organized around four actions -- fetch, read, process, search. This vignette covers the first two. `fetch_rss()` retrieves recent entries from publisher-supported RSS and Atom feeds; `read_urls()` scrapes their content into a node-level data frame while retaining that provenance. Together they turn selected news sources into an analysis-ready corpus in a few lines.
@@ -21,10 +22,13 @@ knitr::opts_chunk$set(
 
 Filter the bundled `rss_politics` catalog directly, use `fetch_rss()` to retrieve recent entries from those publishers, then filter the returned metadata locally before `read_urls()` scrapes and parses the selected articles. The filtering below is ordinary R filtering, not a query sent to a search service.
 
-```{r web-urls, message=FALSE, warning=FALSE}
+```{r libs, message=FALSE, warning=FALSE}
 library(textpress)
 library(dplyr)
 library(DT)
+```
+
+```{r web-urls, cache_rds = c("feeds", "web_urls")}
 
 feeds <- textpress::rss_politics |>
   filter(category %in% c("polling", "public_opinion"))
@@ -41,7 +45,7 @@ web_urls <- textpress::fetch_rss(feeds$url) |>
 
 Scrape and parse the URLs returned above into a node-level data frame with `$text` and `$meta` components.
 
-```{r web-text}
+```{r web-text, cache_rds = "web_text_list"}
 web_text_list <- web_urls |>
   textpress::read_urls(cores = 4)
 ```

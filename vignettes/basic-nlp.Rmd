@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>"
 )
+source("cache-hook.R")
 ```
 
 Three `nlp_*` functions form the core processing pipeline: `nlp_split_sentences()` segments text into sentence rows; `nlp_tokenize_text()` tokenizes each sentence into a named list with optional character spans; `nlp_cast_tokens()` flattens that list into a long-format data frame ready for counting, filtering, or indexing. This vignette walks through each step on a Wikipedia corpus, then collapses them into a single pipe.
@@ -29,11 +30,13 @@ library(DT)
 
 Fetch Wikipedia articles on the Strauss-Howe generational theory and scrape the article bodies.
 
-```{r corpus}
+```{r corpus, cache_rds = c("wiki_urls", "wiki_text_list")}
 wiki_urls <- textpress::fetch_wiki_urls("Strauss Howe generational theory", limit = 5)
 
 wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
+```
 
+```{r corpus-rows}
 corpus <- wiki_text_list$text
 nrow(corpus)
 ```
