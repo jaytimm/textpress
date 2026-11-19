@@ -4,7 +4,7 @@
 \name{textpress-package}
 \alias{textpress}
 \alias{textpress-package}
-\title{textpress: A Lightweight and Versatile NLP Toolkit}
+\title{textpress: Build and Search Web Text Corpora}
 \description{
 A lightweight toolkit for text retrieval and NLP with a consistent and
 predictable API organized around four actions: fetching, reading, processing,

@@ -1,4 +1,4 @@
-#' textpress: A Lightweight and Versatile NLP Toolkit
+#' textpress: Build and Search Web Text Corpora
 #'
 #' A lightweight toolkit for text retrieval and NLP with a consistent and
 #' predictable API organized around four actions: fetching, reading, processing,

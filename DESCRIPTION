@@ -1,6 +1,6 @@
 Package: textpress
 Type: Package
-Title: A Lightweight and Versatile NLP Toolkit
+Title: Build and Search Web Text Corpora
 Version: 1.1.2
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
