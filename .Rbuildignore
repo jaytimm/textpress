@@ -11,6 +11,4 @@
 ^doc/
 ^data-raw$
 ^PIVOT\.md$
-^cran-comments\.md$
-^CRAN-SUBMISSION$
 ^r-journal-textpress$
