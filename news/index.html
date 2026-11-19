@@ -96,12 +96,18 @@
 <div class="section level3">
 <h3 id="process-1-1-2">Process<a class="anchor" aria-label="anchor" href="#process-1-1-2"></a></h3>
 <ul><li>
-<code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> finds in-text abbreviation definitions and returns one row per unique <code>short_form</code>/<code>long_form</code> pair per document. Parenthetical definitions use the Schwartz &amp; Hearst (2003) algorithm in either direction (“tumor necrosis factor (TNF)”, “TNF (tumor necrosis factor)”); taxonomic abbreviations such as “E. coli” are matched to full names in the same document. A new “Abbreviations” vignette walks through it.</li>
+<code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> finds in-text abbreviation definitions and returns one row per unique <code>short_form</code>/<code>long_form</code> pair per text unit. Parenthetical definitions use the Schwartz &amp; Hearst (2003) algorithm in either direction (“tumor necrosis factor (TNF)”, “TNF (tumor necrosis factor)”); taxonomic abbreviations such as “E. coli” are matched to full names such as “Escherichia coli”. A new “Abbreviations” vignette walks through it.</li>
+<li>
+<code>nlp_tokenize_text(method = "biber")</code> now returns spans that point into the original text. Previously, start/end positions drifted after intra-word hyphens and contractions. Tokens are unchanged.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="search-1-1-2">Search<a class="anchor" aria-label="anchor" href="#search-1-1-2"></a></h3>
 <ul><li>
 <code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> now calls any OpenAI-compatible <code>/embeddings</code> endpoint and defaults to a local Ollama server with the small <code>all-minilm</code> model, so no account or API key is needed. Hugging Face’s hosted inference now requires paid credits. <strong>Breaking:</strong> <code>api_token</code> and <code>api_url</code> are replaced by <code>model</code>, <code>base_url</code>, and <code>api_key</code>. Requests are sent in batches (<code>batch_size</code>, default 64).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-1-1-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-2"></a></h3>
+<ul><li>Vignettes now run all of their code and render every table, including semantic search, rank fusion and the LLM example. Results from network steps (feeds, Wikipedia, embeddings, LLM calls) are saved once to <code>vignettes/data/</code>, so builds and checks run offline.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
