@@ -25,11 +25,15 @@
 ## Process
 
 - `nlp_find_abbreviations()` finds in-text abbreviation definitions and
-  returns one row per unique `short_form`/`long_form` pair per document.
+  returns one row per unique `short_form`/`long_form` pair per text unit.
   Parenthetical definitions use the Schwartz & Hearst (2003) algorithm in
   either direction ("tumor necrosis factor (TNF)", "TNF (tumor necrosis
   factor)"); taxonomic abbreviations such as "E. coli" are matched to full
-  names in the same document. A new "Abbreviations" vignette walks through it.
+  names such as "Escherichia coli". A new "Abbreviations" vignette walks
+  through it.
+- `nlp_tokenize_text(method = "biber")` now returns spans that point into the
+  original text. Previously, start/end positions drifted after intra-word
+  hyphens and contractions. Tokens are unchanged.
 
 ## Search
 
@@ -39,6 +43,13 @@
   now requires paid credits. **Breaking:** `api_token` and `api_url` are
   replaced by `model`, `base_url`, and `api_key`. Requests are sent in batches
   (`batch_size`, default 64).
+
+## Documentation
+
+- Vignettes now run all of their code and render every table, including
+  semantic search, rank fusion and the LLM example. Results from network
+  steps (feeds, Wikipedia, embeddings, LLM calls) are saved once to
+  `vignettes/data/`, so builds and checks run offline.
 
 ---
 
