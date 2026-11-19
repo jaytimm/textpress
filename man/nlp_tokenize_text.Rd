@@ -21,7 +21,9 @@ nlp_tokenize_text(
 
 \item{include_spans}{Logical. Include start/end character spans for each token (default \code{TRUE}).}
 
-\item{method}{Character. \code{"word"} or \code{"biber"}.}
+\item{method}{Character. \code{"word"} uses ICU word boundaries.
+\code{"biber"} keeps intra-word hyphens, splits common contraction
+suffixes, and emits punctuation as separate tokens.}
 }
 \value{
 Named list of tokens; or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}.

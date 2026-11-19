@@ -8,7 +8,9 @@
 #' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("url", "node_id")}). Default \code{c("doc_id", "paragraph_id", "sentence_id")}. The last column is the finest granularity.
 #' @param id_col Character. Name of the column (and list names) used for the unit id (default \code{"uid"}).
 #' @param include_spans Logical. Include start/end character spans for each token (default \code{TRUE}).
-#' @param method Character. \code{"word"} or \code{"biber"}.
+#' @param method Character. \code{"word"} uses ICU word boundaries.
+#'   \code{"biber"} keeps intra-word hyphens, splits common contraction
+#'   suffixes, and emits punctuation as separate tokens.
 #' @return Named list of tokens; or list of \code{tokens} and \code{spans} if \code{include_spans = TRUE}.
 #' @export
 #' @examples
@@ -103,17 +105,34 @@ nlp_tokenize_text <- function(corpus,
 #' @keywords internal
 #' @noRd
 .token_split_biber_with_spans <- function(x, include_spans) {
-  # Replace hyphens within words with placeholders
-  x_mod <- gsub("(?<=\\w)-(?=\\w)", "__", x, perl = TRUE)
-
   contraction_suffixes <- c("s", "ll", "ve", "d", "m", "re")
-  pattern_contraction <- paste0("(?<=\\w)['\u2019](", paste(contraction_suffixes, collapse = "|"), ")\\b")
-  x_mod <- gsub(pattern_contraction, " '\\1", x_mod, perl = TRUE)
+  suffix <- paste(contraction_suffixes, collapse = "|")
 
-  # Match tokens with boundaries
-  pattern_tokens <- "'s|'ll|'ve|'d|'m|'re|\\w+['\u2019]\\w+|\\w+|[[:punct:]]"
-  matches <- stringi::stri_match_all_regex(x_mod, pattern_tokens, omit_no_match = TRUE)[[1]]
-  spans <- stringi::stri_locate_all_regex(x_mod, pattern_tokens)[[1]]
+  # Match the original string directly. Earlier versions inserted characters
+  # before contractions and replaced hyphens with two-character placeholders;
+  # spans calculated from that modified string no longer addressed the source.
+  pattern_tokens <- paste0(
+    "\\w+(?=['\u2019](?:", suffix, ")\\b)", # base of a common contraction
+    "|['\u2019](?:", suffix, ")\\b",         # contraction suffix
+    "|\\w+(?:-\\w+)+",                       # intra-word hyphens
+    "|\\w+['\u2019]\\w+",                    # other apostrophe forms
+    "|\\w+",
+    "|[[:punct:]]"
+  )
+  matches <- stringi::stri_match_all_regex(
+    x, pattern_tokens, omit_no_match = TRUE
+  )[[1]]
+  spans <- stringi::stri_locate_all_regex(x, pattern_tokens)[[1]]
+
+  if (!length(matches) || !nrow(matches)) {
+    empty_spans <- matrix(
+      integer(), ncol = 2L, dimnames = list(NULL, c("start", "end"))
+    )
+    return(list(
+      tokens = character(),
+      spans = if (include_spans) empty_spans else NULL
+    ))
+  }
 
   tokens <- matches[, 1]
   keep <- tokens != ""
@@ -121,8 +140,9 @@ nlp_tokenize_text <- function(corpus,
   tokens <- tokens[keep]
   spans <- spans[keep, , drop = FALSE]
 
-  # Restore original hyphens
-  tokens <- gsub("__", "-", tokens)
+  # Preserve the historical normalized ASCII apostrophe for curly contraction
+  # suffixes while retaining spans into the untouched source string.
+  tokens <- sub("^\u2019", "'", tokens)
 
   if (!include_spans) {
     spans <- NULL
