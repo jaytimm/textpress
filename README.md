@@ -81,6 +81,18 @@ Prepare text for search or indexing.
 - **`nlp_tokenize_text()`** -- Normalize text into a clean token stream.
 - **`nlp_index_tokens()`** -- Build a weighted BM25 index for ranked retrieval.
 - **`nlp_roll_chunks()`** -- Roll sentences into fixed-size chunks with surrounding context (RAG-style).
+- **`nlp_find_abbreviations()`** -- Find in-text abbreviation definitions (e.g. "tumor necrosis factor (TNF)", "E. coli").
+
+```r
+corpus <- data.frame(
+  doc_id = "1",
+  text = "Tumor necrosis factor (TNF) rose, as did the BMI (body mass index)."
+)
+nlp_find_abbreviations(corpus)
+#>    doc_id short_form             long_form        method
+#> 1:      1        TNF Tumor necrosis factor parenthetical
+#> 2:      1        BMI       body mass index parenthetical
+```
 
 ### 4. Search (`search_*`)
 
@@ -114,6 +126,7 @@ corpus class.
 - [Web data](https://jaytimm.github.io/textpress/articles/web-data.html) -- `fetch_rss()` + `read_urls()`
 - [Basic NLP](https://jaytimm.github.io/textpress/articles/basic-nlp.html) -- sentence splitting, tokenization, span-aware casting
 - [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
+- [Abbreviations](https://jaytimm.github.io/textpress/articles/abbreviations.html) -- `nlp_find_abbreviations()`, abbreviation-aware dictionary search
 - [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC
 - [Dictionary search](https://jaytimm.github.io/textpress/articles/dict-search.html) -- `search_dict()`, PMI co-occurrence
 - [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- RAG pipeline: embeddings, BM25, hybrid RRF retrieval, LLM extraction

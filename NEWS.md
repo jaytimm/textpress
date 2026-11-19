@@ -22,6 +22,15 @@
   Wikipedia URLs, allowing its results to pass directly to `read_urls()`.
 - Wikipedia requests now identify textpress with a package User-Agent.
 
+## Process
+
+- `nlp_find_abbreviations()` finds in-text abbreviation definitions and
+  returns one row per unique `short_form`/`long_form` pair per document.
+  Parenthetical definitions use the Schwartz & Hearst (2003) algorithm in
+  either direction ("tumor necrosis factor (TNF)", "TNF (tumor necrosis
+  factor)"); taxonomic abbreviations such as "E. coli" are matched to full
+  names in the same document. A new "Abbreviations" vignette walks through it.
+
 ---
 
 # textpress 1.1.1

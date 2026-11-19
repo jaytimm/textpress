@@ -1,0 +1,153 @@
+---
+title: "Abbreviations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Abbreviations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+`nlp_find_abbreviations()` finds abbreviations that a text defines for itself and pairs each short form with its long form. Parenthetical definitions -- *"tumor necrosis factor (TNF)"* or *"TNF (tumor necrosis factor)"* -- are found with the Schwartz & Hearst (2003) algorithm; taxonomic abbreviations like *"E. coli"* are matched to *"Escherichia coli"* elsewhere in the same document. This vignette runs it over a set of biomedical Wikipedia articles, looks at short forms shared across documents, and then uses the pairs as a dictionary so that a concept is counted whether it is written out or abbreviated.
+
+Load packages.
+
+```{r libs}
+library(textpress)
+library(dplyr)
+library(DT)
+```
+
+## Corpus
+
+Fetch Wikipedia articles on inflammation and gut bacteria, then scrape the article bodies.
+
+```{r corpus}
+wiki_urls <- c(
+  textpress::fetch_wiki_urls("tumor necrosis factor inflammation", limit = 4),
+  textpress::fetch_wiki_urls("Escherichia coli gut microbiota", limit = 4)
+)
+
+wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
+```
+
+`read_urls()` returns one row per text node. A definition and its later uses can sit in different paragraphs, so collapse each article into a single document first.
+
+```{r docs}
+docs <- wiki_text_list$text |>
+  mutate(doc_id = match(url, unique(url))) |>
+  group_by(doc_id, url) |>
+  summarise(text = paste(text, collapse = "\n\n"), .groups = "drop")
+
+docs |> select(doc_id, url)
+```
+
+## Find abbreviations
+
+`nlp_find_abbreviations()` takes any data frame with `doc_id` and `text` and returns one row per unique `short_form`/`long_form` pair per document, along with the `method` that found it.
+
+```{r find}
+abbrevs <- docs |>
+  textpress::nlp_find_abbreviations()
+
+abbrevs |>
+  DT::datatable(rownames = FALSE, options = list(pageLength = 10))
+```
+
+Run one method on its own with `methods`. The taxonomic pairs read as a species list for the corpus.
+
+```{r taxonomic}
+docs |>
+  textpress::nlp_find_abbreviations(methods = "taxonomic") |>
+  DT::datatable(rownames = FALSE, options = list(pageLength = 10))
+```
+
+## Shared short forms
+
+Short forms defined in more than one article.
+
+```{r shared}
+abbrevs |>
+  distinct(doc_id, short_form) |>
+  count(short_form, name = "n_docs", sort = TRUE) |>
+  filter(n_docs > 1) |>
+  DT::datatable(rownames = FALSE)
+```
+
+The same short form does not always get the same long form. Different authors spell out *SCFAs* as *"short-chain"*, *"short chain"* or *"small chain fatty acids"*, and the algorithm sometimes takes in a few words too many. Listing every short form with more than one long form is a quick way to find both.
+
+```{r variants}
+abbrevs |>
+  distinct(short_form, long_form) |>
+  group_by(short_form) |>
+  filter(n_distinct(tolower(long_form)) > 1) |>
+  arrange(short_form) |>
+  DT::datatable(rownames = FALSE)
+```
+
+## Abbreviation-aware search
+
+Once an article defines *TNF*, it rarely writes out *"tumor necrosis factor"* again, so a search for the long form alone undercounts. Stack the parenthetical pairs into a dictionary in which both forms point to one concept. Where an article spells out a short form more than one way, the first long form becomes the concept and the others become variants of it.
+
+```{r dict}
+pairs <- abbrevs |>
+  filter(method == "parenthetical") |>
+  group_by(doc_id, short_form) |>
+  mutate(concept = tolower(first(long_form))) |>
+  ungroup()
+
+abbrev_dict <- bind_rows(
+  pairs |> transmute(doc_id, form = "short_form", variant = short_form,
+                     concept),
+  pairs |> transmute(doc_id, form = "long_form", variant = long_form,
+                     concept)
+) |>
+  distinct()
+```
+
+Split into sentences and run one `search_dict()` pass over every variant. `search_dict()` matches without regard to case, which is right for long forms but not for short forms: *IS* (insertion sequence) would match every *"is"*. Keep short-form hits only where the case matches, and join each hit to the definitions from its own document.
+
+```{r search}
+abbrev_ss <- docs |>
+  textpress::nlp_split_sentences(by = "doc_id")
+
+hits <- abbrev_ss |>
+  textpress::search_dict(
+    by    = c("doc_id", "sentence_id"),
+    terms = unique(abbrev_dict$variant)
+  ) |>
+  mutate(doc_id = as.integer(sub("\\..*$", "", id))) |>
+  inner_join(abbrev_dict |> mutate(term = tolower(variant)),
+             by = c("doc_id", "term"), relationship = "many-to-many") |>
+  filter(form == "long_form" | ngram == variant)
+```
+
+Mentions per concept, split by how they were written. Across the corpus, short forms account for most of the mentions.
+
+```{r counts}
+hits |>
+  distinct(id, start, doc_id, concept, form) |>
+  group_by(doc_id, concept) |>
+  summarise(
+    long_form  = sum(form == "long_form"),
+    short_form = sum(form == "short_form"),
+    total      = n(),
+    .groups    = "drop"
+  ) |>
+  arrange(desc(total)) |>
+  DT::datatable(rownames = FALSE, options = list(pageLength = 10))
+```
+
+## Summary
+
+`nlp_find_abbreviations()` turns the definitions a text already contains into a `short_form`/`long_form` table, using only the text itself and no external dictionary. Listing the pairs by short form exposes spelling variants and noisy matches to clean up; stacking them into a dictionary for `search_dict()` lets a concept be counted whether it is written out or abbreviated. For a fixed vocabulary, see the dictionary search vignette.
+
+Schwartz, A. S., & Hearst, M. A. (2003). A simple algorithm for identifying abbreviation definitions in biomedical text. *Pacific Symposium on Biocomputing*, 451-462.
