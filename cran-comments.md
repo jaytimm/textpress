@@ -19,9 +19,8 @@ See NEWS.md for details.
 
 ## Test environments
 
-* local Ubuntu, R 4.3.1
+* local Ubuntu, R 4.3.1 and R 4.5.2
 * GitHub Actions: macOS, Windows, Ubuntu (R release, devel, oldrel-1)
-* win-builder (devel)
 
 ## Notes
 
