@@ -39,24 +39,23 @@ wiki_urls <- c(
 wiki_text_list <- textpress::read_urls(wiki_urls, exclude_wiki_refs = TRUE)
 ```
 
-`read_urls()` returns one row per text node. A definition and its later uses can sit in different paragraphs, so collapse each article into a single document first.
+`read_urls()` returns one row per text node. Give each article an integer `doc_id`.
 
 ```{r docs}
-docs <- wiki_text_list$text |>
+wiki_text <- wiki_text_list$text |>
   mutate(doc_id = match(url, unique(url))) |>
-  group_by(doc_id, url) |>
-  summarise(text = paste(text, collapse = "\n\n"), .groups = "drop")
+  relocate(doc_id, .before = 1)
 
-docs |> select(doc_id, url)
+wiki_text |> distinct(doc_id, url)
 ```
 
 ## Find abbreviations
 
-`nlp_find_abbreviations()` takes any data frame with `doc_id` and `text` and returns one row per unique `short_form`/`long_form` pair per document, along with the `method` that found it.
+`nlp_find_abbreviations()` pools all rows that share the `by` values into one unit, so with `by = "doc_id"` each article is searched whole: a definition in one paragraph pairs with a full name in another. It returns one row per unique `short_form`/`long_form` pair per unit, along with the `method` that found it.
 
 ```{r find}
-abbrevs <- docs |>
-  textpress::nlp_find_abbreviations()
+abbrevs <- wiki_text |>
+  textpress::nlp_find_abbreviations(by = "doc_id")
 
 abbrevs |>
   DT::datatable(rownames = FALSE, options = list(pageLength = 10))
@@ -65,8 +64,8 @@ abbrevs |>
 Run one method on its own with `methods`. The taxonomic pairs read as a species list for the corpus.
 
 ```{r taxonomic}
-docs |>
-  textpress::nlp_find_abbreviations(methods = "taxonomic") |>
+wiki_text |>
+  textpress::nlp_find_abbreviations(by = "doc_id", methods = "taxonomic") |>
   DT::datatable(rownames = FALSE, options = list(pageLength = 10))
 ```
 
@@ -116,12 +115,12 @@ abbrev_dict <- bind_rows(
 Split into sentences and run one `search_dict()` pass over every variant. `search_dict()` matches without regard to case, which is right for long forms but not for short forms: *IS* (insertion sequence) would match every *"is"*. Keep short-form hits only where the case matches, and join each hit to the definitions from its own document.
 
 ```{r search}
-abbrev_ss <- docs |>
-  textpress::nlp_split_sentences(by = "doc_id")
+abbrev_ss <- wiki_text |>
+  textpress::nlp_split_sentences(by = c("doc_id", "node_id"))
 
 hits <- abbrev_ss |>
   textpress::search_dict(
-    by    = c("doc_id", "sentence_id"),
+    by    = c("doc_id", "node_id", "sentence_id"),
     terms = unique(abbrev_dict$variant)
   ) |>
   mutate(doc_id = as.integer(sub("\\..*$", "", id))) |>

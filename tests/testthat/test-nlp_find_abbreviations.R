@@ -94,6 +94,23 @@ test_that("the same pair in two documents appears once per document", {
   expect_equal(res$doc_id, c("a", "b"))
 })
 
+test_that("rows sharing `by` values are pooled into one unit", {
+  corpus <- data.frame(
+    doc_id = c("a", "a", "b"),
+    node_id = c(1, 2, 1),
+    text = c("Escherichia coli was cultured.", "Growth of E. coli was slow.",
+             "Growth of E. coli was slow.")
+  )
+  res <- nlp_find_abbreviations(corpus, by = "doc_id", methods = "taxonomic")
+  expect_equal(res$doc_id, "a")
+  expect_named(res, c("doc_id", "short_form", "long_form", "method"))
+
+  # Splitting by node keeps the definition and the short form apart
+  res2 <- nlp_find_abbreviations(corpus, by = c("doc_id", "node_id"))
+  expect_equal(nrow(res2), 0)
+  expect_named(res2, c("doc_id", "node_id", "short_form", "long_form", "method"))
+})
+
 test_that("2,000 short documents run in under 2 seconds", {
   skip_on_cran()
   texts <- c(

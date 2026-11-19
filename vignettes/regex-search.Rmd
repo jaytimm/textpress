@@ -100,18 +100,19 @@ age_range = paste(
 Sentences containing explicit age ranges or constructions (e.g. *"adults aged 18 to 29"*, *"under 30"*, *"65+"*).
 
 ```{r out-age-range}
-fs <- web_ss |> 
-  
+fs <- web_ss |>
   textpress::search_regex(
     query = patterns$age_range,
     by = c('doc_id', 'node_id'),
     highlight = c('<span style="background:#a6cbe1;">', '</span>')
-    ) |>
-  
-  distinct(text, .keep_all = TRUE) |>
-  select(doc_id, node_id, pattern, text)
+    )
 
-if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape = FALSE)
+if (!is.null(fs) && nrow(fs) > 0) {
+  fs |>
+    distinct(text, .keep_all = TRUE) |>
+    select(doc_id, node_id, pattern, text) |>
+    DT::datatable(rownames = FALSE, escape = FALSE)
+}
 ```
 
 
@@ -121,18 +122,19 @@ if (!is.null(fs) && nrow(fs) > 0) fs |> DT::datatable(rownames = FALSE, escape =
 Sentences with numeric change expressions (e.g. *"from 42 to 51 percent"*) -- useful for tracking shifts in polling or support figures.
 
 ```{r out-from-to}
-fs1 <- web_ss |> 
-  
+fs1 <- web_ss |>
   textpress::search_regex(
     query = patterns$from_to,
     by = c('doc_id', 'node_id'),
     highlight = c('<span style="background:#fdc4a8;">', '</span>')
-    ) |>
-  
-  distinct(text, .keep_all = TRUE) |>
-  select(doc_id, node_id, pattern, text)
+    )
 
-if (!is.null(fs1) && nrow(fs1) > 0) fs1 |> DT::datatable(rownames = FALSE, escape = FALSE)
+if (!is.null(fs1) && nrow(fs1) > 0) {
+  fs1 |>
+    distinct(text, .keep_all = TRUE) |>
+    select(doc_id, node_id, pattern, text) |>
+    DT::datatable(rownames = FALSE, escape = FALSE)
+}
 ```
 
 ### Search ~ `energized`
@@ -141,17 +143,18 @@ Sentences with voter-mobilization language -- terms like *"energized"*, *"motiva
 
 ```{r out-energized}
 fs2 <- web_ss |>
-
   textpress::search_regex(
     query = patterns$energized,
     by = c('doc_id', 'node_id'),
     highlight = c('<span style="background:#c8e6c9;">', '</span>')
-    ) |>
+    )
 
-  distinct(text, .keep_all = TRUE) |>
-  select(doc_id, node_id, pattern, text)
-
-if (!is.null(fs2) && nrow(fs2) > 0) fs2 |> DT::datatable(rownames = FALSE, escape = FALSE)
+if (!is.null(fs2) && nrow(fs2) > 0) {
+  fs2 |>
+    distinct(text, .keep_all = TRUE) |>
+    select(doc_id, node_id, pattern, text) |>
+    DT::datatable(rownames = FALSE, escape = FALSE)
+}
 ```
 
 ## Summary

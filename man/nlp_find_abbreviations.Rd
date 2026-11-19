@@ -4,17 +4,23 @@
 \alias{nlp_find_abbreviations}
 \title{Find abbreviation definitions in text}
 \usage{
-nlp_find_abbreviations(corpus, methods = c("parenthetical", "taxonomic"))
+nlp_find_abbreviations(
+  corpus,
+  by = c("doc_id"),
+  methods = c("parenthetical", "taxonomic")
+)
 }
 \arguments{
-\item{corpus}{A data frame with columns \code{doc_id} and \code{text}.}
+\item{corpus}{Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.}
+
+\item{by}{Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("doc_id", "node_id")}). Default \code{c("doc_id")}.}
 
 \item{methods}{Which detectors to run: \code{"parenthetical"},
 \code{"taxonomic"}, or both (default).}
 }
 \value{
-A \code{data.table} with columns \code{doc_id}, \code{short_form},
-  \code{long_form}, and \code{method}; one row per unique pair per document.
+Data.table with \code{by} columns, \code{short_form},
+  \code{long_form}, and \code{method}; one row per unique pair per unit.
 }
 \description{
 Detects in-text abbreviation definitions and pairs each short form with its
@@ -24,8 +30,15 @@ long form. Two kinds are found:
     algorithm: "tumor necrosis factor (TNF)" and the reverse
     "TNF (tumor necrosis factor)".
   \item \strong{Taxonomic} abbreviations: "E. coli" paired with
-    "Escherichia coli" when the full name also appears in the document.
+    "Escherichia coli" when the full name also appears in the same unit.
 }
+}
+\details{
+Rows that share the same \code{by} values are pooled into one unit before
+searching, so a definition in one paragraph pairs with a full name in
+another. With \code{by = "doc_id"}, node- or sentence-level rows from
+\code{\link{read_urls}} or \code{\link{nlp_split_sentences}} are searched
+as whole documents.
 }
 \examples{
 corpus <- data.frame(
@@ -33,7 +46,7 @@ corpus <- data.frame(
   text = c("Levels of tumor necrosis factor (TNF) and interleukin-6 (IL-6) rose.",
            "Escherichia coli was cultured. Growth of E. coli was slow.")
 )
-nlp_find_abbreviations(corpus)
+nlp_find_abbreviations(corpus, by = "doc_id")
 }
 \references{
 Schwartz, A. S., & Hearst, M. A. (2003). A simple algorithm for

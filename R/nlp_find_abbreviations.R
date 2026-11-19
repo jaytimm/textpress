@@ -7,14 +7,21 @@
 #'     algorithm: "tumor necrosis factor (TNF)" and the reverse
 #'     "TNF (tumor necrosis factor)".
 #'   \item \strong{Taxonomic} abbreviations: "E. coli" paired with
-#'     "Escherichia coli" when the full name also appears in the document.
+#'     "Escherichia coli" when the full name also appears in the same unit.
 #' }
 #'
-#' @param corpus A data frame with columns \code{doc_id} and \code{text}.
+#' Rows that share the same \code{by} values are pooled into one unit before
+#' searching, so a definition in one paragraph pairs with a full name in
+#' another. With \code{by = "doc_id"}, node- or sentence-level rows from
+#' \code{\link{read_urls}} or \code{\link{nlp_split_sentences}} are searched
+#' as whole documents.
+#'
+#' @param corpus Data frame or data.table with a \code{text} column and the identifier columns specified in \code{by}.
+#' @param by Character vector of identifier columns that define the text unit (e.g. \code{doc_id} or \code{c("doc_id", "node_id")}). Default \code{c("doc_id")}.
 #' @param methods Which detectors to run: \code{"parenthetical"},
 #'   \code{"taxonomic"}, or both (default).
-#' @return A \code{data.table} with columns \code{doc_id}, \code{short_form},
-#'   \code{long_form}, and \code{method}; one row per unique pair per document.
+#' @return Data.table with \code{by} columns, \code{short_form},
+#'   \code{long_form}, and \code{method}; one row per unique pair per unit.
 #' @references Schwartz, A. S., & Hearst, M. A. (2003). A simple algorithm for
 #'   identifying abbreviation definitions in biomedical text.
 #'   \emph{Pacific Symposium on Biocomputing}, 451-462.
@@ -24,28 +31,40 @@
 #'   text = c("Levels of tumor necrosis factor (TNF) and interleukin-6 (IL-6) rose.",
 #'            "Escherichia coli was cultured. Growth of E. coli was slow.")
 #' )
-#' nlp_find_abbreviations(corpus)
+#' nlp_find_abbreviations(corpus, by = "doc_id")
 #' @export
 nlp_find_abbreviations <- function(corpus,
+                                   by = c("doc_id"),
                                    methods = c("parenthetical", "taxonomic")) {
   methods <- match.arg(methods, several.ok = TRUE)
-  if (!all(c("doc_id", "text") %in% names(corpus))) {
-    stop("`corpus` must contain columns 'doc_id' and 'text'.", call. = FALSE)
+  missing <- setdiff(c(by, "text"), names(corpus))
+  if (length(missing)) {
+    stop("Missing columns in `corpus`: ", paste(missing, collapse = ", "),
+         call. = FALSE)
   }
-  ok <- !is.na(corpus$text) & nzchar(corpus$text)
-  doc_id <- corpus$doc_id[ok]
-  text <- as.character(corpus$text[ok])
+
+  dt <- data.table::as.data.table(corpus)[, c(by, "text"), with = FALSE]
+  dt[, text := as.character(text)]
+  dt <- dt[!is.na(text) & nzchar(text)]
+
+  # One unit per unique combination of `by` values
+  units <- dt[, list(text = paste(text, collapse = "\n\n")), by = by]
+  uid <- seq_len(nrow(units))
 
   out <- list()
-  if ("parenthetical" %in% methods) out$p <- .abbr_parenthetical(doc_id, text)
-  if ("taxonomic" %in% methods)     out$t <- .abbr_taxonomic(doc_id, text)
+  if ("parenthetical" %in% methods) out$p <- .abbr_parenthetical(uid, units$text)
+  if ("taxonomic" %in% methods)     out$t <- .abbr_taxonomic(uid, units$text)
 
   res <- data.table::rbindlist(out, use.names = TRUE)
   if (nrow(res) == 0L) {
-    return(data.table::data.table(doc_id = doc_id[0], short_form = character(0),
-                                  long_form = character(0), method = character(0)))
+    return(cbind(units[0L, by, with = FALSE],
+                 data.table::data.table(short_form = character(0),
+                                        long_form = character(0),
+                                        method = character(0))))
   }
-  unique(res, by = c("doc_id", "short_form", "long_form"))
+  res <- unique(res, by = c("doc_id", "short_form", "long_form"))
+  cbind(units[res$doc_id, by, with = FALSE],
+        res[, c("short_form", "long_form", "method"), with = FALSE])
 }
 
 

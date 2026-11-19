@@ -81,17 +81,18 @@ Prepare text for search or indexing.
 - **`nlp_tokenize_text()`** -- Normalize text into a clean token stream.
 - **`nlp_index_tokens()`** -- Build a weighted BM25 index for ranked retrieval.
 - **`nlp_roll_chunks()`** -- Roll sentences into fixed-size chunks with surrounding context (RAG-style).
-- **`nlp_find_abbreviations()`** -- Find in-text abbreviation definitions (e.g. "tumor necrosis factor (TNF)", "E. coli").
+- **`nlp_find_abbreviations()`** -- Find in-text abbreviation definitions (e.g. "abscisic acid (ABA)", "A. thaliana").
 
 ```r
 corpus <- data.frame(
   doc_id = "1",
-  text = "Tumor necrosis factor (TNF) rose, as did the BMI (body mass index)."
+  text = paste("Arabidopsis thaliana seedlings were treated with abscisic acid (ABA).",
+               "In A. thaliana roots, ABA slowed growth.")
 )
-nlp_find_abbreviations(corpus)
-#>    doc_id short_form             long_form        method
-#> 1:      1        TNF Tumor necrosis factor parenthetical
-#> 2:      1        BMI       body mass index parenthetical
+nlp_find_abbreviations(corpus, by = "doc_id")
+#>    doc_id  short_form            long_form        method
+#> 1:      1         ABA        abscisic acid parenthetical
+#> 2:      1 A. thaliana Arabidopsis thaliana     taxonomic
 ```
 
 ### 4. Search (`search_*`)
