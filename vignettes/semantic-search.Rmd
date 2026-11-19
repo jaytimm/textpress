@@ -17,7 +17,7 @@ source("cache-hook.R")
 ```
 
 
-This vignette completes the search side of the `textpress` pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here all three are run on the same generational-politics corpus, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
+This vignette completes the search side of the `textpress` pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here they are run on politics coverage from the weeks after the 2026 midterms, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
 
 Load packages.
 
@@ -28,27 +28,21 @@ library(dplyr)
 
 
 
-## Terms and RSS entries
+## Sources
 
-Terms used to select relevant entries from political RSS feeds.
+The corpus comes from two openly reusable sources: the Pew Research Center politics feed, taken from the bundled `rss_politics` catalog, and The Conversation's US politics feed. Both allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026, in the weeks after the midterm elections, and only entries about the elections are kept.
 
-```{r search-terms}
-search_terms <- c(
-  "Gen Z", "Millennial", "Gen X", "Baby Boomer",
-  "young voters", "older voters"
+```{r web-urls, cache_rds = c("feeds", "web_urls")}
+feeds <- c(
+  textpress::rss_politics |>
+    filter(source == "Pew Research Center") |>
+    pull(url),
+  "https://theconversation.com/us/politics/articles.atom"
 )
-```
 
-
-
-Fetch recent entries from the selected feeds, filter their title and description locally, and deduplicate the resulting URLs.
-
-```{r web-urls, cache_rds = c("politics_feeds", "web_urls")}
-politics_feeds <- textpress::rss_politics
-
-web_urls <- textpress::fetch_rss(politics_feeds$url) |>
+web_urls <- textpress::fetch_rss(feeds) |>
   filter(grepl(
-    paste(search_terms, collapse = "|"),
+    "midterm|election|voter|Congress",
     paste(title, description),
     ignore.case = TRUE
   )) |>
@@ -125,13 +119,13 @@ index <- textpress::nlp_tokenize_text(
 A single query string is used for both BM25 and semantic search, enabling a direct comparison of the two methods on the same input.
 
 ```{r}
-query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"
+query_text <- "Why did Democrats gain in the 2026 midterms and which voters shifted?"
 ```
 
 
 ### BM25
 
-Search the index with a short query relevant to the corpus (e.g. generations and voter turnout).
+Search the index with the query. BM25 rewards chunks that share its terms.
 
 ```{r search-bm25, message=FALSE, warning=FALSE}
 bm25_hits <- search_index(index,
@@ -148,7 +142,7 @@ bm25_hits |>
 
 ### Semantic
 
-Embed a query phrase that matches the corpus theme (generational politics, voter behavior), then run `search_vector()` and join back to chunks to show the retrieved text.
+Embed the same query, then run `search_vector()`. Semantic search can rank chunks that answer the question in different words.
 
 ```{r query-embed, cache_rds = "query_embed"}
 query_embed <- textpress::util_fetch_embeddings(query_text)
@@ -217,41 +211,37 @@ chat <- ellmer::chat_openai(model = "gpt-4o-mini")
 
 
 
-### Generational portrait
+### Explaining the midterm results
 
-Comparative structured portrait per generation (alignment, drivers, divisions).
+Ask the model which explanations the passages give for the results, as structured rows that cite their sources.
 
-```{r llm-portraits, cache_rds = "portraits_out"}
-portrait_schema <- ellmer::type_object(
-  "Comparative political portraits of each generation in 2026.",
-  portraits = ellmer::type_array(
+```{r llm-explanations, cache_rds = "explanations_out"}
+explanation_schema <- ellmer::type_object(
+  "Explanations the passages give for the 2026 midterm results.",
+  explanations = ellmer::type_array(
     ellmer::type_object(
-      "Portrait of one generation.",
-      generation               = ellmer::type_string("Gen Z / Millennial / Gen X / Boomer."),
-      party_alignment          = ellmer::type_string("Current lean or alignment per the passages."),
-      key_drivers              = ellmer::type_string("What is driving their alignment or behavior."),
-      internal_divisions       = ellmer::type_string("Any splits within the generation mentioned."),
-      contrast_with_prior      = ellmer::type_string("How they differ from the prior generation."),
-      most_recent_source       = ellmer::type_string("Date of the most recent passage informing this portrait, as YYYY-MM-DD.")
+      "One explanation.",
+      factor  = ellmer::type_string("Short name, e.g. turnout, economy, candidate quality."),
+      claim   = ellmer::type_string("What the passages say about it, in one or two sentences."),
+      voters  = ellmer::type_string("Voter groups involved, if the passages name any."),
+      sources = ellmer::type_string("Source numbers that support it, e.g. 3, 7.")
     )
   )
 )
-portraits_out <- chat$chat_structured(
+explanations_out <- chat$chat_structured(
   glue::glue(
-    "Write a comparative political portrait of each generation -- Gen Z,
-   Millennials, Gen X, Boomers -- based solely on the passages.
-   Focus on party alignment, key drivers, and internal divisions in 2026.
-
-   Note the date of the most recent passage you draw on for each generation.
+    "Based solely on the passages, list the explanations given for the
+   results of the 2026 US midterm elections. Use one row per distinct
+   explanation and cite the source numbers that support it.
 
    PASSAGES:\n{context}"
   ),
-  type = portrait_schema
+  type = explanation_schema
 )
 ```
 
-```{r show-portraits}
-portraits_out$portraits |> DT::datatable(rownames = F)
+```{r show-explanations}
+explanations_out$explanations |> DT::datatable(rownames = F)
 ```
 
 ## Summary

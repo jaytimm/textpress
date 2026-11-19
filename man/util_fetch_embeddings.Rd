@@ -10,7 +10,8 @@ util_fetch_embeddings(
   model = "all-minilm",
   base_url = "http://localhost:11434/v1",
   api_key = NULL,
-  batch_size = 64L
+  batch_size = 64L,
+  max_chars = 1000L
 )
 }
 \arguments{
@@ -25,6 +26,11 @@ util_fetch_embeddings(
 \item{api_key}{API key, sent as a bearer token. Not needed for local servers.}
 
 \item{batch_size}{Number of texts sent per request (default 64).}
+
+\item{max_chars}{Texts longer than this many characters are cut before
+sending (default 1000). Small models such as \code{all-minilm} read about
+256 tokens and Ollama rejects longer input rather than truncating it. Use
+\code{NULL} to send full text to models with a longer context.}
 }
 \value{
 Numeric matrix with row names (unit ids).

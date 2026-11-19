@@ -20,7 +20,9 @@ source("cache-hook.R")
 
 ## Select, fetch, and read
 
-Filter the bundled `rss_politics` catalog directly, use `fetch_rss()` to retrieve recent entries from those publishers, then filter the returned metadata locally before `read_urls()` scrapes and parses the selected articles. The filtering below is ordinary R filtering, not a query sent to a search service.
+Select the Pew Research Center feed from the bundled `rss_politics` catalog, add The Conversation's US politics feed, use `fetch_rss()` to retrieve their recent entries, then keep entries about the 2026 midterms before `read_urls()` scrapes and parses the selected articles. The filtering below is ordinary R filtering, not a query sent to a search service.
+
+Both sources allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026; the table below links to every article.
 
 ```{r libs, message=FALSE, warning=FALSE}
 library(textpress)
@@ -29,13 +31,16 @@ library(DT)
 ```
 
 ```{r web-urls, cache_rds = c("feeds", "web_urls")}
+feeds <- c(
+  textpress::rss_politics |>
+    filter(source == "Pew Research Center") |>
+    pull(url),
+  "https://theconversation.com/us/politics/articles.atom"
+)
 
-feeds <- textpress::rss_politics |>
-  filter(category %in% c("polling", "public_opinion"))
-
-web_urls <- textpress::fetch_rss(feeds$url) |>
+web_urls <- textpress::fetch_rss(feeds) |>
   filter(grepl(
-    "immigration|poll|survey",
+    "midterm|election|voter|Congress",
     paste(title, description),
     ignore.case = TRUE
   ))

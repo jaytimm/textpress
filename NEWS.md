@@ -42,14 +42,18 @@
   model, so no account or API key is needed. Hugging Face's hosted inference
   now requires paid credits. **Breaking:** `api_token` and `api_url` are
   replaced by `model`, `base_url`, and `api_key`. Requests are sent in batches
-  (`batch_size`, default 64).
+  (`batch_size`, default 64), and texts longer than `max_chars` (default 1000)
+  are cut before sending, since small models such as `all-minilm` reject long
+  input.
 
 ## Documentation
 
 - Vignettes now run all of their code and render every table, including
   semantic search, rank fusion and the LLM example. Results from network
   steps (feeds, Wikipedia, embeddings, LLM calls) are saved once to
-  `vignettes/data/`, so builds and checks run offline.
+  `vignettes/data/`, so builds and checks run offline. News examples now use
+  openly reusable sources (Pew Research Center and The Conversation) and
+  follow coverage of the 2026 midterm elections.
 
 ---
 

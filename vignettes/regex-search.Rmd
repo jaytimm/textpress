@@ -16,21 +16,11 @@ knitr::opts_chunk$set(
 source("cache-hook.R")
 ```
 
-`search_regex()` matches patterns against a text corpus and returns results in KWIC format with inline highlighting. This vignette applies it to a generational-politics corpus with three patterns -- age ranges, numeric change expressions, and voter-mobilization language -- each match returned at the sentence level, ready for close reading or aggregation.
+`search_regex()` matches patterns against a text corpus and returns results in KWIC format with inline highlighting. This vignette applies it to politics coverage from the weeks after the 2026 midterms, with three patterns -- age ranges, numeric change expressions, and point margins -- each match returned at the sentence level, ready for close reading or aggregation.
 
-## Terms and RSS entries
+## Sources
 
-Terms used to select relevant entries from political RSS feeds.
-
-```{r search-terms}
-search_terms <- c(
-  "Gen Z", "Millennial", "Gen X", "Baby Boomer",
-  "young voters", "older voters"
-)
-```
-
-
-Fetch recent entries from the selected feeds, filter their title and description locally, and deduplicate the resulting URLs.
+The corpus comes from two openly reusable sources: the Pew Research Center politics feed, taken from the bundled `rss_politics` catalog, and The Conversation's US politics feed. Both allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026, in the weeks after the midterm elections; links to every article are kept in the results.
 
 ```{r libs, message=FALSE, warning=FALSE}
 library(textpress)
@@ -38,16 +28,15 @@ library(dplyr)
 library(DT)
 ```
 
-```{r web-urls, cache_rds = c("politics_feeds", "web_urls")}
+```{r web-urls, cache_rds = c("feeds", "web_urls")}
+feeds <- c(
+  textpress::rss_politics |>
+    filter(source == "Pew Research Center") |>
+    pull(url),
+  "https://theconversation.com/us/politics/articles.atom"
+)
 
-politics_feeds <- textpress::rss_politics
-
-web_urls <- textpress::fetch_rss(politics_feeds$url) |>
-  filter(grepl(
-    paste(search_terms, collapse = "|"),
-    paste(title, description),
-    ignore.case = TRUE
-  )) |>
+web_urls <- textpress::fetch_rss(feeds) |>
   select(-doc_id) |>
   distinct(url, .keep_all = TRUE)
 ```
@@ -60,7 +49,7 @@ web_urls <- textpress::fetch_rss(politics_feeds$url) |>
 
 ```{r web-text, cache_rds = c("web_text_list", "web_text")}
 web_text_list <- web_urls |>
-  textpress::read_urls(cores = 6) 
+  textpress::read_urls(cores = 4)
 
 web_text <- web_text_list$text |>
   mutate(doc_id = match(url, unique(url))) |>
@@ -79,11 +68,11 @@ web_ss <- web_text |>
 
 ## Regex patterns
 
-Three patterns: `age_range` matches explicit age constructions; `from_to` captures numeric change expressions; `energized` catches voter-mobilization language.
+Three patterns: `age_range` matches explicit age constructions; `from_to` captures numeric change expressions; `margin` catches leads and swings stated in points.
 
 ```{r patterns}
 patterns <- list(
-  energized = "\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b",
+  margin = "\\b\\d{1,2}(?:\\.\\d)?[- ](?:percentage[- ])?points?\\b",
 age_range = paste(
   "\\b(?:aged?(?:\\s+between)?|ages?)\\s+\\d{2,3}(?:(?:\\s*(?:[-–]|to|and)\\s*\\d{2,3})|(?:\\s+and\\s+(?:older|younger|over|under)))\\b",
   "\\bunder\\s+\\d{2}(?!\\d|,|%)\\b",
@@ -122,7 +111,7 @@ if (!is.null(fs) && nrow(fs) > 0) {
 
 ### Search ~ `from_to`
 
-Sentences with numeric change expressions (e.g. *"from 42 to 51 percent"*) -- useful for tracking shifts in polling or support figures.
+Sentences with numeric change expressions (e.g. *"from 42 to 51 percent"*) -- useful for tracking shifts in support or turnout figures.
 
 ```{r out-from-to}
 fs1 <- web_ss |>
@@ -140,14 +129,14 @@ if (!is.null(fs1) && nrow(fs1) > 0) {
 }
 ```
 
-### Search ~ `energized`
+### Search ~ `margin`
 
-Sentences with voter-mobilization language -- terms like *"energized"*, *"motivated"*, *"mobilized"*, *"disillusioned"*, *"apathetic"*.
+Sentences stating a lead or swing in points (e.g. *"won by 8 points"*, *"a 3.5-percentage-point shift"*) -- the usual way election margins are reported.
 
-```{r out-energized}
+```{r out-margin}
 fs2 <- web_ss |>
   textpress::search_regex(
-    query = patterns$energized,
+    query = patterns$margin,
     by = c('doc_id', 'node_id'),
     highlight = c('<span style="background:#c8e6c9;">', '</span>')
     )

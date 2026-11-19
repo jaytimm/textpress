@@ -18,6 +18,10 @@
 #' @param base_url Base URL of an OpenAI-compatible API (default local Ollama, \code{"http://localhost:11434/v1"}).
 #' @param api_key API key, sent as a bearer token. Not needed for local servers.
 #' @param batch_size Number of texts sent per request (default 64).
+#' @param max_chars Texts longer than this many characters are cut before
+#'   sending (default 1000). Small models such as \code{all-minilm} read about
+#'   256 tokens and Ollama rejects longer input rather than truncating it. Use
+#'   \code{NULL} to send full text to models with a longer context.
 #' @return Numeric matrix with row names (unit ids).
 #' @examples
 #' \dontrun{
@@ -39,7 +43,8 @@ util_fetch_embeddings <- function(corpus,
                                   model = "all-minilm",
                                   base_url = "http://localhost:11434/v1",
                                   api_key = NULL,
-                                  batch_size = 64L) {
+                                  batch_size = 64L,
+                                  max_chars = 1000L) {
 
   if (is.character(corpus)) {
     texts <- corpus
@@ -69,6 +74,14 @@ util_fetch_embeddings <- function(corpus,
   }
 
   texts <- as.character(texts)
+  if (!is.null(max_chars)) {
+    long <- nchar(texts) > max_chars
+    if (any(long)) {
+      message(sum(long), " text(s) cut to ", max_chars,
+              " characters for embedding; set `max_chars` to change.")
+      texts[long] <- substr(texts[long], 1L, max_chars)
+    }
+  }
   url <- paste0(sub("/+$", "", base_url), "/embeddings")
   headers <- if (!is.null(api_key) && nzchar(api_key)) {
     httr::add_headers(Authorization = paste("Bearer", api_key))

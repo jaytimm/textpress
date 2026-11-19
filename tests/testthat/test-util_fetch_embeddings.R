@@ -28,4 +28,8 @@ test_that("embeddings come back one row per text from a local Ollama server", {
   expect_equal(dim(emb), c(70L, 384L))
   expect_equal(rownames(emb), as.character(1:70))
   expect_equal(attr(emb, "id_col"), "uid")
+
+  long <- strrep("Turnout rose 12.5% (n = 1,204; 95% CI 3.1-4.8). ", 60)
+  expect_message(e2 <- util_fetch_embeddings(c(a = long, b = "short")), "cut to 1000")
+  expect_equal(dim(e2), c(2L, 384L))
 })
