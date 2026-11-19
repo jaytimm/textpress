@@ -111,6 +111,14 @@ test_that("rows sharing `by` values are pooled into one unit", {
   expect_named(res2, c("doc_id", "node_id", "short_form", "long_form", "method"))
 })
 
+test_that("initials before function words are not taxonomic pairs", {
+  res <- nlp_find_abbreviations(data.frame(
+    doc_id = "d1",
+    text = "Site and Silva and Jones S. and Smith reported on Escherichia coli and E. coli."
+  ), methods = "taxonomic")
+  expect_equal(res$short_form, "E. coli")
+})
+
 test_that("2,000 short documents run in under 2 seconds", {
   skip_on_cran()
   texts <- c(

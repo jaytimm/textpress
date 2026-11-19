@@ -19,7 +19,7 @@ utils::globalVariables(c(
   "source", "feed", "category", "source_type", "url", "pub_date",
   "language", "country",
   "scraped_h1_title", "scraped_date", "scraped_source",
-  "short_form", "long_form", "i"
+  "short_form", "long_form", "i", "epithet"
 ))
 
 

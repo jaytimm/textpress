@@ -173,6 +173,9 @@ nlp_find_abbreviations <- function(corpus,
   h <- do.call(rbind, hits)
   dt <- unique(data.table::data.table(i = idx, short_form = h[, 1],
                                       init = h[, 2], epithet = h[, 3]))
+  # An initial before a function word ("Jones S. and Silva") is not a binomial
+  dt <- dt[!epithet %in% stopwords_en]
+  if (nrow(dt) == 0L) return(NULL)
 
   # Full binomial in the same document: same initial, genus of 3+ letters
   pat <- paste0("\\b", dt$init, "[a-z]{2,}\\s+", dt$epithet, "\\b")
