@@ -91,7 +91,8 @@ Use the result with <code><a href="search_vector.html">search_vector</a></code> 
 <span>  model <span class="op">=</span> <span class="st">"all-minilm"</span>,</span>
 <span>  base_url <span class="op">=</span> <span class="st">"http://localhost:11434/v1"</span>,</span>
 <span>  api_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  batch_size <span class="op">=</span> <span class="fl">64L</span></span>
+<span>  batch_size <span class="op">=</span> <span class="fl">64L</span>,</span>
+<span>  max_chars <span class="op">=</span> <span class="fl">1000L</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -121,6 +122,13 @@ Use the result with <code><a href="search_vector.html">search_vector</a></code> 
 
 <dt id="arg-batch-size">batch_size<a class="anchor" aria-label="anchor" href="#arg-batch-size"></a></dt>
 <dd><p>Number of texts sent per request (default 64).</p></dd>
+
+
+<dt id="arg-max-chars">max_chars<a class="anchor" aria-label="anchor" href="#arg-max-chars"></a></dt>
+<dd><p>Texts longer than this many characters are cut before
+sending (default 1000). Small models such as <code>all-minilm</code> read about
+256 tokens and Ollama rejects longer input rather than truncating it. Use
+<code>NULL</code> to send full text to models with a longer context.</p></dd>
 
 </dl></div>
     <div id="value">

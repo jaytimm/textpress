@@ -103,11 +103,11 @@
 <div class="section level3">
 <h3 id="search-1-1-2">Search<a class="anchor" aria-label="anchor" href="#search-1-1-2"></a></h3>
 <ul><li>
-<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> now calls any OpenAI-compatible <code>/embeddings</code> endpoint and defaults to a local Ollama server with the small <code>all-minilm</code> model, so no account or API key is needed. Hugging Face’s hosted inference now requires paid credits. <strong>Breaking:</strong> <code>api_token</code> and <code>api_url</code> are replaced by <code>model</code>, <code>base_url</code>, and <code>api_key</code>. Requests are sent in batches (<code>batch_size</code>, default 64).</li>
+<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> now calls any OpenAI-compatible <code>/embeddings</code> endpoint and defaults to a local Ollama server with the small <code>all-minilm</code> model, so no account or API key is needed. Hugging Face’s hosted inference now requires paid credits. <strong>Breaking:</strong> <code>api_token</code> and <code>api_url</code> are replaced by <code>model</code>, <code>base_url</code>, and <code>api_key</code>. Requests are sent in batches (<code>batch_size</code>, default 64), and texts longer than <code>max_chars</code> (default 1000) are cut before sending, since small models such as <code>all-minilm</code> reject long input.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-1-1-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-1-2"></a></h3>
-<ul><li>Vignettes now run all of their code and render every table, including semantic search, rank fusion and the LLM example. Results from network steps (feeds, Wikipedia, embeddings, LLM calls) are saved once to <code>vignettes/data/</code>, so builds and checks run offline.</li>
+<ul><li>Vignettes now run all of their code and render every table, including semantic search, rank fusion and the LLM example. Results from network steps (feeds, Wikipedia, embeddings, LLM calls) are saved once to <code>vignettes/data/</code>, so builds and checks run offline. News examples now use openly reusable sources (Pew Research Center and The Conversation) and follow coverage of the 2026 midterm elections.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
