@@ -9,7 +9,6 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  eval = identical(Sys.getenv("TEXTPRESS_BUILD_LIVE_VIGNETTES"), "true"),
   message = FALSE,
   warning = FALSE,
   comment = "#>"
@@ -108,7 +107,7 @@ head(rownames(embeddings))
 
 Build a BM25 index over the same chunk text for keyword search. Tokenize by chunk, then index.
 
-```{r index, eval=FALSE}
+```{r index}
 index <- textpress::nlp_tokenize_text(
   chunks,
   by = c("uid"),
@@ -123,7 +122,7 @@ index <- textpress::nlp_tokenize_text(
 
 A single query string is used for both BM25 and semantic search, enabling a direct comparison of the two methods on the same input.
 
-```{r eval=FALSE}
+```{r}
 query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"
 ```
 
@@ -132,7 +131,7 @@ query_text <- "Gen Z Millennial Gen X Boomer Republican Democrat party alignment
 
 Search the index with a short query relevant to the corpus (e.g. generations and voter turnout).
 
-```{r search-bm25, eval=FALSE, message=FALSE, warning=FALSE}
+```{r search-bm25, message=FALSE, warning=FALSE}
 bm25_hits <- search_index(index,
                           query_text,
                           n = 25,
