@@ -129,9 +129,9 @@ scrape the article bodies.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wiki_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_wiki_urls.html">fetch_wiki_urls</a></span><span class="op">(</span><span class="st">"Strauss Howe generational theory"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">wiki_text_list</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">wiki_urls</span>, exclude_wiki_refs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="va">wiki_text_list</span><span class="op">$</span><span class="va">text</span></span>
+<span><span class="va">wiki_text_list</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">wiki_urls</span>, exclude_wiki_refs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="va">wiki_text_list</span><span class="op">$</span><span class="va">text</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">corpus</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] 126</span></span></code></pre>
 </div>
@@ -144,7 +144,7 @@ sentences, adding <code>sentence_id</code> and
 abbreviations (<em>Mr., U.S., vs.</em>) and single-letter initials are
 protected from false boundary detection via a built-in
 <code>abbreviations</code> vector, which can be extended as needed.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_ss</span> <span class="op">&lt;-</span> <span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -166,7 +166,7 @@ protected from false boundary detection via a built-in
 list. With <code>include_spans = TRUE</code> the result carries two
 parallel lists – <code>tokens</code> and <code>spans</code> – keyed by a
 composite <code>uid</code> built from the <code>by</code> columns.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tokens</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
 <span>    by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span>, <span class="st">"sentence_id"</span><span class="op">)</span>,</span>
@@ -178,7 +178,7 @@ composite <code>uid</code> built from the <code>by</code> columns.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">$</span><span class="va">tokens</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] "The"          "Strauss"      "–"            "Howe"         "generational"</span></span>
 <span><span class="co">#&gt; [6] "theory"</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># spans matrix: matching start/end positions</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tokens</span><span class="op">$</span><span class="va">spans</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;      start end</span></span>
@@ -195,7 +195,7 @@ composite <code>uid</code> built from the <code>by</code> columns.</p>
 <p><code><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens()</a></code> flattens the token list into a
 long-format data table: one row per token, with <code>id</code>,
 <code>token</code>, <code>start</code>, and <code>end</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">token_df</span> <span class="op">&lt;-</span> <span class="va">tokens</span> <span class="op">|&gt;</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_cast_tokens.html">nlp_cast_tokens</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">token_df</span> <span class="op">|&gt;</span></span>
@@ -208,7 +208,7 @@ long-format data table: one row per token, with <code>id</code>,
 <h2 id="full-pipeline">Full pipeline<a class="anchor" aria-label="anchor" href="#full-pipeline"></a>
 </h2>
 <p>All three steps as a single pipe from the abstract corpus.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"doc_id"</span>, <span class="st">"node_id"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>

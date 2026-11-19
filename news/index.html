@@ -97,6 +97,11 @@
 <h3 id="process-1-1-2">Process<a class="anchor" aria-label="anchor" href="#process-1-1-2"></a></h3>
 <ul><li>
 <code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> finds in-text abbreviation definitions and returns one row per unique <code>short_form</code>/<code>long_form</code> pair per document. Parenthetical definitions use the Schwartz &amp; Hearst (2003) algorithm in either direction (“tumor necrosis factor (TNF)”, “TNF (tumor necrosis factor)”); taxonomic abbreviations such as “E. coli” are matched to full names in the same document. A new “Abbreviations” vignette walks through it.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="search-1-1-2">Search<a class="anchor" aria-label="anchor" href="#search-1-1-2"></a></h3>
+<ul><li>
+<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> now calls any OpenAI-compatible <code>/embeddings</code> endpoint and defaults to a local Ollama server with the small <code>all-minilm</code> model, so no account or API key is needed. Hugging Face’s hosted inference now requires paid credits. <strong>Breaking:</strong> <code>api_token</code> and <code>api_url</code> are replaced by <code>model</code>, <code>base_url</code>, and <code>api_key</code>. Requests are sent in batches (<code>batch_size</code>, default 64).</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

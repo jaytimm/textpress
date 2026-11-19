@@ -129,9 +129,9 @@ description locally, and deduplicate the resulting URLs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">politics_feeds</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/rss_politics.html">rss_politics</a></span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">politics_feeds</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="va"><a href="../reference/rss_politics.html">rss_politics</a></span></span>
 <span></span>
 <span><span class="va">web_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_rss.html">fetch_rss</a></span><span class="op">(</span><span class="va">politics_feeds</span><span class="op">$</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span></span>
@@ -148,7 +148,7 @@ description locally, and deduplicate the resulting URLs.</p>
 <p><code><a href="../reference/read_urls.html">read_urls()</a></code> scrapes and parses the article text;
 <code><a href="../reference/nlp_split_sentences.html">nlp_split_sentences()</a></code> segments each document into
 analysis-ready sentence rows.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_text_list</span> <span class="op">&lt;-</span> <span class="va">web_urls</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span>cores <span class="op">=</span> <span class="fl">6</span><span class="op">)</span> </span>
 <span></span>
@@ -156,7 +156,7 @@ analysis-ready sentence rows.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>doc_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">url</span>, <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span><span class="va">doc_id</span>, .before <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Segment each document into sentence rows.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">web_ss</span> <span class="op">&lt;-</span> <span class="va">web_text</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_split_sentences.html">nlp_split_sentences</a></span><span class="op">(</span>by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'doc_id'</span>, <span class="st">'node_id'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -166,7 +166,7 @@ analysis-ready sentence rows.</p>
 <p>Three patterns: <code>age_range</code> matches explicit age
 constructions; <code>from_to</code> captures numeric change expressions;
 <code>energized</code> catches voter-mobilization language.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">patterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  energized <span class="op">=</span> <span class="st">"\\b(?:energi[zs]ed|motivated|mobili[zs]ed|fired\\s+up|disillusioned|apathetic)\\b"</span>,</span>
 <span>age_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
@@ -187,7 +187,7 @@ constructions; <code>from_to</code> captures numeric change expressions;
 <p>Sentences containing explicit age ranges or constructions
 (e.g. <em>“adults aged 18 to 29”</em>, <em>“under 30”</em>,
 <em>“65+”</em>).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fs</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/search_regex.html">search_regex</a></span><span class="op">(</span></span>
 <span>    query <span class="op">=</span> <span class="va">patterns</span><span class="op">$</span><span class="va">age_range</span>,</span>
@@ -210,7 +210,7 @@ constructions; <code>from_to</code> captures numeric change expressions;
 <p>Sentences with numeric change expressions (e.g. <em>“from 42 to 51
 percent”</em>) – useful for tracking shifts in polling or support
 figures.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fs1</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/search_regex.html">search_regex</a></span><span class="op">(</span></span>
 <span>    query <span class="op">=</span> <span class="va">patterns</span><span class="op">$</span><span class="va">from_to</span>,</span>
@@ -231,7 +231,7 @@ figures.</p>
 <p>Sentences with voter-mobilization language – terms like
 <em>“energized”</em>, <em>“motivated”</em>, <em>“mobilized”</em>,
 <em>“disillusioned”</em>, <em>“apathetic”</em>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fs2</span> <span class="op">&lt;-</span> <span class="va">web_ss</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/search_regex.html">search_regex</a></span><span class="op">(</span></span>
 <span>    query <span class="op">=</span> <span class="va">patterns</span><span class="op">$</span><span class="va">energized</span>,</span>
@@ -246,7 +246,7 @@ figures.</p>
 <span>    <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, escape <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"none","vertical":false,"data":[[14],[17],["motivated"],["This Navigator Research report covers the issues Americans prioritized as they headed to the polls and what <span style=\"background:#c8e6c9;\">motivated<\/span> their vote."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>pattern<\/th>\n      <th>text<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"pattern","targets":2},{"name":"text","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"none","vertical":false,"data":[[5],[17],["motivated"],["This Navigator Research report covers the issues Americans prioritized as they headed to the polls and what <span style=\"background:#c8e6c9;\">motivated<\/span> their vote."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>node_id<\/th>\n      <th>pattern<\/th>\n      <th>text<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[0,1]},{"name":"doc_id","targets":0},{"name":"node_id","targets":1},{"name":"pattern","targets":2},{"name":"text","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="section level2">

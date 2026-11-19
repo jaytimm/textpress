@@ -178,24 +178,32 @@ focal sentence plus surrounding context in
 <div class="section level2">
 <h2 id="embeddings-for-chunks">Embeddings for chunks<a class="anchor" aria-label="anchor" href="#embeddings-for-chunks"></a>
 </h2>
-<p>Embed the chunk text (with context) via a Hugging Face inference
-endpoint. The result is a numeric matrix with one row per chunk; use it
-with <code><a href="../reference/search_vector.html">search_vector()</a></code> for semantic search.</p>
+<p>Embed the chunk text (with context).
+<code><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code> defaults to a local <a href="https://ollama.com" class="external-link">Ollama</a> server running the small
+<code>all-minilm</code> model, so no account or API key is needed:
+install Ollama and run <code>ollama pull all-minilm</code> once. Any
+OpenAI-compatible endpoint works by changing <code>base_url</code>,
+<code>model</code>, and <code>api_key</code>. The result is a numeric
+matrix with one row per chunk; use it with <code><a href="../reference/search_vector.html">search_vector()</a></code>
+for semantic search.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">embeddings</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings</a></span><span class="op">(</span></span>
 <span>  <span class="va">chunks</span>,</span>
-<span>  by <span class="op">=</span> <span class="st">"uid"</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="va">HUGGINGFACE_API_TOKEN</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  by <span class="op">=</span> <span class="st">"uid"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] 199 384</span></span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">embeddings</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; [1] "4_1_1" "4_2_1" "4_3_1" "4_4_1" "4_5_1" "4_5_2"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="bm25-index">BM25 index<a class="anchor" aria-label="anchor" href="#bm25-index"></a>
 </h2>
 <p>Build a BM25 index over the same chunk text for keyword search.
 Tokenize by chunk, then index.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_tokenize_text.html">nlp_tokenize_text</a></span><span class="op">(</span></span>
 <span>  <span class="va">chunks</span>,</span>
 <span>  by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uid"</span><span class="op">)</span>,</span>
@@ -208,14 +216,14 @@ Tokenize by chunk, then index.</p>
 </h2>
 <p>A single query string is used for both BM25 and semantic search,
 enabling a direct comparison of the two methods on the same input.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">query_text</span> <span class="op">&lt;-</span> <span class="st">"Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="bm25">BM25<a class="anchor" aria-label="anchor" href="#bm25"></a>
 </h3>
 <p>Search the index with a short query relevant to the corpus
 (e.g. generations and voter turnout).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bm25_hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_index.html">search_index</a></span><span class="op">(</span><span class="va">index</span>,</span>
 <span>                          <span class="va">query_text</span>,</span>
 <span>                          n <span class="op">=</span> <span class="fl">25</span>,</span>
@@ -227,7 +235,7 @@ enabling a direct comparison of the two methods on the same input.</p>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>dom <span class="op">=</span> <span class="st">"lrtip"</span>,</span>
 <span>                   pageLength <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[["Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"],["bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25"],[16.5,15.9,14.7,14.3,14.1,13.5,13.1,13,12.6,12.3,12.3,12.3,12,10.8,10,9.859999999999999,9.51,9.199999999999999,9.16,8.949999999999999,8.66,8.619999999999999,7.96,7.39,6.83],["13_7_2","13_6_1","5_11_2","5_11_1","5_3_1","13_7_1","5_7_1","5_6_1","5_2_1","1_2_1","5_11_3","5_13_1","13_7_3","5_4_1","5_8_1","5_12_1","5_9_1","5_10_1","13_8_1","13_1_1","13_5_1","5_5_1","1_1_1","4_16_1","2_2_1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>query<\/th>\n      <th>method<\/th>\n      <th>score<\/th>\n      <th>uid<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"lrtip","pageLength":5,"columnDefs":[{"className":"dt-right","targets":2},{"name":"query","targets":0},{"name":"method","targets":1},{"name":"score","targets":2},{"name":"uid","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"filter":"none","vertical":false,"data":[["Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"],["bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25","bm25"],[13.1,12.8,11.7,11.4,10.9,10.8,10.5,10.3,10.1,9.44,9.09,8.5,8.369999999999999,8.109999999999999,7.87,7.42,6.61,6.31,6.31,5.78,5.06,4.89,4.82,4.82,4.73],["5_11_2","5_11_1","5_3_1","1_2_1","5_7_1","5_6_1","5_2_1","5_11_3","5_13_1","4_16_1","5_4_1","5_8_1","5_12_1","5_9_1","5_10_1","5_5_1","1_1_1","2_2_1","4_2_1","5_1_1","4_6_2","2_23_1","2_2_3","2_22_3","4_6_1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>query<\/th>\n      <th>method<\/th>\n      <th>score<\/th>\n      <th>uid<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"lrtip","pageLength":5,"columnDefs":[{"className":"dt-right","targets":2},{"name":"query","targets":0},{"name":"method","targets":1},{"name":"score","targets":2},{"name":"uid","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level3">
 <h3 id="semantic">Semantic<a class="anchor" aria-label="anchor" href="#semantic"></a>
@@ -235,18 +243,18 @@ enabling a direct comparison of the two methods on the same input.</p>
 <p>Embed a query phrase that matches the corpus theme (generational
 politics, voter behavior), then run <code><a href="../reference/search_vector.html">search_vector()</a></code> and
 join back to chunks to show the retrieved text.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">query_embed</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings</a></span><span class="op">(</span></span>
-<span>  <span class="va">query_text</span>,</span>
-<span>  api_token <span class="op">=</span> <span class="va">HUGGINGFACE_API_TOKEN</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">semantic_hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_vector.html">search_vector</a></span><span class="op">(</span><span class="va">embeddings</span>, <span class="va">query_embed</span>, n <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">query_embed</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_fetch_embeddings.html">util_fetch_embeddings</a></span><span class="op">(</span><span class="va">query_text</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">semantic_hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_vector.html">search_vector</a></span><span class="op">(</span><span class="va">embeddings</span>, <span class="va">query_embed</span>, n <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">semantic_hits</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span></span>
 <span>    rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>dom <span class="op">=</span> <span class="st">"lrtip"</span>,</span>
 <span>                   pageLength <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"none","vertical":false,"data":[["Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026","Gen Z Millennial Gen X Boomer Republican Democrat party alignment 2026"],["cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine","cosine"],[0.523,0.517,0.516,0.508,0.492,0.468,0.466,0.452,0.452,0.424,0.407,0.404,0.399,0.398,0.397,0.393,0.392,0.363,0.357,0.355,0.355,0.354,0.349,0.349,0.347],["5_6_1","5_5_1","5_3_1","5_2_1","5_13_1","5_12_1","5_8_1","5_7_1","5_11_2","5_4_1","4_35_1","4_16_1","5_10_1","5_11_3","5_9_1","1_2_1","5_16_1","1_3_1","5_18_1","4_18_3","2_2_3","4_2_1","2_2_2","5_11_1","1_1_1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>query<\/th>\n      <th>method<\/th>\n      <th>score<\/th>\n      <th>uid<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"lrtip","pageLength":5,"columnDefs":[{"className":"dt-right","targets":2},{"name":"query","targets":0},{"name":"method","targets":1},{"name":"score","targets":2},{"name":"uid","targets":3}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level3">
 <h3 id="hybrid-reciprocal-rank-fusion-rrf">Hybrid: reciprocal rank fusion (RRF)<a class="anchor" aria-label="anchor" href="#hybrid-reciprocal-rank-fusion-rrf"></a>
@@ -256,7 +264,7 @@ join back to chunks to show the retrieved text.</p>
 60); larger <em>k</em> flattens the curve so lower ranks contribute
 more. Sum scores per <em>uid</em>, then sort descending. Chunks that
 appear in both lists get a higher fused score.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">60</span></span>
 <span><span class="va">both</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">bm25_hits</span>, <span class="va">semantic_hits</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">query</span>, <span class="va">method</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -283,7 +291,7 @@ appear in both lists get a higher fused score.</p>
 <p>Format the top-ranked chunks as labeled source blocks and concatenate
 into a single context string for the LLM. Initialize the chat
 client.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ellmer.tidyverse.org" class="external-link">ellmer</a></span><span class="op">)</span></span>
 <span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">web_text_list</span><span class="op">$</span><span class="va">meta</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">doc_id</span>, <span class="va">date</span><span class="op">)</span></span>
 <span><span class="va">ff_meta</span> <span class="op">&lt;-</span> <span class="va">ff</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">meta</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -301,7 +309,7 @@ client.</p>
 </h3>
 <p>Comparative structured portrait per generation (alignment, drivers,
 divisions).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">portrait_schema</span> <span class="op">&lt;-</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_object</span><span class="op">(</span></span>
 <span>  <span class="st">"Comparative political portraits of each generation in 2026."</span>,</span>
 <span>  portraits <span class="op">=</span> <span class="fu">ellmer</span><span class="fu">::</span><span class="fu">type_array</span><span class="op">(</span></span>
@@ -327,8 +335,11 @@ divisions).</p>
 <span><span class="st">   PASSAGES:\n{context}"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  type <span class="op">=</span> <span class="va">portrait_schema</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">portraits_out</span><span class="op">$</span><span class="va">portraits</span> <span class="op">|&gt;</span> <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">portraits_out</span><span class="op">$</span><span class="va">portraits</span> <span class="op">|&gt;</span> <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"none","vertical":false,"data":[["Gen Z","Millennials","Gen X","Boomers"],["Lean Democratic, critical of Trump","Leaning Democratic, cautiously optimistic","Cautiously moderate, mixed views","Lean Republican, more traditional"],["Dissatisfaction with Trump’s policies, media consumption habits favor online sources, social engagement, and awareness of contemporary social issues.","Concerns about technology's potential societal impact, particularly AI, and engagement in social issues.","Awareness of AI’s risks aligns with older generational perspectives; maintaining a moderate stance on social and political issues.","Stable media consumption habits favoring traditional news sources, greater awareness of foreign policy, and preference for established political norms."],["None explicitly mentioned, but the split in news consumption may indicate varying levels of engagement within the generation.","Divided views on AI impact; more optimistic compared to Gen Z and older generations, possibly reflecting differing priorities or experiences.","Less explicitly mentioned but implied through perspectives on technology and policy issues compared to younger generations.","Some differences in views on Trump’s actions, particularly among those more politically engaged."],["More digitally engaged and critical of traditional institutions compared to Boomers, highlighting a major generational shift in political priorities and media consumption habits.","Generally more optimistic than Gen Z and Boomers, suggesting a different approach to technology and social issues than older generations.","More moderate and traditionally inclined than Gen Z; may not embrace the progressivism seen in younger cohorts as readily.","More traditionally aligned and less critical of institutions compared to younger generations, reflecting a generational adherence to established norms and practices."],["2026-10-29","2026-11-13","2026-11-13","2026-10-29"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>generation<\/th>\n      <th>party_alignment<\/th>\n      <th>key_drivers<\/th>\n      <th>internal_divisions<\/th>\n      <th>contrast_with_prior<\/th>\n      <th>most_recent_source<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"name":"generation","targets":0},{"name":"party_alignment","targets":1},{"name":"key_drivers","targets":2},{"name":"internal_divisions","targets":3},{"name":"contrast_with_prior","targets":4},{"name":"most_recent_source","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="section level2">

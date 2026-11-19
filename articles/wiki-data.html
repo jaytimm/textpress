@@ -123,10 +123,11 @@ to collect cited external URLs – primary sources, reports, and news.
 URLs matching a search phrase. Use that as your seed set.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/textpress" class="external-link">textpress</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">wiki_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_wiki_urls.html">fetch_wiki_urls</a></span><span class="op">(</span><span class="st">"January 6 Capitol attack"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">wiki_urls</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wiki_urls</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_wiki_urls.html">fetch_wiki_urls</a></span><span class="op">(</span><span class="st">"January 6 Capitol attack"</span>, limit <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wiki_urls</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; [1] "https://en.wikipedia.org/wiki/January_6_United_States_Capitol_attack"                            </span></span>
 <span><span class="co">#&gt; [2] "https://en.wikipedia.org/wiki/Pardon_of_January_6_United_States_Capitol_attack_defendants"       </span></span>
 <span><span class="co">#&gt; [3] "https://en.wikipedia.org/wiki/Timeline_of_the_January_6_United_States_Capitol_attack"            </span></span>
@@ -139,10 +140,10 @@ those URLs are often high-value (primary sources, reports, news).
 page) and <code>ref_url</code> (the cited link), whether
 <code>url</code> contains one Wikipedia page or several. Use
 <code>n</code> to cap references per page.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">refs</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs</a></span><span class="op">(</span><span class="va">wiki_urls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, n <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">refs</span> <span class="op">|&gt;</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">refs</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/fetch_wiki_refs.html">fetch_wiki_refs</a></span><span class="op">(</span><span class="va">wiki_urls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, n <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">refs</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">source_url</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
@@ -166,11 +167,11 @@ function uses Wikipedia’s main-content selector
 nodes under References, See also, Bibliography, and Sources so you get
 article body only; set to <code>FALSE</code> to include those
 sections.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Article body only (no References / See also); wiki_read$text, wiki_read$meta</span></span>
-<span><span class="va">wiki_text_list</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">wiki_urls</span>, exclude_wiki_refs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">wiki_text_list</span><span class="op">$</span><span class="va">text</span> <span class="op">|&gt;</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Article body only (no References / See also); wiki_text_list$text, wiki_text_list$meta</span></span>
+<span><span class="va">wiki_text_list</span> <span class="op">&lt;-</span> <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/read_urls.html">read_urls</a></span><span class="op">(</span><span class="va">wiki_urls</span>, exclude_wiki_refs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">wiki_text_list</span><span class="op">$</span><span class="va">text</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>text <span class="op">=</span> <span class="op">{</span></span>
