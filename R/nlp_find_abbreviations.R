@@ -85,7 +85,10 @@ nlp_find_abbreviations <- function(corpus,
   inner <- trimws(sub("[;,].*$", "", inner))
   pre <- stringi::stri_sub(txt, 1L, m[, 1] - 1L)
   # Restrict to the current sentence / clause
-  pre <- sub("^.*(?:[.!?;:]\\s|[()\\[\\]])", "", pre, perl = TRUE)
+  # (?s): text pooled across paragraphs or table cells contains newlines.
+  # A period after a single letter ("E. coli", "e.g.", "U.S.") is not a break.
+  pre <- sub("(?s)^.*(?:(?:(?<!\\b[A-Za-z])[.]|[!?;:])\\s|[()\\[\\]\n])", "", pre,
+             perl = TRUE)
   pre <- trimws(pre)
 
   pre_words <- strsplit(pre, "\\s+")
@@ -106,7 +109,10 @@ nlp_find_abbreviations <- function(corpus,
   # Case 2: short form (long form) -- e.g. "TNF (tumor necrosis factor)"
   last_word <- vapply(pre_words, function(w) if (length(w)) w[length(w)] else "", "")
   last_word <- gsub("^[[:punct:]]+|[[:punct:]]+$", "", last_word)
-  c2 <- is.na(long) & inner_nw > 1L & .valid_short_form(last_word)
+  # Reverse direction needs an abbreviation-like word (two or more capitals),
+  # so ordinary capitalized words ("Green", "County") are not taken
+  c2 <- is.na(long) & inner_nw > 1L & .valid_short_form(last_word) &
+    stringi::stri_count_regex(last_word, "[A-Z]") >= 2L
   for (i in which(c2)) {
     lf <- .best_long_form(last_word[i], inner[i])
     if (!is.na(lf)) { short[i] <- last_word[i]; long[i] <- lf }
@@ -154,6 +160,7 @@ nlp_find_abbreviations <- function(corpus,
   n_words <- lengths(strsplit(out, "\\s+"))
   if (nchar(out) <= nchar(sf) ||
       grepl(sf, out, fixed = TRUE) ||
+      grepl("[()]", out) ||
       n_words > min(nchar(sf) + 5L, 2L * nchar(sf))) {
     return(NA_character_)
   }

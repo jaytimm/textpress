@@ -119,6 +119,17 @@ test_that("initials before function words are not taxonomic pairs", {
   expect_equal(res$short_form, "E. coli")
 })
 
+test_that("lines and table cells do not leak into long forms", {
+  res <- nlp_find_abbreviations(data.frame(
+    doc_id = "d1",
+    text = paste("George McDermott (Republican)", "Sam Husseini (Green)",
+                 "Buddy Roemer (ran unsuccessfully for the Reform Party nomination)",
+                 "The Federal Election Commission (FEC) regulates political action committees (PACs).",
+                 sep = "\n")
+  ))
+  expect_setequal(res$short_form, c("FEC", "PACs"))
+})
+
 test_that("2,000 short documents run in under 2 seconds", {
   skip_on_cran()
   texts <- c(

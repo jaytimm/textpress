@@ -81,7 +81,7 @@ abbrevs |>
   DT::datatable(rownames = FALSE)
 ```
 
-The same short form does not always get the same long form. Different authors spell out *SCFAs* as *"short-chain"*, *"short chain"* or *"small chain fatty acids"*, and the algorithm sometimes takes in a few words too many. Listing every short form with more than one long form is a quick way to find both.
+The same short form does not always get the same long form. Different authors spell out *SCFAs* as *"short-chain"*, *"short chain"* or *"small chain fatty acids"*, and *STEC* appears as both *"Shiga toxin-producing E. coli"* and *"Shigatoxigenic Escherichia coli"*. Listing every short form with more than one long form is a quick way to find these variants.
 
 ```{r variants}
 abbrevs |>
