@@ -204,19 +204,7 @@
 <strong><code><a href="reference/nlp_index_tokens.html">nlp_index_tokens()</a></code></strong> – Build a weighted BM25 index for ranked retrieval.</li>
 <li>
 <strong><code><a href="reference/nlp_roll_chunks.html">nlp_roll_chunks()</a></code></strong> – Roll sentences into fixed-size chunks with surrounding context (RAG-style).</li>
-<li>
-<strong><code><a href="reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code></strong> – Find in-text abbreviation definitions (e.g. “abscisic acid (ABA)”, “A. thaliana”).</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  doc_id <span class="op">=</span> <span class="st">"1"</span>,</span>
-<span>  text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Arabidopsis thaliana seedlings were treated with abscisic acid (ABA)."</span>,</span>
-<span>               <span class="st">"In A. thaliana roots, ABA slowed growth."</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/nlp_find_abbreviations.html">nlp_find_abbreviations</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    doc_id  short_form            long_form        method</span></span>
-<span><span class="co">#&gt; 1:      1         ABA        abscisic acid parenthetical</span></span>
-<span><span class="co">#&gt; 2:      1 A. thaliana Arabidopsis thaliana     taxonomic</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_4-search-search_">4. Search (<code>search_*</code>)<a class="anchor" aria-label="anchor" href="#id_4-search-search_"></a>
@@ -256,6 +244,27 @@
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level3">
+<h3 id="utilities-util_">Utilities (<code>util_*</code>)<a class="anchor" aria-label="anchor" href="#utilities-util_"></a>
+</h3>
+<p>Build resources that the search functions use.</p>
+<ul>
+<li>
+<strong><code><a href="reference/util_fetch_embeddings.html">util_fetch_embeddings()</a></code></strong> – Embed text through a local Ollama server (default <code>all-minilm</code>) or any OpenAI-compatible endpoint; the matrix feeds <code><a href="reference/search_vector.html">search_vector()</a></code>.</li>
+<li>
+<strong><code><a href="reference/util_find_abbreviations.html">util_find_abbreviations()</a></code></strong> – Find in-text abbreviation definitions (e.g. “abscisic acid (ABA)”, “A. thaliana”); the pairs can extend a <code><a href="reference/search_dict.html">search_dict()</a></code> dictionary.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">corpus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  doc_id <span class="op">=</span> <span class="st">"1"</span>,</span>
+<span>  text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Arabidopsis thaliana seedlings were treated with abscisic acid (ABA)."</span>,</span>
+<span>               <span class="st">"In A. thaliana roots, ABA slowed growth."</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/util_find_abbreviations.html">util_find_abbreviations</a></span><span class="op">(</span><span class="va">corpus</span>, by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    doc_id  short_form            long_form        method</span></span>
+<span><span class="co">#&gt; 1:      1         ABA        abscisic acid parenthetical</span></span>
+<span><span class="co">#&gt; 2:      1 A. thaliana Arabidopsis thaliana     taxonomic</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -281,7 +290,7 @@
 <a href="https://jaytimm.github.io/textpress/articles/wiki-data.html">Wikipedia data</a> – <code><a href="reference/fetch_wiki_urls.html">fetch_wiki_urls()</a></code> + <code><a href="reference/fetch_wiki_refs.html">fetch_wiki_refs()</a></code>
 </li>
 <li>
-<a href="https://jaytimm.github.io/textpress/articles/abbreviations.html">Abbreviations</a> – <code><a href="reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code>, abbreviation-aware dictionary search</li>
+<a href="https://jaytimm.github.io/textpress/articles/abbreviations.html">Abbreviations</a> – <code><a href="reference/util_find_abbreviations.html">util_find_abbreviations()</a></code>, abbreviation-aware dictionary search</li>
 <li>
 <a href="https://jaytimm.github.io/textpress/articles/regex-search.html">Regex search</a> – <code><a href="reference/search_regex.html">search_regex()</a></code>, KWIC</li>
 <li>

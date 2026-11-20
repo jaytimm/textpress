@@ -109,8 +109,8 @@
 
     
     
-<p><code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> finds abbreviations that a text
-defines for itself and pairs each short form with its long form.
+<p><code><a href="../reference/util_find_abbreviations.html">util_find_abbreviations()</a></code> finds abbreviations that a
+text defines for itself and pairs each short form with its long form.
 Parenthetical definitions – <em>“tumor necrosis factor (TNF)”</em> or
 <em>“TNF (tumor necrosis factor)”</em> – are found with the Schwartz
 &amp; Hearst (2003) algorithm; taxonomic abbreviations like <em>“E.
@@ -168,7 +168,7 @@ article an integer <code>doc_id</code>.</p>
 <div class="section level2">
 <h2 id="find-abbreviations">Find abbreviations<a class="anchor" aria-label="anchor" href="#find-abbreviations"></a>
 </h2>
-<p><code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> pools all rows that share the
+<p><code><a href="../reference/util_find_abbreviations.html">util_find_abbreviations()</a></code> pools all rows that share the
 <code>by</code> values into one unit, so with <code>by = "doc_id"</code>
 each article is searched whole: a definition in one paragraph pairs with
 a full name in another. It returns one row per unique
@@ -176,7 +176,7 @@ a full name in another. It returns one row per unique
 the <code>method</code> that found it.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">abbrevs</span> <span class="op">&lt;-</span> <span class="va">wiki_text</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations</a></span><span class="op">(</span>by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_find_abbreviations.html">util_find_abbreviations</a></span><span class="op">(</span>by <span class="op">=</span> <span class="st">"doc_id"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">abbrevs</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pageLength <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -185,7 +185,7 @@ the <code>method</code> that found it.</p>
 pairs read as a species list for the corpus.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wiki_text</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations</a></span><span class="op">(</span>by <span class="op">=</span> <span class="st">"doc_id"</span>, methods <span class="op">=</span> <span class="st">"taxonomic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">textpress</span><span class="fu">::</span><span class="fu"><a href="../reference/util_find_abbreviations.html">util_find_abbreviations</a></span><span class="op">(</span>by <span class="op">=</span> <span class="st">"doc_id"</span>, methods <span class="op">=</span> <span class="st">"taxonomic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pageLength <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:100%;height:auto;"></div>
 <script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"none","vertical":false,"data":[[5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,8,8,8,8,8,8],["H. pylori","B. breve","B. infantis","L. rhamnosus","L. plantarum","C. difficile","E. coli","E. coli","S. dysenteriae","S. flexneri","S. boydii","S. sonnei","E. coli","B. henselae","B. quintana","E. albertii","E. fergusonii","E. hermannii","E. ruysiae","E. marmotae","E. coli"],["Helicobacter pylori","Bifidobacterium breve","Bifidobacterium infantis","Lactobacillus rhamnosus","Lactobacillus plantarum","Clostridioides difficile","Escherichia coli","Escherichia coli","Shigella dysenteriae","Shigella flexneri","Shigella boydii","Shigella sonnei","Escherichia coli","Bartonella henselae","Bartonella quintana","Escherichia albertii","Escherichia fergusonii","Escherichia hermannii","Escherichia ruysiae","Escherichia marmotae","Escherichia coli"],["taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic","taxonomic"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>doc_id<\/th>\n      <th>short_form<\/th>\n      <th>long_form<\/th>\n      <th>method<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"columnDefs":[{"className":"dt-right","targets":0},{"name":"doc_id","targets":0},{"name":"short_form","targets":1},{"name":"long_form","targets":2},{"name":"method","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
@@ -279,7 +279,7 @@ corpus, short forms account for most of the mentions.</p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p><code><a href="../reference/nlp_find_abbreviations.html">nlp_find_abbreviations()</a></code> turns the definitions a text
+<p><code><a href="../reference/util_find_abbreviations.html">util_find_abbreviations()</a></code> turns the definitions a text
 already contains into a <code>short_form</code>/<code>long_form</code>
 table, using only the text itself and no external dictionary. Listing
 the pairs by short form exposes spelling variants and noisy matches to

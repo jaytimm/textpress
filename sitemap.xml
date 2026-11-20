@@ -20,7 +20,6 @@
 <url><loc>https://jaytimm.github.io/textpress/reference/fetch_wiki_urls.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/index.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_cast_tokens.html</loc></url>
-<url><loc>https://jaytimm.github.io/textpress/reference/nlp_find_abbreviations.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_index_tokens.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_roll_chunks.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/nlp_split_paragraphs.html</loc></url>
@@ -35,5 +34,6 @@
 <url><loc>https://jaytimm.github.io/textpress/reference/search_vector.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/textpress-package.html</loc></url>
 <url><loc>https://jaytimm.github.io/textpress/reference/util_fetch_embeddings.html</loc></url>
+<url><loc>https://jaytimm.github.io/textpress/reference/util_find_abbreviations.html</loc></url>
 </urlset>
 
