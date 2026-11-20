@@ -31,9 +31,9 @@
 #'   text = c("Levels of tumor necrosis factor (TNF) and interleukin-6 (IL-6) rose.",
 #'            "Escherichia coli was cultured. Growth of E. coli was slow.")
 #' )
-#' nlp_find_abbreviations(corpus, by = "doc_id")
+#' util_find_abbreviations(corpus, by = "doc_id")
 #' @export
-nlp_find_abbreviations <- function(corpus,
+util_find_abbreviations <- function(corpus,
                                    by = c("doc_id"),
                                    methods = c("parenthetical", "taxonomic")) {
   methods <- match.arg(methods, several.ok = TRUE)

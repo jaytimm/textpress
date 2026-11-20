@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 source("cache-hook.R")
 ```
 
-`nlp_find_abbreviations()` finds abbreviations that a text defines for itself and pairs each short form with its long form. Parenthetical definitions -- *"tumor necrosis factor (TNF)"* or *"TNF (tumor necrosis factor)"* -- are found with the Schwartz & Hearst (2003) algorithm; taxonomic abbreviations like *"E. coli"* are matched to *"Escherichia coli"* elsewhere in the same document. This vignette runs it over a set of biomedical Wikipedia articles, looks at short forms shared across documents, and then uses the pairs as a dictionary so that a concept is counted whether it is written out or abbreviated.
+`util_find_abbreviations()` finds abbreviations that a text defines for itself and pairs each short form with its long form. Parenthetical definitions -- *"tumor necrosis factor (TNF)"* or *"TNF (tumor necrosis factor)"* -- are found with the Schwartz & Hearst (2003) algorithm; taxonomic abbreviations like *"E. coli"* are matched to *"Escherichia coli"* elsewhere in the same document. This vignette runs it over a set of biomedical Wikipedia articles, looks at short forms shared across documents, and then uses the pairs as a dictionary so that a concept is counted whether it is written out or abbreviated.
 
 Load packages.
 
@@ -51,11 +51,11 @@ wiki_text |> distinct(doc_id, url)
 
 ## Find abbreviations
 
-`nlp_find_abbreviations()` pools all rows that share the `by` values into one unit, so with `by = "doc_id"` each article is searched whole: a definition in one paragraph pairs with a full name in another. It returns one row per unique `short_form`/`long_form` pair per unit, along with the `method` that found it.
+`util_find_abbreviations()` pools all rows that share the `by` values into one unit, so with `by = "doc_id"` each article is searched whole: a definition in one paragraph pairs with a full name in another. It returns one row per unique `short_form`/`long_form` pair per unit, along with the `method` that found it.
 
 ```{r find}
 abbrevs <- wiki_text |>
-  textpress::nlp_find_abbreviations(by = "doc_id")
+  textpress::util_find_abbreviations(by = "doc_id")
 
 abbrevs |>
   DT::datatable(rownames = FALSE, options = list(pageLength = 10))
@@ -65,7 +65,7 @@ Run one method on its own with `methods`. The taxonomic pairs read as a species 
 
 ```{r taxonomic}
 wiki_text |>
-  textpress::nlp_find_abbreviations(by = "doc_id", methods = "taxonomic") |>
+  textpress::util_find_abbreviations(by = "doc_id", methods = "taxonomic") |>
   DT::datatable(rownames = FALSE, options = list(pageLength = 10))
 ```
 
@@ -147,6 +147,6 @@ hits |>
 
 ## Summary
 
-`nlp_find_abbreviations()` turns the definitions a text already contains into a `short_form`/`long_form` table, using only the text itself and no external dictionary. Listing the pairs by short form exposes spelling variants and noisy matches to clean up; stacking them into a dictionary for `search_dict()` lets a concept be counted whether it is written out or abbreviated. For a fixed vocabulary, see the dictionary search vignette.
+`util_find_abbreviations()` turns the definitions a text already contains into a `short_form`/`long_form` table, using only the text itself and no external dictionary. Listing the pairs by short form exposes spelling variants and noisy matches to clean up; stacking them into a dictionary for `search_dict()` lets a concept be counted whether it is written out or abbreviated. For a fixed vocabulary, see the dictionary search vignette.
 
 Schwartz, A. S., & Hearst, M. A. (2003). A simple algorithm for identifying abbreviation definitions in biomedical text. *Pacific Symposium on Biocomputing*, 451-462.

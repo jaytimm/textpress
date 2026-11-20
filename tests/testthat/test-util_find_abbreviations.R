@@ -1,5 +1,5 @@
 pairs <- function(text, ...) {
-  res <- nlp_find_abbreviations(data.frame(doc_id = "d1", text = text), ...)
+  res <- util_find_abbreviations(data.frame(doc_id = "d1", text = text), ...)
   stats::setNames(res$long_form, res$short_form)
 }
 
@@ -26,7 +26,7 @@ test_that("plural short forms and short forms starting with a digit", {
 })
 
 test_that("taxonomic match in a document with no parentheses", {
-  res <- nlp_find_abbreviations(data.frame(
+  res <- util_find_abbreviations(data.frame(
     doc_id = "d1",
     text = "Escherichia coli was cultured. Growth of E. coli was slow."
   ))
@@ -42,12 +42,12 @@ test_that("statistical and date parentheticals are ignored", {
 })
 
 test_that("missing and empty text is skipped without error", {
-  res <- nlp_find_abbreviations(data.frame(doc_id = c("a", "b"), text = c(NA, "")))
+  res <- util_find_abbreviations(data.frame(doc_id = c("a", "b"), text = c(NA, "")))
   expect_equal(nrow(res), 0)
 })
 
 test_that("empty result is a zero-row data.table with all four columns", {
-  res <- nlp_find_abbreviations(data.frame(doc_id = "a", text = "Nothing here."))
+  res <- util_find_abbreviations(data.frame(doc_id = "a", text = "Nothing here."))
   expect_s3_class(res, "data.table")
   expect_equal(nrow(res), 0)
   expect_named(res, c("doc_id", "short_form", "long_form", "method"))
@@ -58,8 +58,8 @@ test_that("methods filters the output", {
     doc_id = "d1",
     text = "Escherichia coli (EC) was cultured. Growth of E. coli was slow."
   )
-  tax <- nlp_find_abbreviations(corpus, methods = "taxonomic")
-  par <- nlp_find_abbreviations(corpus, methods = "parenthetical")
+  tax <- util_find_abbreviations(corpus, methods = "taxonomic")
+  par <- util_find_abbreviations(corpus, methods = "parenthetical")
   expect_gt(nrow(tax), 0)
   expect_gt(nrow(par), 0)
   expect_true(all(tax$method == "taxonomic"))
@@ -67,19 +67,19 @@ test_that("methods filters the output", {
 })
 
 test_that("missing doc_id or text columns stop with a clear error", {
-  expect_error(nlp_find_abbreviations(data.frame(text = "x")), "doc_id")
-  expect_error(nlp_find_abbreviations(data.frame(doc_id = "x")), "text")
+  expect_error(util_find_abbreviations(data.frame(text = "x")), "doc_id")
+  expect_error(util_find_abbreviations(data.frame(doc_id = "x")), "text")
 })
 
 test_that("invalid methods value errors via match.arg()", {
   expect_error(
-    nlp_find_abbreviations(data.frame(doc_id = "a", text = "x"), methods = "bogus"),
+    util_find_abbreviations(data.frame(doc_id = "a", text = "x"), methods = "bogus"),
     "should be one of"
   )
 })
 
 test_that("a duplicate pair within one document appears once", {
-  res <- nlp_find_abbreviations(data.frame(
+  res <- util_find_abbreviations(data.frame(
     doc_id = "d1",
     text = "body mass index (BMI) was high. Later, body mass index (BMI) fell."
   ))
@@ -87,7 +87,7 @@ test_that("a duplicate pair within one document appears once", {
 })
 
 test_that("the same pair in two documents appears once per document", {
-  res <- nlp_find_abbreviations(data.frame(
+  res <- util_find_abbreviations(data.frame(
     doc_id = c("a", "b"),
     text = "body mass index (BMI) was high."
   ))
@@ -101,18 +101,18 @@ test_that("rows sharing `by` values are pooled into one unit", {
     text = c("Escherichia coli was cultured.", "Growth of E. coli was slow.",
              "Growth of E. coli was slow.")
   )
-  res <- nlp_find_abbreviations(corpus, by = "doc_id", methods = "taxonomic")
+  res <- util_find_abbreviations(corpus, by = "doc_id", methods = "taxonomic")
   expect_equal(res$doc_id, "a")
   expect_named(res, c("doc_id", "short_form", "long_form", "method"))
 
   # Splitting by node keeps the definition and the short form apart
-  res2 <- nlp_find_abbreviations(corpus, by = c("doc_id", "node_id"))
+  res2 <- util_find_abbreviations(corpus, by = c("doc_id", "node_id"))
   expect_equal(nrow(res2), 0)
   expect_named(res2, c("doc_id", "node_id", "short_form", "long_form", "method"))
 })
 
 test_that("initials before function words are not taxonomic pairs", {
-  res <- nlp_find_abbreviations(data.frame(
+  res <- util_find_abbreviations(data.frame(
     doc_id = "d1",
     text = "Site and Silva and Jones S. and Smith reported on Escherichia coli and E. coli."
   ), methods = "taxonomic")
@@ -120,7 +120,7 @@ test_that("initials before function words are not taxonomic pairs", {
 })
 
 test_that("lines and table cells do not leak into long forms", {
-  res <- nlp_find_abbreviations(data.frame(
+  res <- util_find_abbreviations(data.frame(
     doc_id = "d1",
     text = paste("George McDermott (Republican)", "Sam Husseini (Green)",
                  "Buddy Roemer (ran unsuccessfully for the Reform Party nomination)",
@@ -139,6 +139,6 @@ test_that("2,000 short documents run in under 2 seconds", {
     "Patients (n = 40) were enrolled (2019). Results were significant (p < 0.05)."
   )
   corpus <- data.frame(doc_id = seq_len(2000), text = rep(texts, 500))
-  elapsed <- system.time(nlp_find_abbreviations(corpus))[["elapsed"]]
+  elapsed <- system.time(util_find_abbreviations(corpus))[["elapsed"]]
   expect_lt(elapsed, 2)
 })

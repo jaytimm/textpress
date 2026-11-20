@@ -81,19 +81,6 @@ Prepare text for search or indexing.
 - **`nlp_tokenize_text()`** -- Normalize text into a clean token stream.
 - **`nlp_index_tokens()`** -- Build a weighted BM25 index for ranked retrieval.
 - **`nlp_roll_chunks()`** -- Roll sentences into fixed-size chunks with surrounding context (RAG-style).
-- **`nlp_find_abbreviations()`** -- Find in-text abbreviation definitions (e.g. "abscisic acid (ABA)", "A. thaliana").
-
-```r
-corpus <- data.frame(
-  doc_id = "1",
-  text = paste("Arabidopsis thaliana seedlings were treated with abscisic acid (ABA).",
-               "In A. thaliana roots, ABA slowed growth.")
-)
-nlp_find_abbreviations(corpus, by = "doc_id")
-#>    doc_id  short_form            long_form        method
-#> 1:      1         ABA        abscisic acid parenthetical
-#> 2:      1 A. thaliana Arabidopsis thaliana     taxonomic
-```
 
 ### 4. Search (`search_*`)
 
@@ -105,6 +92,26 @@ Four retrieval modes over the same corpus. Data-first, pipe-friendly.
 | **`search_dict(corpus, terms)`**      | Term vector   | Exact phrases and MWEs; built-in `dict_generations`, `dict_political`.      |
 | **`search_index(index, query)`**      | Keywords      | BM25 ranked retrieval over a token index.                                   |
 | **`search_vector(embeddings, query)`**| Numeric vector| Semantic nearest-neighbor search; use `util_fetch_embeddings()` to embed.   |
+
+### Utilities (`util_*`)
+
+Build resources that the search functions use.
+
+- **`util_fetch_embeddings()`** -- Embed text through a local Ollama server (default `all-minilm`) or any OpenAI-compatible endpoint; the matrix feeds `search_vector()`.
+- **`util_find_abbreviations()`** -- Find in-text abbreviation definitions (e.g. "abscisic acid (ABA)", "A. thaliana"); the pairs can extend a `search_dict()` dictionary.
+
+```r
+corpus <- data.frame(
+  doc_id = "1",
+  text = paste("Arabidopsis thaliana seedlings were treated with abscisic acid (ABA).",
+               "In A. thaliana roots, ABA slowed growth.")
+)
+util_find_abbreviations(corpus, by = "doc_id")
+#>    doc_id  short_form            long_form        method
+#> 1:      1         ABA        abscisic acid parenthetical
+#> 2:      1 A. thaliana Arabidopsis thaliana     taxonomic
+```
+
 
 ---
 
@@ -127,7 +134,7 @@ corpus class.
 - [Web data](https://jaytimm.github.io/textpress/articles/web-data.html) -- `fetch_rss()` + `read_urls()`
 - [Basic NLP](https://jaytimm.github.io/textpress/articles/basic-nlp.html) -- sentence splitting, tokenization, span-aware casting
 - [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
-- [Abbreviations](https://jaytimm.github.io/textpress/articles/abbreviations.html) -- `nlp_find_abbreviations()`, abbreviation-aware dictionary search
+- [Abbreviations](https://jaytimm.github.io/textpress/articles/abbreviations.html) -- `util_find_abbreviations()`, abbreviation-aware dictionary search
 - [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC
 - [Dictionary search](https://jaytimm.github.io/textpress/articles/dict-search.html) -- `search_dict()`, PMI co-occurrence
 - [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- RAG pipeline: embeddings, BM25, hybrid RRF retrieval, LLM extraction
