@@ -20,7 +20,7 @@ source("cache-hook.R")
 
 ## Sources
 
-The corpus comes from two openly reusable sources: the Pew Research Center politics feed, taken from the bundled `rss_politics` catalog, and The Conversation's US politics feed. Both allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026, in the weeks after the midterm elections; links to every article are kept in the results.
+The corpus comes from six outlets in the bundled `rss_politics` catalog: NPR, PBS News, Fox News, the Los Angeles Times, Vox, and The Dispatch. `fetch_rss()` retrieves their current entries.
 
 ```{r libs, message=FALSE, warning=FALSE}
 library(textpress)
@@ -28,15 +28,13 @@ library(dplyr)
 library(DT)
 ```
 
-```{r web-urls, cache_rds = c("feeds", "web_urls")}
-feeds <- c(
-  textpress::rss_politics |>
-    filter(source == "Pew Research Center") |>
-    pull(url),
-  "https://theconversation.com/us/politics/articles.atom"
-)
+```{r web-urls, cache_rds = "web_urls"}
+outlets <- c("NPR", "PBS News", "Fox News", "Los Angeles Times", "Vox", "The Dispatch")
 
-web_urls <- textpress::fetch_rss(feeds) |>
+web_urls <- textpress::rss_politics |>
+  filter(source %in% outlets) |>
+  pull(url) |>
+  textpress::fetch_rss() |>
   select(-doc_id) |>
   distinct(url, .keep_all = TRUE)
 ```

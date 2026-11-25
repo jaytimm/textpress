@@ -20,9 +20,7 @@ source("cache-hook.R")
 
 ## Select, fetch, and read
 
-Select the Pew Research Center feed from the bundled `rss_politics` catalog, add The Conversation's US politics feed, use `fetch_rss()` to retrieve their recent entries, then keep entries about the 2026 midterms before `read_urls()` scrapes and parses the selected articles. The filtering below is ordinary R filtering, not a query sent to a search service.
-
-Both sources allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026; the table below links to every article.
+Select six outlets from the bundled `rss_politics` catalog, use `fetch_rss()` to retrieve their recent entries, and keep the five most recent from each before `read_urls()` scrapes and parses the articles. The selection below is ordinary R filtering of a data frame, not a query sent to a search service.
 
 ```{r libs, message=FALSE, warning=FALSE}
 library(textpress)
@@ -30,23 +28,25 @@ library(dplyr)
 library(DT)
 ```
 
-```{r web-urls, cache_rds = c("feeds", "web_urls")}
-feeds <- c(
-  textpress::rss_politics |>
-    filter(source == "Pew Research Center") |>
-    pull(url),
-  "https://theconversation.com/us/politics/articles.atom"
-)
+```{r catalog}
+outlets <- c("NPR", "PBS News", "Fox News", "Los Angeles Times", "Vox", "The Dispatch")
 
-web_urls <- textpress::fetch_rss(feeds) |>
-  filter(grepl(
-    "midterm|election|voter|Congress",
-    paste(title, description),
-    ignore.case = TRUE
-  ))
+textpress::rss_politics |>
+  filter(source %in% outlets) |>
+  select(source, feed, category, url) |>
+  DT::datatable(rownames = FALSE)
 ```
 
-
+```{r web-urls, cache_rds = "web_urls"}
+web_urls <- textpress::rss_politics |>
+  filter(source %in% outlets) |>
+  pull(url) |>
+  textpress::fetch_rss() |>
+  distinct(url, .keep_all = TRUE) |>
+  group_by(source) |>
+  slice_max(published_at, n = 5, with_ties = FALSE) |>
+  ungroup()
+```
 
 Scrape and parse the URLs returned above into a node-level data frame with `$text` and `$meta` components.
 

@@ -17,7 +17,7 @@ source("cache-hook.R")
 ```
 
 
-This vignette completes the search side of the `textpress` pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here they are run on politics coverage from the weeks after the 2026 midterms, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
+This vignette completes the search side of the `textpress` pipeline. Where regex and dictionary search match on form, and BM25 matches on term frequency, embedding-based search matches on meaning -- useful when the query and the relevant passage share little surface vocabulary. Here they are run on recent politics coverage about the 2026 midterms, BM25 via `search_index()` and semantic via `search_vector()`, then combined with reciprocal rank fusion (RRF). The top-ranked chunks are passed to an LLM for synthesis and structured extraction, showing the full arc from raw URLs to generated output.
 
 Load packages.
 
@@ -30,17 +30,15 @@ library(dplyr)
 
 ## Sources
 
-The corpus comes from two openly reusable sources: the Pew Research Center politics feed, taken from the bundled `rss_politics` catalog, and The Conversation's US politics feed. Both allow reuse with attribution (The Conversation publishes under CC BY-ND 4.0; Pew Research Center under its terms of use), so the article text can be saved with this vignette. Entries were retrieved in November 2026, in the weeks after the midterm elections, and only entries about the elections are kept.
+The corpus comes from six outlets in the bundled `rss_politics` catalog: NPR, PBS News, Fox News, the Los Angeles Times, Vox, and The Dispatch. `fetch_rss()` retrieves their current entries, and ordinary filtering keeps entries about the elections.
 
-```{r web-urls, cache_rds = c("feeds", "web_urls")}
-feeds <- c(
-  textpress::rss_politics |>
-    filter(source == "Pew Research Center") |>
-    pull(url),
-  "https://theconversation.com/us/politics/articles.atom"
-)
+```{r web-urls, cache_rds = "web_urls"}
+outlets <- c("NPR", "PBS News", "Fox News", "Los Angeles Times", "Vox", "The Dispatch")
 
-web_urls <- textpress::fetch_rss(feeds) |>
+web_urls <- textpress::rss_politics |>
+  filter(source %in% outlets) |>
+  pull(url) |>
+  textpress::fetch_rss() |>
   filter(grepl(
     "midterm|election|voter|Congress",
     paste(title, description),
@@ -89,7 +87,8 @@ Embed the chunk text (with context). `util_fetch_embeddings()` defaults to a loc
 embeddings <- textpress::util_fetch_embeddings(
   chunks,
   by = "uid"
-)
+) |>
+  round(4) # plenty for cosine similarity; keeps the saved matrix small
 ```
 
 ```{r show-embeddings}

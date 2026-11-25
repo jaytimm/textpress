@@ -1,3 +1,10 @@
+# textpress (development version)
+
+- Vignettes are now site-only articles on the pkgdown website and are no
+  longer shipped with the package. `knitr`, `rmarkdown`, `DT` and `dplyr` are
+  no longer suggested dependencies.
+- News examples draw on outlets from the bundled `rss_politics` catalog.
+
 # textpress 1.1.2
 
 ## Fetch
@@ -54,6 +61,7 @@
   `vignettes/data/`, so builds and checks run offline. News examples now use
   openly reusable sources (Pew Research Center and The Conversation) and
   follow coverage of the 2026 midterm elections.
+- The dictionary search vignette has been removed.
 
 ---
 

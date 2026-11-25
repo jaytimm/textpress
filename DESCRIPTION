@@ -1,7 +1,7 @@
 Package: textpress
 Type: Package
 Title: Build and Search Web Text Corpora
-Version: 1.1.2
+Version: 1.1.2.9000
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: An R toolkit for building text corpora and searching them.
@@ -30,13 +30,9 @@ Imports:
     lubridate
 Suggests:
     SnowballC (>= 0.7.0),
-    DT,
-    dplyr,
-    knitr,
-    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+Config/Needs/website: DT, dplyr
 URL: https://github.com/jaytimm/textpress, https://jaytimm.github.io/textpress/
 BugReports: https://github.com/jaytimm/textpress/issues
 Config/roxygen2/version: 8.0.0
