@@ -1,7 +1,7 @@
 Package: textpress
 Type: Package
 Title: Build and Search Web Text Corpora
-Version: 1.1.2.9000
+Version: 1.1.2
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: An R toolkit for building text corpora and searching them.
