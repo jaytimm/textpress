@@ -136,7 +136,6 @@ corpus class.
 - [Wikipedia data](https://jaytimm.github.io/textpress/articles/wiki-data.html) -- `fetch_wiki_urls()` + `fetch_wiki_refs()`
 - [Abbreviations](https://jaytimm.github.io/textpress/articles/abbreviations.html) -- `util_find_abbreviations()`, abbreviation-aware dictionary search
 - [Regex search](https://jaytimm.github.io/textpress/articles/regex-search.html) -- `search_regex()`, KWIC
-- [Dictionary search](https://jaytimm.github.io/textpress/articles/dict-search.html) -- `search_dict()`, PMI co-occurrence
 - [Semantic search](https://jaytimm.github.io/textpress/articles/semantic-search.html) -- RAG pipeline: embeddings, BM25, hybrid RRF retrieval, LLM extraction
 
 ---

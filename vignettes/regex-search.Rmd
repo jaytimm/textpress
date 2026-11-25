@@ -151,4 +151,4 @@ if (!is.null(fs2) && nrow(fs2) > 0) {
 
 ## Summary
 
-`search_regex()` is best for precise, expressive patterns -- age ranges, numeric constructions, multi-word sequences -- where you control the match exactly. Results come back sentence-level with inline highlighting. For broader vocabulary coverage without hand-crafting every variant, see the dictionary search vignette.
+`search_regex()` is best for precise, expressive patterns -- age ranges, numeric constructions, multi-word sequences -- where you control the match exactly. Results come back sentence-level with inline highlighting.
