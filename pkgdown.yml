@@ -4,12 +4,11 @@ pkgdown_sha: ~
 articles:
   abbreviations: abbreviations.html
   basic-nlp: basic-nlp.html
-  dict-search: dict-search.html
   regex-search: regex-search.html
   semantic-search: semantic-search.html
   web-data: web-data.html
   wiki-data: wiki-data.html
-last_built: 2026-11-25T19:53Z
+last_built: 2026-11-25T20:37Z
 urls:
   reference: https://jaytimm.github.io/textpress/reference
   article: https://jaytimm.github.io/textpress/articles
