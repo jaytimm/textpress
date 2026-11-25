@@ -5,8 +5,6 @@
 
 `textpress` is an R toolkit for building text corpora and searching them -- no custom object classes, just plain data frames from start to finish. It collects URLs from durable sources -- RSS and Atom feeds, Wikipedia and its citations, or URLs you already have -- then reads, processes, and searches the resulting text through a consistent four-step API: **Fetch**, **Read**, **Process**, **Search**.
 
-If you're after word clouds or sentiment scores, `textpress` isn't the package for you. If you want to find what a text actually says, it might be.
-
 ---
 
 ## Installation
